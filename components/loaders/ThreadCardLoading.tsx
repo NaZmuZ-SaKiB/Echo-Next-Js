@@ -17,7 +17,7 @@ const ThreadCardLoading = ({ isComment }: TProps) => {
         <div className="flex w-full flex-1 flex-row gap-4">
           <div className="flex flex-col items-center">
             <div className="relative">
-              <Skeleton className="opacity-50 rounded-full size-11" />
+              <Skeleton className="opacity-10 rounded-full size-11" />
             </div>
             <div className="thread-card_bar" />
           </div>

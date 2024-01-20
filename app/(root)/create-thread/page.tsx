@@ -1,4 +1,5 @@
 import PostThread from "@/components/forms/PostThread";
+import { Skeleton } from "@/components/ui/skeleton";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";

@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import { fetchUser } from "@/lib/actions/user.actions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
+import { Suspense } from "react";
+import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -49,11 +51,13 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
               value={tab.value}
               className="w-full text-light-1"
             >
-              <ThreadsTab
-                currentUserId={user.id}
-                accountId={userInfo.id}
-                accountType="User"
-              />
+              <Suspense fallback={<ThreadsTabLoading />}>
+                <ThreadsTab
+                  currentUserId={user.id}
+                  accountId={userInfo.id}
+                  accountType="User"
+                />
+              </Suspense>
             </TabsContent>
           ))}
         </Tabs>
