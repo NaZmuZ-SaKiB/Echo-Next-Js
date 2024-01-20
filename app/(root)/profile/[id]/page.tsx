@@ -44,7 +44,11 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             ))}
           </TabsList>
           {profileTabs.map((tab: any) => (
-            <TabsContent key={`content-${tab.label}`} value={tab.value}>
+            <TabsContent
+              key={`content-${tab.label}`}
+              value={tab.value}
+              className="w-full text-light-1"
+            >
               <ThreadsTab
                 currentUserId={user.id}
                 accountId={userInfo.id}
