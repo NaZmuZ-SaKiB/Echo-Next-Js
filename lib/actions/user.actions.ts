@@ -5,6 +5,7 @@ import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.model";
 import { FilterQuery, SortOrder } from "mongoose";
+import Community from "../models/community.model";
 
 type TUpdateUserParams = {
   userId: string;
@@ -51,7 +52,10 @@ export const fetchUser = async (userId: string) => {
   try {
     connectToDB();
 
-    return await User.findOne({ id: userId });
+    return await User.findOne({ id: userId }).populate({
+      path: "communities",
+      model: Community,
+    });
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error?.message}`);
   }
@@ -60,19 +64,28 @@ export const fetchUser = async (userId: string) => {
 export const fetchUserPosts = async (userId: string) => {
   connectToDB();
   try {
-    // todo: populate community
-    const threads = await User.findOne({ id: userId }).populate({
+    const threads = await User.findOne({
+      id: userId,
+      parentId: { $in: [undefined, null] },
+    }).populate({
       path: "threads",
       model: Thread,
-      populate: {
-        path: "children",
-        model: Thread,
-        populate: {
-          path: "author",
-          model: User,
-          select: "id name image _id",
+      populate: [
+        {
+          path: "community",
+          model: Community,
+          select: "name id image _id",
         },
-      },
+        {
+          path: "children",
+          model: Thread,
+          populate: {
+            path: "author",
+            model: User,
+            select: "id name image _id",
+          },
+        },
+      ],
     });
 
     return threads;
