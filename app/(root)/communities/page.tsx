@@ -1,11 +1,11 @@
+import { Suspense } from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { fetchUser, searchUsers } from "@/lib/actions/user.actions";
-import { fetchCommunities } from "@/lib/actions/community.actions";
-import CommunityCard from "@/components/cards/CommunityCard";
+import { fetchUser } from "@/lib/actions/user.actions";
 import Searchbar from "@/components/shared/Searchbar";
-import CommunitiesPageLoading from "./loading";
+import SearchResult from "@/components/shared/SearchResult";
+import SearchResultLoading from "@/components/loaders/SearchResultLoading";
 
 type TProps = {
   searchParams: { [key: string]: string | undefined };
@@ -18,37 +18,21 @@ const CommunityPage = async ({ searchParams }: TProps) => {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const result = await fetchCommunities({
-    pageNumber: searchParams?.page ? +searchParams.page : 1,
-    pageSize: 20,
-    searchString: searchParams.q || "",
-    sortBy: "desc",
-  });
+  const query = searchParams?.q || "";
+
   return (
     <section>
       <h1 className="head-text mb-10">Search</h1>
 
       <Searchbar routeType="communities" />
 
-      <div className="mt-14 flex flex-wrap justify-center gap-9">
-        {result?.communities?.length === 0 ? (
-          <p className="no-result">No communities</p>
-        ) : (
-          <>
-            {result?.communities?.map((community) => (
-              <CommunityCard
-                key={community.id}
-                id={community.id}
-                name={community.name}
-                username={community.username}
-                imgUrl={community.image}
-                bio={community.bio}
-                members={community.members}
-              />
-            ))}
-          </>
-        )}
-      </div>
+      <Suspense key={query} fallback={<SearchResultLoading type="Community" />}>
+        <SearchResult
+          type="Community"
+          query={query}
+          page={searchParams?.page}
+        />
+      </Suspense>
     </section>
   );
 };

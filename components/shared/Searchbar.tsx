@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Input } from "../ui/input";
 
@@ -12,20 +11,22 @@ interface Props {
 
 const Searchbar = ({ routeType }: Props) => {
   const router = useRouter();
-  const [search, setSearch] = useState("");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // query after 0.3s of no input
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (search) {
-        router.push(`/${routeType}?q=` + search);
-      } else {
-        router.push(`/${routeType}`);
-      }
+  function handleSearch(term: string) {
+    const params = new URLSearchParams(searchParams);
+
+    if (term) {
+      params.set("q", term);
+    } else {
+      params.delete("q");
+    }
+
+    setTimeout(() => {
+      router.replace(`${pathname}?${params.toString()}`);
     }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, routeType]);
+  }
 
   return (
     <div className="searchbar">
@@ -36,14 +37,15 @@ const Searchbar = ({ routeType }: Props) => {
         height={24}
         className="object-contain"
       />
+
       <Input
         id="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => handleSearch(e.target.value)}
         placeholder={`${
           routeType !== "search" ? "Search communities" : "Search creators"
         }`}
         className="no-focus searchbar_input"
+        defaultValue={searchParams.get("q")?.toString()}
       />
     </div>
   );

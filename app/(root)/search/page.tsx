@@ -1,9 +1,11 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { fetchUser, searchUsers } from "@/lib/actions/user.actions";
-import UserCard from "@/components/cards/UserCard";
+import { fetchUser } from "@/lib/actions/user.actions";
 import Searchbar from "@/components/shared/Searchbar";
+import SearchResult from "@/components/shared/SearchResult";
+import { Suspense } from "react";
+import SearchResultLoading from "@/components/loaders/SearchResultLoading";
 
 type TProps = {
   searchParams: { [key: string]: string | undefined };
@@ -16,37 +18,16 @@ const SearchPage = async ({ searchParams }: TProps) => {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const result = await searchUsers({
-    userId: user.id,
-    searchString: searchParams.q || "",
-    pageNumber: searchParams?.page ? +searchParams.page : 1,
-    pageSize: 25,
-    sortBy: "desc",
-  });
+  const query = searchParams.q || "";
   return (
     <section>
       <h1 className="head-text mb-10">Search</h1>
 
       <Searchbar routeType="search" />
 
-      <div className="mt-14 flex flex-col gap-9">
-        {result?.users?.length === 0 ? (
-          <p className="no-result">No users</p>
-        ) : (
-          <>
-            {result?.users?.map((person) => (
-              <UserCard
-                key={person.id}
-                id={person.id}
-                name={person.name}
-                username={person.username}
-                imgUrl={person.image}
-                personType="User"
-              />
-            ))}
-          </>
-        )}
-      </div>
+      <Suspense key={query} fallback={<SearchResultLoading type="User" />}>
+        <SearchResult type="User" query={query} page={searchParams?.page} />
+      </Suspense>
     </section>
   );
 };
