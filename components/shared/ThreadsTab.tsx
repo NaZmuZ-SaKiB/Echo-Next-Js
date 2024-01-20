@@ -51,7 +51,7 @@ const ThreadsTab = async ({
           community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.children}
-          isComment={true}
+          isComment={false}
         />
       ))}
     </section>
