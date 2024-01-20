@@ -1,8 +1,9 @@
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import DeleteThread from "../forms/DeleteThread";
 
-type TThreadCardProps = {
+type TProps = {
   id: string;
   currentUserId: string;
   parentId: string | null;
@@ -36,12 +37,12 @@ const ThreadCard = ({
   createdAt,
   comments,
   isComment,
-}: TThreadCardProps) => {
+}: TProps) => {
   return (
     <article
       className={`
-    flex w-full flex-col rounded-xl 
-    ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"}
+        flex w-full flex-col rounded-xl
+        ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"}
     `}
     >
       <div className="flex items-start justify-between">
@@ -57,6 +58,7 @@ const ThreadCard = ({
             </Link>
             <div className="thread-card_bar" />
           </div>
+
           <div className="flex w-full flex-col">
             <Link href={`/profile/${author.id}`} className="w-fit">
               <h4 className="cursor-pointer text-base-semibold text-light-1">
@@ -108,7 +110,14 @@ const ThreadCard = ({
           </div>
         </div>
 
-        {/* Todo : Delete thread */}
+        <DeleteThread
+          authorId={author.id}
+          currentUserId={currentUserId}
+          parentId={parentId}
+          threadId={JSON.stringify(id)}
+          isComment={isComment}
+        />
+
         {/* Todo : show comment logs */}
       </div>
       {!isComment && community && (
