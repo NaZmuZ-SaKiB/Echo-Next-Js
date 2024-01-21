@@ -9,6 +9,7 @@ import { fetchUser } from "@/database/user/user.actions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Suspense } from "react";
 import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
+import RepliesTab from "@/components/shared/RepliesTab";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -45,21 +46,41 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
               </TabsTrigger>
             ))}
           </TabsList>
-          {profileTabs.map((tab: any, index) => (
-            <TabsContent
-              key={`content-${tab.label}`}
-              value={tab.value}
-              className="w-full text-light-1"
-            >
-              <Suspense fallback={<ThreadsTabLoading />}>
-                <ThreadsTab
-                  currentUserId={user.id}
-                  accountId={index === 1 ? userInfo._id : userInfo.id}
-                  accountType={index === 1 ? "Replies" : "User"}
-                />
-              </Suspense>
-            </TabsContent>
-          ))}
+
+          <TabsContent
+            value={profileTabs[0].value}
+            className="w-full text-light-1"
+          >
+            <Suspense fallback={<ThreadsTabLoading />}>
+              <ThreadsTab
+                currentUserId={user.id}
+                accountId={userInfo.id}
+                accountType="User"
+              />
+            </Suspense>
+          </TabsContent>
+
+          <TabsContent
+            value={profileTabs[1].value}
+            className="w-full text-light-1"
+          >
+            <Suspense fallback={<ThreadsTabLoading />}>
+              <RepliesTab currentUserId={user.id} accountId={userInfo._id} />
+            </Suspense>
+          </TabsContent>
+
+          <TabsContent
+            value={profileTabs[2].value}
+            className="w-full text-light-1"
+          >
+            <Suspense fallback={<ThreadsTabLoading />}>
+              <ThreadsTab
+                currentUserId={user.id}
+                accountId={userInfo.id}
+                accountType="User"
+              />
+            </Suspense>
+          </TabsContent>
         </Tabs>
       </div>
     </section>

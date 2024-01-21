@@ -160,6 +160,21 @@ export const getUserActivity = async (userId: string) => {
       .populate({
         path: "parentId",
         model: Thread,
+        populate: [
+          {
+            path: "author",
+            model: User,
+          },
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "id name image _id",
+            },
+          },
+        ],
       });
     return replies;
   } catch (error: any) {
