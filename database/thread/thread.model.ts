@@ -1,6 +1,7 @@
 import { Schema, model, models } from "mongoose";
+import { TThread } from "./thread.interface";
 
-const threadSchema = new Schema(
+const threadSchema = new Schema<TThread>(
   {
     text: {
       type: String,
@@ -15,7 +16,10 @@ const threadSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Community",
     },
-    parentId: String,
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Thread",
+    },
     children: [
       {
         type: Schema.Types.ObjectId,
@@ -28,6 +32,6 @@ const threadSchema = new Schema(
   }
 );
 
-const Thread = models.Thread || model("Thread", threadSchema);
+const Thread = models.Thread || model<TThread>("Thread", threadSchema);
 
 export default Thread;

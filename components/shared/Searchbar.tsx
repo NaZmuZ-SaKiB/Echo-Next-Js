@@ -14,7 +14,7 @@ const Searchbar = ({ routeType }: Props) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  function handleSearch(term: string) {
+  const handleSearch = (term: string) => {
     const params = new URLSearchParams(searchParams);
 
     if (term) {
@@ -23,10 +23,10 @@ const Searchbar = ({ routeType }: Props) => {
       params.delete("q");
     }
 
-    setTimeout(() => {
-      router.replace(`${pathname}?${params.toString()}`);
-    }, 500);
-  }
+    // setTimeout(() => {
+    router.replace(`${pathname}?${params.toString()}`);
+    // }, 500);
+  };
 
   return (
     <div className="searchbar">
