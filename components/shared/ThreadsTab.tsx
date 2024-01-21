@@ -1,7 +1,7 @@
-import { fetchUserPosts } from "@/lib/actions/user.actions";
+import { fetchUserPosts } from "@/database/user/user.actions";
 import { redirect } from "next/navigation";
 import ThreadCard from "../cards/ThreadCard";
-import { fetchCommunityPosts } from "@/lib/actions/community.actions";
+import { fetchCommunityPosts } from "@/database/community/community.actions";
 
 type TThreadsTabProps = {
   currentUserId: string;

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { ThreadValidation } from "@/lib/validations/thread";
+import { ThreadValidation } from "@/database/thread/thread.validation";
 import {
   Form,
   FormControl,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
-import { createThread } from "@/lib/actions/thread.actions";
+import { createThread } from "@/database/thread/thread.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { useOrganization } from "@clerk/nextjs";
 

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser } from "@/database/user/user.actions";
 import Searchbar from "@/components/shared/Searchbar";
 import SearchResult from "@/components/shared/SearchResult";
 import SearchResultLoading from "@/components/loaders/SearchResultLoading";

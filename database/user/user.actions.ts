@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import User from "../models/user.model";
-import { connectToDB } from "../mongoose";
-import Thread from "../models/thread.model";
 import { FilterQuery, SortOrder } from "mongoose";
-import Community from "../models/community.model";
+
+import { connectToDB } from "@/database/mongoose";
+import User from "@/database/user/user.model";
+import Thread from "@/database/thread/thread.model";
+import Community from "@/database/community/community.model";
 
 type TUpdateUserParams = {
   userId: string;

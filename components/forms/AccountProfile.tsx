@@ -18,10 +18,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-import { UserValidation } from "@/lib/validations/user";
+import { UserValidation } from "@/database/user/user.validation";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
-import { updateUser } from "@/lib/actions/user.actions";
+import { updateUser } from "@/database/user/user.actions";
 import { usePathname, useRouter } from "next/navigation";
 
 interface IProps {

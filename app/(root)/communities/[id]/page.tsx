@@ -5,7 +5,7 @@ import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { communityTabs } from "@/constants";
 import ThreadsTab from "@/components/shared/ThreadsTab";
-import { fetchCommunityDetails } from "@/lib/actions/community.actions";
+import { fetchCommunityDetails } from "@/database/community/community.actions";
 import UserCard from "@/components/cards/UserCard";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {

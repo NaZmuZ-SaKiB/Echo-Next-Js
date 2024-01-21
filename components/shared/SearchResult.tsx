@@ -1,8 +1,8 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import UserCard from "../cards/UserCard";
-import { fetchUser, searchUsers } from "@/lib/actions/user.actions";
-import { fetchCommunities } from "@/lib/actions/community.actions";
+import { fetchUser, searchUsers } from "@/database/user/user.actions";
+import { fetchCommunities } from "@/database/community/community.actions";
 import CommunityCard from "../cards/CommunityCard";
 
 type TProps = {

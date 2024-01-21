@@ -5,7 +5,7 @@ import { currentUser } from "@clerk/nextjs";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser } from "@/database/user/user.actions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Suspense } from "react";
 import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
