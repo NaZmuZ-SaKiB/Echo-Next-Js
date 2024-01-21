@@ -203,7 +203,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
           )}
         />
         <Button className="bg-primary-500" type="submit">
-          Submit
+          {btnTitle || "Submit"}
         </Button>
       </form>
     </Form>
