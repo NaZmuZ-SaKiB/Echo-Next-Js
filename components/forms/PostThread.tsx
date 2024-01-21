@@ -70,8 +70,14 @@ const PostThread = ({ userId }: { userId: string }) => {
           )}
         />
 
-        <Button type="submit" className="bg-primary-500">
-          Post Thread
+        <Button
+          type="submit"
+          className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting
+            ? "Uploading your thoughts..."
+            : "Post Thread"}
         </Button>
       </form>
     </Form>
