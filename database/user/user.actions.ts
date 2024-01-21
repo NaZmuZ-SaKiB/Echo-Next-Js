@@ -151,12 +151,16 @@ export const getUserActivity = async (userId: string) => {
     const replies = await Thread.find({
       _id: { $in: childThreadIds },
       author: { $ne: userId },
-    }).populate({
-      path: "author",
-      model: User,
-      select: "id name image _id",
-    });
-
+    })
+      .populate({
+        path: "author",
+        model: User,
+        select: "id name image _id",
+      })
+      .populate({
+        path: "parentId",
+        model: Thread,
+      });
     return replies;
   } catch (error: any) {
     throw new Error(`Failed to fetch user activity: ${error?.message}`);
