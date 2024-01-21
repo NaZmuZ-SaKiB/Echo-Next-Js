@@ -22,7 +22,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
         <ThreadCard
           id={thread._id}
           currentUserId={user?.id || ""}
-          parentId={thread?.parentId}
+          parentId={JSON.stringify(thread?.parentId)}
           content={thread.text}
           author={thread.author}
           community={thread.community}
@@ -33,9 +33,9 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
 
       <div className="mt-7">
         <Comment
-          threadId={thread._id}
+          threadId={JSON.stringify(thread._id)}
           currentUserImg={userInfo.image || user.imageUrl}
-          currentUserId={userInfo._id}
+          currentUserId={JSON.stringify(userInfo._id)}
         />
       </div>
 
@@ -45,7 +45,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
             key={child._id}
             id={child._id}
             currentUserId={user?.id || ""}
-            parentId={child?.parentId}
+            parentId={JSON.stringify(child?.parentId)}
             content={child.text}
             author={child.author}
             community={child.community}

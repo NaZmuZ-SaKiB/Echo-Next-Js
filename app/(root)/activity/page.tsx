@@ -20,7 +20,7 @@ const ActivityPage = async () => {
       <section className="mt-10 flex flex-col gap-5">
         {activities?.length > 0 ? (
           activities.map((activity: any) => (
-            <Link key={activity._id} href={`/thread/${activity.parentId}`}>
+            <Link key={activity._id} href={`/thread/${activity.parentId._id}`}>
               <article className="activity-card">
                 <Image
                   src={activity.author.image}

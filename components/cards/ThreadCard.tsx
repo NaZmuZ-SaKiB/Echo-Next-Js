@@ -113,7 +113,7 @@ const ThreadCard = ({
         <DeleteThread
           authorId={author.id}
           currentUserId={currentUserId}
-          parentId={parentId}
+          parentId={JSON.stringify(parentId)}
           threadId={JSON.stringify(id)}
           isComment={isComment}
         />

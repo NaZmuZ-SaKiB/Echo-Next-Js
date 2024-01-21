@@ -18,7 +18,7 @@ const Home = async () => {
                 key={post._id}
                 id={post._id}
                 currentUserId={user?.id || ""}
-                parentId={post?.parentId}
+                parentId={JSON.stringify(post?.parentId)}
                 content={post.text}
                 author={post.author}
                 community={post.community}
