@@ -202,8 +202,12 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
             </FormItem>
           )}
         />
-        <Button className="bg-primary-500" type="submit">
-          {btnTitle || "Submit"}
+        <Button
+          className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
+          type="submit"
+          disabled={form.formState.isSubmitting}
+        >
+          {!form.formState.isSubmitting ? btnTitle || "Submit" : "Updating..."}
         </Button>
       </form>
     </Form>

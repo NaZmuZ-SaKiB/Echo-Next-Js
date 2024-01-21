@@ -11,6 +11,7 @@ const LeftSideBar = () => {
   const { userId } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
   return (
     <section className="custom-scrollbar leftsidebar">
       <div className="flex w-full flex-1 gap-6 flex-col px-6">
