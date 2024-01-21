@@ -8,7 +8,7 @@ import { SignOutButton, SignedIn, useAuth } from "@clerk/nextjs";
 import { sidebarLinks } from "@/constants";
 
 const LeftSideBar = () => {
-  const { userId } = useAuth();
+  const { userId, isSignedIn } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -40,19 +40,31 @@ const LeftSideBar = () => {
         })}
       </div>
       <div className="mt-10 px-6">
-        <SignedIn>
-          <SignOutButton signOutCallback={() => router.push("/sign-in")}>
-            <div className="flex cursor-pointer gap-4 p-4">
-              <Image
-                src={"/assets/logout.svg"}
-                width={24}
-                height={24}
-                alt="logout"
-              />
-              <p className="text-light-1 max-lg:hidden">Logout</p>
-            </div>
-          </SignOutButton>
-        </SignedIn>
+        {isSignedIn ? (
+          <SignedIn>
+            <SignOutButton signOutCallback={() => router.push("/sign-in")}>
+              <div className="flex cursor-pointer gap-4 p-4">
+                <Image
+                  src={"/assets/logout.svg"}
+                  width={24}
+                  height={24}
+                  alt="logout"
+                />
+                <p className="text-light-1 max-lg:hidden">Logout</p>
+              </div>
+            </SignOutButton>
+          </SignedIn>
+        ) : (
+          <Link href={"/sign-in"} className={`leftsidebar_link`}>
+            <Image
+              src={"/assets/login.svg"}
+              alt={"log in"}
+              width={24}
+              height={24}
+            />
+            <p className="text-light-1 max-lg:hidden">Login</p>
+          </Link>
+        )}
       </div>
     </section>
   );
