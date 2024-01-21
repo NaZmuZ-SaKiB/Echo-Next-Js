@@ -45,7 +45,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
               </TabsTrigger>
             ))}
           </TabsList>
-          {profileTabs.map((tab: any) => (
+          {profileTabs.map((tab: any, index) => (
             <TabsContent
               key={`content-${tab.label}`}
               value={tab.value}
@@ -54,8 +54,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
               <Suspense fallback={<ThreadsTabLoading />}>
                 <ThreadsTab
                   currentUserId={user.id}
-                  accountId={userInfo.id}
-                  accountType="User"
+                  accountId={index === 1 ? userInfo._id : userInfo.id}
+                  accountType={index === 1 ? "Replies" : "User"}
                 />
               </Suspense>
             </TabsContent>

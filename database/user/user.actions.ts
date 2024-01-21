@@ -62,7 +62,7 @@ export const fetchUser = async (userId: string) => {
   }
 };
 
-export const fetchUserPosts = async (userId: string) => {
+export const fetchUserThreads = async (userId: string) => {
   connectToDB();
   try {
     const threads = await User.findOne({
