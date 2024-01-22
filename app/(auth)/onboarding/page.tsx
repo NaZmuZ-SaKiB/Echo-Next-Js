@@ -1,5 +1,6 @@
 import AccountProfile from "@/components/forms/AccountProfile";
 import { fetchUser } from "@/database/user/user.actions";
+import { TUser } from "@/database/user/user.interface";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
@@ -13,9 +14,9 @@ const OnboardingPage = async () => {
 
   const userData = {
     id: user.id,
-    objectId: JSON.stringify(userInfo?._id),
+    _id: userInfo?._id,
     username: userInfo?.username || user?.username,
-    name: userInfo?.name || user?.firstName || "",
+    name: userInfo?.name || user?.firstName,
     bio: userInfo?.bio || "",
     image: userInfo?.image || user?.imageUrl,
   };
@@ -27,7 +28,10 @@ const OnboardingPage = async () => {
       </p>
 
       <section className="mt-9 bg-dark-2 p-10">
-        <AccountProfile user={userData} btnTitle="Let's get started" />
+        <AccountProfile
+          user={userData as unknown as TUser}
+          btnTitle="Let's get started"
+        />
       </section>
     </main>
   );

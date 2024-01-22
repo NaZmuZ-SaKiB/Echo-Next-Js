@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Model, Schema, model, models } from "mongoose";
 import { TCommunity } from "./community.interface";
 
 const communitySchema = new Schema<TCommunity>({
@@ -29,7 +29,7 @@ const communitySchema = new Schema<TCommunity>({
   ],
 });
 
-const Community =
-  models.Community || model<TCommunity>("Community", communitySchema);
+const Community = Model<TCommunity>;
+models.Community || model<TCommunity>("Community", communitySchema);
 
 export default Community;

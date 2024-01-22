@@ -2,28 +2,20 @@ import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteThread from "../forms/DeleteThread";
+import { Types } from "mongoose";
+import { TUser } from "@/database/user/user.interface";
+import { TCommunity } from "@/database/community/community.interface";
+import { TThread } from "@/database/thread/thread.interface";
 
 type TProps = {
-  threadId: string;
+  threadId: Types.ObjectId;
   currentUserId: string;
-  parentId: string | null;
+  parentId: Types.ObjectId | null | undefined;
   content: string;
-  author: {
-    id: string;
-    name: string;
-    image: string;
-  };
-  community: {
-    name: string;
-    id: string;
-    image: string | null;
-  };
+  author: TUser;
+  community: TCommunity;
   createdAt: string;
-  comments: {
-    author: {
-      image: string;
-    };
-  }[];
+  comments: TThread[];
   isComment?: boolean;
 };
 
@@ -50,7 +42,7 @@ const ThreadCard = ({
           <div className="flex flex-col items-center">
             <Link href={`/profile/${author.id}`} className="relative h-11 w-11">
               <Image
-                src={author.image}
+                src={author.image!}
                 alt="Profile image"
                 fill
                 className="cursor-pointer rounded-full"
@@ -113,18 +105,16 @@ const ThreadCard = ({
         <DeleteThread
           authorId={author.id}
           currentUserId={currentUserId}
-          parentId={JSON.stringify(parentId)}
-          threadId={JSON.stringify(threadId)}
-          isComment={isComment}
+          threadId={threadId}
         />
       </div>
 
       {!isComment && comments.length > 0 && (
         <div className="ml-1 mt-3 flex items-center gap-2">
-          {comments.slice(0, 2).map((comment, index) => (
+          {comments.slice(0, 2).map((comment, index: number) => (
             <Image
               key={index}
-              src={comment.author.image}
+              src={(comment.author as unknown as TUser).image!}
               alt={`user_${index}`}
               width={24}
               height={24}
@@ -150,7 +140,7 @@ const ThreadCard = ({
           </p>
           <Image
             src={community.image!}
-            alt={community.name}
+            alt={community.name!}
             height={14}
             width={14}
             className="ml-1 rounded-full size-[14px] object-cover"

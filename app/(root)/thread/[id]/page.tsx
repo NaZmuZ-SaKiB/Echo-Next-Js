@@ -4,6 +4,8 @@ import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchUser } from "@/database/user/user.actions";
 import { fetchThreadById } from "@/database/thread/thread.actions";
 import Comment from "@/components/forms/Comment";
+import { TUser } from "@/database/user/user.interface";
+import { TCommunity } from "@/database/community/community.interface";
 
 const ThreadPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -22,11 +24,11 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
         <ThreadCard
           threadId={thread._id}
           currentUserId={user?.id || ""}
-          parentId={JSON.stringify(thread?.parentId)}
+          parentId={thread?.parentThread}
           content={thread.text}
-          author={thread.author}
-          community={thread.community}
-          createdAt={thread.createdAt}
+          author={thread.author as unknown as TUser}
+          community={thread.community as unknown as TCommunity}
+          createdAt={thread.createdAt as unknown as string}
           comments={thread.replies}
         />
       </div>
@@ -40,16 +42,16 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="mt-10">
-        {thread.replies.map((reply: any) => (
+        {thread.replies.map((reply) => (
           <ThreadCard
-            key={reply._id}
+            key={reply._id.toString()}
             threadId={reply._id}
             currentUserId={user?.id || ""}
-            parentId={JSON.stringify(reply?.parentId)}
+            parentId={reply?.parentThread}
             content={reply.text}
-            author={reply.author}
-            community={reply.community}
-            createdAt={reply.createdAt}
+            author={reply.author as unknown as TUser}
+            community={reply.community as unknown as TCommunity}
+            createdAt={reply.createdAt as unknown as string}
             comments={reply.replies}
             isComment={true}
           />

@@ -12,7 +12,8 @@ const ActivityPage = async () => {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const activities = await getUserActivity(userInfo._id);
+  // const activities = await getUserActivity(userInfo._id);
+  const activities: any[] = [];
   return (
     <section>
       <h1 className="head-text mb-10">Activity</h1>
@@ -20,7 +21,10 @@ const ActivityPage = async () => {
       <section className="mt-10 flex flex-col gap-5">
         {activities?.length > 0 ? (
           activities.map((activity: any) => (
-            <Link key={activity._id} href={`/thread/${activity.parentId._id}`}>
+            <Link
+              key={activity._id}
+              href={`/thread/${activity.parentThread._id}`}
+            >
               <article className="activity-card">
                 <Image
                   src={activity.author.image}

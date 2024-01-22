@@ -5,12 +5,11 @@ import { currentUser } from "@clerk/nextjs";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
-import { fetchUser } from "@/database/user/user.actions";
+import { fetchUser, getUserThreadsCount } from "@/database/user/user.actions";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Suspense } from "react";
 import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
 import RepliesTab from "@/components/shared/RepliesTab";
-import { getUserThreadsCount } from "@/database/thread/thread.actions";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -18,6 +17,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   if (!user) return null;
 
   const userInfo = await fetchUser(params.id);
+
+  if (!userInfo) redirect("/");
 
   if (!userInfo?.onboarded) redirect("/onboarding");
 
@@ -28,10 +29,10 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
       <ProfileHeader
         accountId={userInfo.id}
         authUserId={user.id}
-        name={userInfo.name}
+        name={userInfo.name!}
         username={userInfo.username}
-        imgUrl={userInfo.image}
-        bio={userInfo.bio}
+        imgUrl={userInfo.image!}
+        bio={userInfo.bio || ""}
       />
 
       <div className="mt-9">
@@ -57,7 +58,6 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
                 currentUserId={user.id}
-                objectId={JSON.stringify(userInfo._id)}
                 accountId={userInfo.id}
                 accountType="User"
               />
@@ -81,7 +81,6 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
               <ThreadsTab
                 currentUserId={user.id}
                 accountId={userInfo.id}
-                objectId={JSON.stringify(userInfo._id)}
                 accountType="User"
               />
             </Suspense>

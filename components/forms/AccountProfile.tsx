@@ -23,16 +23,10 @@ import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 import { updateUser } from "@/database/user/user.actions";
 import { usePathname, useRouter } from "next/navigation";
+import { TUser } from "@/database/user/user.interface";
 
 interface IProps {
-  user: {
-    id: string;
-    objectId: string;
-    username: string;
-    name: string;
-    bio: string;
-    image: string;
-  };
+  user: TUser;
   btnTitle: string;
 }
 

@@ -1,7 +1,7 @@
-import { fetchUsersReplies } from "@/database/thread/thread.actions";
 import ThreadCard from "../cards/ThreadCard";
 import Link from "next/link";
 import { Types } from "mongoose";
+import { fetchUsersReplies } from "@/database/user/user.actions";
 
 type TProps = {
   currentUserId: string;
@@ -16,22 +16,23 @@ const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
       {result.map((reply: any) => (
         <>
           <Link
-            href={`/thread/${reply.parentId._id}`}
+            href={`/thread/${reply.parentThread._id}`}
             className="w-[70%] h-32 overflow-hidden opacity-40 z-0"
-            key={reply.parentId._id}
+            key={reply.parentThread._id}
           >
             <ThreadCard
-              threadId={reply.parentId._id}
+              threadId={reply.parentThread._id}
               currentUserId={currentUserId}
               parentId={null}
-              content={reply?.parentId.text}
+              content={reply?.parentThread.text}
               author={{
-                id: reply?.parentId?.author.id,
-                name: reply?.parentId?.author.name,
-                image: reply?.parentId?.author.image,
+                id: reply?.parentThread?.author.id,
+                name: reply?.parentThread?.author.name,
+                image: reply?.parentThread?.author.image,
+                username: reply?.parentThread?.author.username,
               }}
-              community={reply?.parentId?.community}
-              createdAt={reply?.parentId?.createdAt}
+              community={reply?.parentThread?.community}
+              createdAt={reply?.parentThread?.createdAt}
               comments={[]}
               isComment={false}
             />
@@ -41,12 +42,13 @@ const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
               key={reply._id}
               threadId={reply._id}
               currentUserId={currentUserId}
-              parentId={JSON.stringify(reply?.parentId._id)}
+              parentId={reply?.parentThread._id}
               content={reply.text}
               author={{
                 id: reply.author.id,
                 name: reply.author.name,
                 image: reply.author.image,
+                username: reply.author.username,
               }}
               community={reply.community}
               createdAt={reply.createdAt}

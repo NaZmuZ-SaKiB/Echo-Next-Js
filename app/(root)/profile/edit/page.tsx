@@ -1,5 +1,6 @@
 import AccountProfile from "@/components/forms/AccountProfile";
 import { fetchUser } from "@/database/user/user.actions";
+import { TUser } from "@/database/user/user.interface";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ const ProfileEditPage = async () => {
 
   const userData = {
     id: user.id,
-    objectId: JSON.stringify(userInfo?._id),
+    _id: userInfo?._id,
     username: userInfo ? userInfo?.username : user.username,
     name: userInfo ? userInfo?.name : user.firstName ?? "",
     bio: userInfo ? userInfo?.bio : "",
@@ -25,7 +26,10 @@ const ProfileEditPage = async () => {
       <p className="mt-3 text-base-regular text-light-2">Make any changes</p>
 
       <section className="mt-12">
-        <AccountProfile user={userData} btnTitle="Continue" />
+        <AccountProfile
+          user={userData as unknown as TUser}
+          btnTitle="Continue"
+        />
       </section>
     </>
   );

@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FilterQuery, SortOrder } from "mongoose";
+import { FilterQuery, SortOrder, Types } from "mongoose";
 
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
-import Thread from "@/database/thread/thread.model";
 import Community from "@/database/community/community.model";
+import Thread from "../thread/thread.model";
 
 type TUpdateUserParams = {
   userId: string;
@@ -53,12 +53,112 @@ export const fetchUser = async (userId: string) => {
   try {
     connectToDB();
 
-    return await User.findOne({ id: userId }).populate({
-      path: "communities",
-      model: Community,
-    });
+    return await User.findOne({ id: userId }).populate("communities");
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error?.message}`);
+  }
+};
+
+export const fetchUserThreads = async (userId: Types.ObjectId) => {
+  connectToDB();
+  try {
+    const threads = await Thread.find({
+      author: userId,
+      parentThread: { $in: [undefined, null] },
+    })
+      .populate("community")
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      });
+    const replies = await Thread.find({
+      parentThread: { $in: threads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const threadsWithReplies = threads.map((thread) => {
+      const threadReplies = replies.filter(
+        (reply) => reply.parentThread!.toString() === thread._id.toString()
+      );
+      return {
+        ...thread.toObject(),
+        replies: threadReplies,
+      };
+    });
+
+    return threadsWithReplies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user posts: ${error?.message}`);
+  }
+};
+
+export const getUserThreadsCount = async (userId: Types.ObjectId) => {
+  connectToDB();
+
+  try {
+    const threadsCount = await Thread.countDocuments({
+      author: userId,
+      parentThread: { $in: [undefined, null] },
+    });
+
+    return threadsCount;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user threads count: ${error?.message}`);
+  }
+};
+
+export const fetchUsersReplies = async (userId: Types.ObjectId) => {
+  connectToDB();
+  try {
+    const threads = await Thread.find({
+      author: userId,
+      parentThread: { $in: [undefined, null] },
+    }).select("_id");
+
+    const replyThreads = await Thread.find({
+      parentThread: { $in: threads.map((thread) => thread._id) },
+    })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "parentThread",
+        model: Thread,
+        populate: {
+          path: "author",
+          model: User,
+          select: "_id id name image",
+        },
+      });
+
+    const repliesOfReplyThreads = await Thread.find({
+      parentThread: { $in: replyThreads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const replyThreadsWithReplies = replyThreads.map((singleReplyThread) => {
+      const threadReplies = repliesOfReplyThreads.filter(
+        (reply) =>
+          reply.parentThread!.toString() === singleReplyThread._id.toString()
+      );
+      return {
+        ...singleReplyThread.toObject(),
+        replies: threadReplies,
+      };
+    });
+
+    return replyThreadsWithReplies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user replies: ${error?.message}`);
   }
 };
 
@@ -125,7 +225,7 @@ export const getUserActivity = async (userId: string) => {
   //       select: "id name image _id",
   //     })
   //     .populate({
-  //       path: "parentId",
+  //       path: "parentThread",
   //       model: Thread,
   //       populate: [
   //         {

@@ -38,7 +38,11 @@ export const createCommunity = async (
     const createdCommunity = await newCommunity.save();
 
     // Update User model
-    user.communities.push(createdCommunity._id);
+    if (user.communities) {
+      user.communities.push(createdCommunity._id);
+    } else {
+      user.communities = [createdCommunity._id];
+    }
     await user.save();
 
     return createdCommunity;
@@ -82,29 +86,21 @@ export const fetchCommunityPosts = async (communityId: Types.ObjectId) => {
         model: User,
         select: "_id id name image",
       })
-      .populate({
-        path: "community",
-        model: Community,
-        select: "_id id name image",
-      });
+      .populate("community");
 
     const replies = await Thread.find({
-      parentId: { $in: threads.map((thread) => thread._id) },
+      parentThread: { $in: threads.map((thread) => thread._id) },
     })
       .populate({
         path: "author",
         model: User,
         select: "_id id name image",
       })
-      .populate({
-        path: "community",
-        model: Community,
-        select: "_id id name image",
-      });
+      .populate("community");
 
     const threadsWithReplies = threads.map((thread) => {
       const threadReplies = replies.filter(
-        (reply) => reply.parentId.toString() === thread._id.toString()
+        (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
         ...thread.toObject(),
@@ -207,7 +203,11 @@ export const addMemberToCommunity = async (
     await community.save();
 
     // Add the community's _id to the communities array in the user
-    user.communities.push(community._id);
+    if (user.communities) {
+      user.communities.push(community._id);
+    } else {
+      user.communities = [community._id];
+    }
     await user.save();
 
     return community;
