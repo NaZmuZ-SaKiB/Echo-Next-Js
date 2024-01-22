@@ -7,7 +7,6 @@ export type TUser = {
   name?: string;
   image?: string;
   bio?: string;
-  threads?: Types.ObjectId[];
   onboarded?: boolean;
   communities?: Types.ObjectId[];
 };

@@ -18,12 +18,6 @@ const userSchema = new Schema<TUser>(
     },
     image: String,
     bio: String,
-    threads: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Thread",
-      },
-    ],
     onboarded: {
       type: Boolean,
       default: false,
