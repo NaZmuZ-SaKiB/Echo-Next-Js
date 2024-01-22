@@ -77,7 +77,7 @@ export const createThread = async ({
   }
 };
 
-export const fetchPosts = async (pageNumber = 1, pageSize = 20) => {
+export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
   connectToDB();
 
   const skip = (pageNumber - 1) * pageSize;
