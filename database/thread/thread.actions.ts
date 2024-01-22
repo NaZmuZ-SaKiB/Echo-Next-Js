@@ -1,6 +1,6 @@
 "use server";
 
-import { startSession } from "mongoose";
+import { Types, startSession } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import { connectToDB } from "@/database/mongoose";
@@ -116,6 +116,47 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
 
     return { posts, isNext };
   } catch (error) {}
+};
+
+export const fetchUserThreads = async (authorId: Types.ObjectId) => {
+  connectToDB();
+  try {
+    const threads = await Thread.find({
+      author: authorId,
+      parentId: { $in: [undefined, null] },
+    })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      });
+    const replies = await Thread.find({
+      parentId: { $in: threads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const threadsWithReplies = threads.map((thread) => {
+      const threadReplies = replies.filter(
+        (reply) => reply.parentId.toString() === thread._id.toString()
+      );
+      return {
+        ...thread.toObject(),
+        replies: threadReplies,
+      };
+    });
+
+    return threadsWithReplies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user posts: ${error?.message}`);
+  }
 };
 
 export const fetchThreadById = async (id: string) => {

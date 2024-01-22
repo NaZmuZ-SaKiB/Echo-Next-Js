@@ -62,39 +62,6 @@ export const fetchUser = async (userId: string) => {
   }
 };
 
-export const fetchUserThreads = async (userId: string) => {
-  connectToDB();
-  try {
-    const threads = await User.findOne({
-      id: userId,
-      parentId: { $in: [undefined, null] },
-    }).populate({
-      path: "threads",
-      model: Thread,
-      populate: [
-        {
-          path: "community",
-          model: Community,
-          select: "name id image _id",
-        },
-        {
-          path: "children",
-          model: Thread,
-          populate: {
-            path: "author",
-            model: User,
-            select: "id name image _id",
-          },
-        },
-      ],
-    });
-
-    return threads;
-  } catch (error: any) {
-    throw new Error(`Failed to fetch user posts: ${error?.message}`);
-  }
-};
-
 export const searchUsers = async ({
   userId,
   searchString = "",
