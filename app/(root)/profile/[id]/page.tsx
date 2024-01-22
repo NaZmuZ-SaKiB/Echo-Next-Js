@@ -66,7 +66,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             className="w-full text-light-1"
           >
             <Suspense fallback={<ThreadsTabLoading />}>
-              <RepliesTab currentUserId={user.id} accountId={userInfo._id} />
+              <RepliesTab currentUserId={user.id} user_id={userInfo._id} />
             </Suspense>
           </TabsContent>
 

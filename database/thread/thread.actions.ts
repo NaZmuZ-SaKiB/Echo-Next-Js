@@ -100,11 +100,11 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
   } catch (error) {}
 };
 
-export const fetchUserThreads = async (authorId: Types.ObjectId) => {
+export const fetchUserThreads = async (userId: Types.ObjectId) => {
   connectToDB();
   try {
     const threads = await Thread.find({
-      author: authorId,
+      author: userId,
       parentId: { $in: [undefined, null] },
     })
       .populate({
@@ -138,6 +138,57 @@ export const fetchUserThreads = async (authorId: Types.ObjectId) => {
     return threadsWithReplies;
   } catch (error: any) {
     throw new Error(`Failed to fetch user posts: ${error?.message}`);
+  }
+};
+
+export const fetchUsersReplies = async (userId: Types.ObjectId) => {
+  connectToDB();
+  try {
+    const threads = await Thread.find({
+      author: userId,
+      parentId: { $in: [undefined, null] },
+    }).select("_id");
+
+    const replyThreads = await Thread.find({
+      parentId: { $in: threads.map((thread) => thread._id) },
+    })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "parentId",
+        model: Thread,
+        populate: {
+          path: "author",
+          model: User,
+          select: "_id id name image",
+        },
+      });
+
+    const repliesOfReplyThreads = await Thread.find({
+      parentId: { $in: replyThreads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const replyThreadsWithReplies = replyThreads.map((singleReplyThread) => {
+      const threadReplies = repliesOfReplyThreads.filter(
+        (reply) =>
+          reply.parentId.toString() === singleReplyThread._id.toString()
+      );
+      return {
+        ...singleReplyThread.toObject(),
+        replies: threadReplies,
+      };
+    });
+
+    return replyThreadsWithReplies;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user replies: ${error?.message}`);
   }
 };
 

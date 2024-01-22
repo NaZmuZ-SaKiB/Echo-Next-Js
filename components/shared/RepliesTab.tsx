@@ -1,14 +1,15 @@
-import { getUserActivity } from "@/database/user/user.actions";
+import { fetchUsersReplies } from "@/database/thread/thread.actions";
 import ThreadCard from "../cards/ThreadCard";
 import Link from "next/link";
+import { Types } from "mongoose";
 
 type TProps = {
   currentUserId: string;
-  accountId: string;
+  user_id: Types.ObjectId;
 };
 
-const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
-  const result = await getUserActivity(accountId);
+const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
+  const result = await fetchUsersReplies(user_id);
 
   return (
     <section className="mt-9 flex flex-col gap-10">
@@ -20,9 +21,9 @@ const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
             key={reply.parentId._id}
           >
             <ThreadCard
-              threadId={reply._id}
+              threadId={reply.parentId._id}
               currentUserId={currentUserId}
-              parentId={JSON.stringify(reply?.parentId._id)}
+              parentId={null}
               content={reply?.parentId.text}
               author={{
                 id: reply?.parentId?.author.id,
@@ -31,7 +32,7 @@ const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
               }}
               community={reply?.parentId?.community}
               createdAt={reply?.parentId?.createdAt}
-              comments={reply?.parentId?.children}
+              comments={[]}
               isComment={false}
             />
           </Link>
@@ -49,7 +50,7 @@ const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
               }}
               community={reply.community}
               createdAt={reply.createdAt}
-              comments={reply.children}
+              comments={reply?.replies}
               isComment={false}
             />
           </div>
