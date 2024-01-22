@@ -9,7 +9,7 @@ import { fetchCommunityPosts } from "@/database/community/community.actions";
 type TThreadsTabProps = {
   currentUserId: string;
   accountId: string;
-  accountType: "User" | "Community" | "Replies";
+  accountType: "User" | "Community";
 };
 
 const ThreadsTab = async ({
@@ -22,11 +22,9 @@ const ThreadsTab = async ({
   if (accountType === "Community") {
     result = await fetchCommunityPosts(accountId);
     if (!result) return redirect("/");
-  } else if (accountType === "User") {
+  } else {
     result = await fetchUserThreads(accountId);
     if (!result) return redirect("/");
-  } else {
-    result = await getUserActivity(accountId);
   }
 
   const threadsAuthor = {
