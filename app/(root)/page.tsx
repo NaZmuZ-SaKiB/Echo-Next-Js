@@ -9,21 +9,21 @@ const Home = async () => {
     <main>
       <h1 className="head-text">Home</h1>
       <section className="mt-9 flex flex-col gap-10">
-        {result?.posts.length === 0 ? (
+        {result?.threads.length === 0 ? (
           <p className="no-result">No threads found</p>
         ) : (
           <>
-            {result?.posts.map((post) => (
+            {result?.threads.map((thread) => (
               <ThreadCard
-                key={post._id}
-                id={post._id}
+                key={thread._id}
+                id={thread._id}
                 currentUserId={user?.id || ""}
-                parentId={JSON.stringify(post?.parentId)}
-                content={post.text}
-                author={post.author}
-                community={post.community}
-                createdAt={post.createdAt}
-                comments={post.children}
+                parentId={JSON.stringify(thread?.parentId)}
+                content={thread.text}
+                author={thread.author}
+                community={thread.community}
+                createdAt={thread.createdAt}
+                comments={thread.replies}
               />
             ))}
           </>

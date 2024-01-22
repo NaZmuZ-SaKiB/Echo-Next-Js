@@ -106,45 +106,47 @@ export const searchUsers = async ({
 };
 
 export const getUserActivity = async (userId: string) => {
-  connectToDB();
+  // connectToDB();
 
-  try {
-    const userThreads = await Thread.find({ author: userId });
+  // try {
+  //   const userThreads = await Thread.find({ author: userId });
 
-    const childThreadIds = userThreads.reduce((acc, thread) => {
-      return acc.concat(thread.children);
-    }, []);
+  //   const childThreadIds = userThreads.reduce((acc, thread) => {
+  //     return acc.concat(thread.children);
+  //   }, []);
 
-    const replies = await Thread.find({
-      _id: { $in: childThreadIds },
-      author: { $ne: userId },
-    })
-      .populate({
-        path: "author",
-        model: User,
-        select: "id name image _id",
-      })
-      .populate({
-        path: "parentId",
-        model: Thread,
-        populate: [
-          {
-            path: "author",
-            model: User,
-          },
-          {
-            path: "children",
-            model: Thread,
-            populate: {
-              path: "author",
-              model: User,
-              select: "id name image _id",
-            },
-          },
-        ],
-      });
-    return replies;
-  } catch (error: any) {
-    throw new Error(`Failed to fetch user activity: ${error?.message}`);
-  }
+  //   const replies = await Thread.find({
+  //     _id: { $in: childThreadIds },
+  //     author: { $ne: userId },
+  //   })
+  //     .populate({
+  //       path: "author",
+  //       model: User,
+  //       select: "id name image _id",
+  //     })
+  //     .populate({
+  //       path: "parentId",
+  //       model: Thread,
+  //       populate: [
+  //         {
+  //           path: "author",
+  //           model: User,
+  //         },
+  //         {
+  //           path: "children",
+  //           model: Thread,
+  //           populate: {
+  //             path: "author",
+  //             model: User,
+  //             select: "id name image _id",
+  //           },
+  //         },
+  //       ],
+  //     });
+  //   return replies;
+  // } catch (error: any) {
+  //   throw new Error(`Failed to fetch user activity: ${error?.message}`);
+  // }
+
+  return [];
 };

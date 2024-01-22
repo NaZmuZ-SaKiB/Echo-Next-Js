@@ -20,14 +20,14 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
     <section className="relative">
       <div>
         <ThreadCard
-          id={thread._id}
+          threadId={thread._id}
           currentUserId={user?.id || ""}
           parentId={JSON.stringify(thread?.parentId)}
           content={thread.text}
           author={thread.author}
           community={thread.community}
           createdAt={thread.createdAt}
-          comments={thread.children}
+          comments={thread.replies}
         />
       </div>
 
@@ -40,17 +40,17 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="mt-10">
-        {thread.children.map((child: any) => (
+        {thread.replies.map((reply: any) => (
           <ThreadCard
-            key={child._id}
-            id={child._id}
+            key={reply._id}
+            threadId={reply._id}
             currentUserId={user?.id || ""}
-            parentId={JSON.stringify(child?.parentId)}
-            content={child.text}
-            author={child.author}
-            community={child.community}
-            createdAt={child.createdAt}
-            comments={child.children}
+            parentId={JSON.stringify(reply?.parentId)}
+            content={reply.text}
+            author={reply.author}
+            community={reply.community}
+            createdAt={reply.createdAt}
+            comments={reply.replies}
             isComment={true}
           />
         ))}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import DeleteThread from "../forms/DeleteThread";
 
 type TProps = {
-  id: string;
+  threadId: string;
   currentUserId: string;
   parentId: string | null;
   content: string;
@@ -28,7 +28,7 @@ type TProps = {
 };
 
 const ThreadCard = ({
-  id,
+  threadId,
   currentUserId,
   parentId,
   content,
@@ -75,7 +75,7 @@ const ThreadCard = ({
                   height={24}
                   className="cursor-pointer object-contain"
                 />
-                <Link href={`/thread/${id}`}>
+                <Link href={`/thread/${threadId}`}>
                   <Image
                     src={"/assets/reply.svg"}
                     alt="heart"
@@ -100,7 +100,7 @@ const ThreadCard = ({
                 />
               </div>
               {isComment && comments.length > 0 && (
-                <Link href={`thread/${id}`}>
+                <Link href={`/thread/${threadId}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
                     {comments.length} replies
                   </p>
@@ -114,7 +114,7 @@ const ThreadCard = ({
           authorId={author.id}
           currentUserId={currentUserId}
           parentId={JSON.stringify(parentId)}
-          threadId={JSON.stringify(id)}
+          threadId={JSON.stringify(threadId)}
           isComment={isComment}
         />
       </div>
@@ -132,7 +132,7 @@ const ThreadCard = ({
             />
           ))}
 
-          <Link href={`/thread/${id}`}>
+          <Link href={`/thread/${threadId}`}>
             <p className="mt-1 text-subtle-medium text-gray-1">
               {comments.length} repl{comments.length > 1 ? "ies" : "y"}
             </p>

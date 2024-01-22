@@ -83,7 +83,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
   const skip = (pageNumber - 1) * pageSize;
 
   try {
-    const postsQuery = Thread.find({
+    const threadsQuery = Thread.find({
       parentId: { $in: [null, undefined] },
     })
       .sort({ createdAt: -1 })
@@ -96,25 +96,35 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
       .populate({
         path: "community",
         model: Community,
-      })
-      .populate({
-        path: "children",
-        populate: {
-          path: "author",
-          model: User,
-          select: "_id name image",
-        },
       });
 
-    const totalPostsCount = await Thread.countDocuments({
+    const totalthreadsCount = await Thread.countDocuments({
       parentId: { $in: [null, undefined] },
     });
 
-    const posts = await postsQuery.exec();
+    const threads = await threadsQuery.exec();
 
-    const isNext = totalPostsCount > skip + posts.length;
+    const replies = await Thread.find({
+      parentId: { $in: threads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
 
-    return { posts, isNext };
+    const threadsWithReplies = threads.map((thread) => {
+      const threadReplies = replies.filter(
+        (reply) => reply.parentId.toString() === thread._id.toString()
+      );
+      return {
+        ...thread.toObject(),
+        replies: threadReplies,
+      };
+    });
+
+    const isNext = totalthreadsCount > skip + threads.length;
+
+    return { threads: threadsWithReplies, isNext };
   } catch (error) {}
 };
 
@@ -172,28 +182,39 @@ export const fetchThreadById = async (id: string) => {
         model: Community,
         select: "_id id name image",
       })
-      .populate({
-        path: "children",
-        populate: [
-          {
-            path: "author",
-            model: User,
-            select: "_id id name image",
-          },
-          {
-            path: "children",
-            model: Thread,
-            populate: {
-              path: "author",
-              model: User,
-              select: "_id id name image",
-            },
-          },
-        ],
-      })
       .exec();
 
-    return thread;
+    const replies = await Thread.find({
+      parentId: thread._id,
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const replyToAllReplies = await Thread.find({
+      parentId: { $in: replies.map((reply) => reply._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
+    });
+
+    const threadWithReplies = {
+      ...thread.toObject(),
+      replies: replies.map((reply) => {
+        const repliesToReply = replyToAllReplies.filter(
+          (replyToReply) =>
+            replyToReply.parentId.toString() === reply._id.toString()
+        );
+        return {
+          ...reply.toObject(),
+          replies: repliesToReply,
+        };
+      }),
+    };
+
+    return threadWithReplies;
   } catch (error: any) {
     throw new Error(`Failed to fetch thread: ${error?.message}`);
   }
