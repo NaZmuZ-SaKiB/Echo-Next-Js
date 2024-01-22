@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Model, Schema, model, models } from "mongoose";
 import { TThread } from "./thread.interface";
 
 const threadSchema = new Schema<TThread>(
@@ -16,7 +16,7 @@ const threadSchema = new Schema<TThread>(
       type: Schema.Types.ObjectId,
       ref: "Community",
     },
-    parentId: {
+    parentThread: {
       type: Schema.Types.ObjectId,
       ref: "Thread",
     },
@@ -26,6 +26,7 @@ const threadSchema = new Schema<TThread>(
   }
 );
 
-const Thread = models.Thread || model<TThread>("Thread", threadSchema);
+const Thread: Model<TThread> =
+  models.Thread || model<TThread>("Thread", threadSchema);
 
 export default Thread;

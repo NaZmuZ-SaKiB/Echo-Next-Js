@@ -86,7 +86,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
 
     const threadsWithReplies = threads.map((thread) => {
       const threadReplies = replies.filter(
-        (reply) => reply.parentId.toString() === thread._id.toString()
+        (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
         ...thread.toObject(),
@@ -127,7 +127,7 @@ export const fetchUserThreads = async (userId: Types.ObjectId) => {
 
     const threadsWithReplies = threads.map((thread) => {
       const threadReplies = replies.filter(
-        (reply) => reply.parentId.toString() === thread._id.toString()
+        (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
         ...thread.toObject(),
@@ -193,7 +193,7 @@ export const fetchUsersReplies = async (userId: Types.ObjectId) => {
     const replyThreadsWithReplies = replyThreads.map((singleReplyThread) => {
       const threadReplies = repliesOfReplyThreads.filter(
         (reply) =>
-          reply.parentId.toString() === singleReplyThread._id.toString()
+          reply.parentThread!.toString() === singleReplyThread._id.toString()
       );
       return {
         ...singleReplyThread.toObject(),
@@ -222,8 +222,12 @@ export const fetchThreadById = async (id: string) => {
       })
       .exec();
 
+    if (!thread) {
+      throw new Error(`Faild to fetch thread. Thread not found`);
+    }
+
     const replies = await Thread.find({
-      parentId: thread._id,
+      parentThread: thread._id,
     }).populate({
       path: "author",
       model: User,
@@ -243,7 +247,7 @@ export const fetchThreadById = async (id: string) => {
       replies: replies.map((reply) => {
         const repliesToReply = replyToAllReplies.filter(
           (replyToReply) =>
-            replyToReply.parentId.toString() === reply._id.toString()
+            replyToReply.parentThread!.toString() === reply._id.toString()
         );
         return {
           ...reply.toObject(),
@@ -286,7 +290,9 @@ export const addCommentToThread = async ({
   }
 };
 
-const fetchAllChildThreads = async (threadId: string): Promise<any[]> => {
+const fetchAllChildThreads = async (
+  threadId: Types.ObjectId
+): Promise<any[]> => {
   const childThreads = await Thread.find({ parentId: threadId }).populate(
     "author community"
   );
@@ -300,7 +306,7 @@ const fetchAllChildThreads = async (threadId: string): Promise<any[]> => {
   return descendantThreads;
 };
 
-export const deleteThread = async (id: string, path: string) => {
+export const deleteThread = async (id: Types.ObjectId, path: string) => {
   connectToDB();
 
   const session = await startSession();
