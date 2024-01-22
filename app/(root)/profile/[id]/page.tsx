@@ -10,6 +10,7 @@ import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Suspense } from "react";
 import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
 import RepliesTab from "@/components/shared/RepliesTab";
+import { getUserThreadsCount } from "@/database/thread/thread.actions";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -19,6 +20,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const userInfo = await fetchUser(params.id);
 
   if (!userInfo?.onboarded) redirect("/onboarding");
+
+  const userThreadsCount = await getUserThreadsCount(userInfo._id);
 
   return (
     <section>
@@ -40,7 +43,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
                 <p className="max-sm:hidden">{tab.label}</p>
                 {tab.label === "Threads" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 text-tiny-medium text-light-2">
-                    {userInfo?.threads?.length}
+                    {userThreadsCount}
                   </p>
                 )}
               </TabsTrigger>

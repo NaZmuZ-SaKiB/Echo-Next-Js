@@ -141,6 +141,20 @@ export const fetchUserThreads = async (userId: Types.ObjectId) => {
   }
 };
 
+export const getUserThreadsCount = async (userId: Types.ObjectId) => {
+  connectToDB();
+
+  try {
+    const threadsCount = await Thread.countDocuments({
+      author: userId,
+    });
+
+    return threadsCount;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user threads count: ${error?.message}`);
+  }
+};
+
 export const fetchUsersReplies = async (userId: Types.ObjectId) => {
   connectToDB();
   try {
