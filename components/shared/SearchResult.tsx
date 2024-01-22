@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import UserCard from "../cards/UserCard";
 import { fetchUser, searchUsers } from "@/database/user/user.actions";
-import { fetchCommunities } from "@/database/community/community.actions";
+import { searchCommunities } from "@/database/community/community.actions";
 import CommunityCard from "../cards/CommunityCard";
 
 type TProps = {
@@ -28,7 +28,7 @@ const SearchResult = async ({ type, query, page }: TProps) => {
       sortBy: "desc",
     });
   } else {
-    result = await fetchCommunities({
+    result = await searchCommunities({
       pageNumber: page ? +page : 1,
       pageSize: 20,
       searchString: query || "",

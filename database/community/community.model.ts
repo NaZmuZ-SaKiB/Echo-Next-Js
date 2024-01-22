@@ -21,12 +21,6 @@ const communitySchema = new Schema<TCommunity>({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  threads: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Thread",
-    },
-  ],
   members: [
     {
       type: Schema.Types.ObjectId,

@@ -8,6 +8,5 @@ export type TCommunity = {
   image?: string;
   bio?: string;
   createdBy: Types.ObjectId;
-  threads: Types.ObjectId[];
   members: Types.ObjectId[];
 };

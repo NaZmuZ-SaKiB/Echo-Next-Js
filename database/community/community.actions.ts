@@ -1,6 +1,6 @@
 "use server";
 
-import { FilterQuery, SortOrder } from "mongoose";
+import { FilterQuery, SortOrder, Types, startSession } from "mongoose";
 
 import Community from "./community.model";
 import Thread from "../thread/thread.model";
@@ -70,36 +70,49 @@ export const fetchCommunityDetails = async (id: string) => {
   }
 };
 
-export const fetchCommunityPosts = async (id: string) => {
+export const fetchCommunityPosts = async (communityId: Types.ObjectId) => {
   try {
     connectToDB();
 
-    const communityPosts = await Community.findById(id).populate({
-      path: "threads",
-      model: Thread,
-      populate: [
-        {
-          path: "author",
-          model: User,
-          select: "name image id", // Select the "name" and "_id" fields from the "User" model
-        },
-        {
-          path: "children",
-          model: Thread,
-          populate: {
-            path: "author",
-            model: User,
-            select: "image _id", // Select the "name" and "_id" fields from the "User" model
-          },
-        },
-        {
-          path: "community",
-          model: Community,
-        },
-      ],
+    const threads = await Thread.find({
+      community: communityId,
+    })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      });
+
+    const replies = await Thread.find({
+      parentId: { $in: threads.map((thread) => thread._id) },
+    })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      });
+
+    const threadsWithReplies = threads.map((thread) => {
+      const threadReplies = replies.filter(
+        (reply) => reply.parentId.toString() === thread._id.toString()
+      );
+      return {
+        ...thread.toObject(),
+        replies: threadReplies,
+      };
     });
 
-    return communityPosts;
+    return threadsWithReplies;
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community posts:", error);
@@ -107,7 +120,7 @@ export const fetchCommunityPosts = async (id: string) => {
   }
 };
 
-export const fetchCommunities = async ({
+export const searchCommunities = async ({
   searchString = "",
   pageNumber = 1,
   pageSize = 20,
@@ -274,34 +287,52 @@ export const updateCommunityInfo = async (
 };
 
 export const deleteCommunity = async (communityId: string) => {
-  try {
-    connectToDB();
+  connectToDB();
 
+  const session = await startSession();
+  try {
+    session.startTransaction();
     // Find the community by its ID and delete it
-    const deletedCommunity = await Community.findOneAndDelete({
-      id: communityId,
-    });
+    const deletedCommunity = await Community.findOneAndDelete(
+      {
+        id: communityId,
+      },
+      { session }
+    );
 
     if (!deletedCommunity) {
       throw new Error("Community not found");
     }
 
     // Delete all threads associated with the community
-    await Thread.deleteMany({ community: communityId });
+    await Thread.deleteMany({ community: communityId }, { session });
 
     // Find all users who are part of the community
-    const communityUsers = await User.find({ communities: communityId });
+    const communityUsers = await User.find({ communities: communityId }).select(
+      "_id"
+    );
 
     // Remove the community from the 'communities' array for each user
     const updateUserPromises = communityUsers.map((user) => {
-      user.communities.pull(communityId);
-      return user.save();
+      User.findByIdAndUpdate(
+        user._id,
+        {
+          $pull: { communities: communityId },
+        },
+        { session }
+      );
     });
 
     await Promise.all(updateUserPromises);
 
+    await session.commitTransaction();
+    await session.endSession();
+
     return deletedCommunity;
   } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+
     console.error("Error deleting community: ", error);
     throw error;
   }
