@@ -20,12 +20,6 @@ const threadSchema = new Schema<TThread>(
       type: Schema.Types.ObjectId,
       ref: "Thread",
     },
-    children: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Thread",
-      },
-    ],
   },
   {
     timestamps: true,

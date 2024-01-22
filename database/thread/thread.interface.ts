@@ -6,5 +6,4 @@ export type TThread = {
   author: Types.ObjectId;
   community?: Types.ObjectId;
   parentId?: Types.ObjectId;
-  children?: Types.ObjectId[];
 };
