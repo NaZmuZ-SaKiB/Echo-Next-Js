@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -18,18 +18,14 @@ import { CommentValidation } from "@/database/community/community.validation";
 import Image from "next/image";
 import { addCommentToThread } from "@/database/thread/thread.actions";
 
-type TCommentProps = {
+type TProps = {
   threadId: string;
   currentUserImg: string;
   currentUserId: string;
 };
 
-const Comment = ({
-  threadId,
-  currentUserId,
-  currentUserImg,
-}: TCommentProps) => {
-  const router = useRouter();
+const Comment = ({ threadId, currentUserId, currentUserImg }: TProps) => {
+  // const router = useRouter();
   const pathname = usePathname();
 
   const form = useForm({
@@ -77,8 +73,12 @@ const Comment = ({
           )}
         />
 
-        <Button type="submit" className="comment-form_btn">
-          Reply
+        <Button
+          type="submit"
+          className={`comment-form_btn disabled:bg-gray-1 disabled:animate-pulse`}
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? "Replying..." : "Reply"}
         </Button>
       </form>
     </Form>
