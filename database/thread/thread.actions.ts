@@ -30,49 +30,21 @@ export const createThread = async ({
 }: TCreateThreadParams) => {
   connectToDB();
 
-  const session = await startSession();
   try {
-    session.startTransaction();
-
     const communityObject = await Community.findOne({ id: communityId }).select(
       "_id"
     );
 
     const communityObjectId = communityObject ? communityObject._id : null;
 
-    const thread = await Thread.create(
-      [
-        {
-          text,
-          author,
-          community: communityObjectId,
-        },
-      ],
-      { session }
-    );
-
-    await User.findByIdAndUpdate(
+    await Thread.create({
+      text,
       author,
-      { $push: { threads: thread[0]._id } },
-      { session, runValidators: true }
-    );
-
-    if (communityId) {
-      await Community.findByIdAndUpdate(
-        communityObjectId,
-        { $push: { threads: thread[0]._id } },
-        { session, runValidators: true }
-      );
-    }
-
-    await session.commitTransaction();
-    await session.endSession();
+      community: communityObjectId,
+    });
 
     revalidatePath(path);
   } catch (error: any) {
-    await session.abortTransaction();
-    await session.endSession();
-
     throw new Error(`Failed to create thread: ${error?.message}`);
   }
 };
@@ -228,11 +200,7 @@ export const addCommentToThread = async ({
 }: TCreateCommentParams) => {
   connectToDB();
 
-  const session = await startSession();
-
   try {
-    session.startTransaction();
-
     const originalThread = await Thread.findById(threadId);
     if (!originalThread) {
       throw new Error("Thread not found");
@@ -244,25 +212,10 @@ export const addCommentToThread = async ({
       parentId: threadId,
     });
 
-    const savedCommentThread = await commentThread.save({ session });
-
-    originalThread.children.push(savedCommentThread._id);
-    await originalThread.save({ session });
-
-    await User.findByIdAndUpdate(
-      userId,
-      { $push: { threads: savedCommentThread._id } },
-      { session, runValidators: true }
-    );
-
-    await session.commitTransaction();
-    await session.endSession();
+    await commentThread.save();
 
     revalidatePath(path);
   } catch (error: any) {
-    await session.abortTransaction();
-    await session.endSession();
-
     throw new Error(`Failed to add comment to thread: ${error?.message}`);
   }
 };
