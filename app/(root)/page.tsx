@@ -16,7 +16,7 @@ const Home = async () => {
             {result?.threads.map((thread) => (
               <ThreadCard
                 key={thread._id}
-                id={thread._id}
+                threadId={thread._id}
                 currentUserId={user?.id || ""}
                 parentId={JSON.stringify(thread?.parentId)}
                 content={thread.text}

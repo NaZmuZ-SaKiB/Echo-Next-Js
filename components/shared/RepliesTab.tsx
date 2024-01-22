@@ -20,7 +20,7 @@ const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
             key={reply.parentId._id}
           >
             <ThreadCard
-              id={reply._id}
+              threadId={reply._id}
               currentUserId={currentUserId}
               parentId={JSON.stringify(reply?.parentId._id)}
               content={reply?.parentId.text}
@@ -38,7 +38,7 @@ const RepliesTab = async ({ accountId, currentUserId }: TProps) => {
           <div className="-mt-16 z-10">
             <ThreadCard
               key={reply._id}
-              id={reply._id}
+              threadId={reply._id}
               currentUserId={currentUserId}
               parentId={JSON.stringify(reply?.parentId._id)}
               content={reply.text}

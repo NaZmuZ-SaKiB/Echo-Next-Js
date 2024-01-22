@@ -31,7 +31,7 @@ const ThreadsTab = async ({
       {result.map((thread: any) => (
         <ThreadCard
           key={thread._id}
-          id={thread._id}
+          threadId={thread._id}
           currentUserId={currentUserId}
           parentId={JSON.stringify(thread?.parentId)}
           content={thread.text}
