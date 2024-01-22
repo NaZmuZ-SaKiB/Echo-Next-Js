@@ -8,7 +8,7 @@ const SearchResultLoading = ({ type }: { type: "User" | "Community" }) => {
         type === "User" ? "flex-col" : "flex-wrap justify-start"
       }`}
     >
-      {Array(5)
+      {Array(type === "User" ? 5 : 4)
         .fill(0)
         .map((_, i) => (
           <>

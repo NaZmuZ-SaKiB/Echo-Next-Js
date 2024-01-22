@@ -1,4 +1,4 @@
-import ProfilePageLoading from "../../profile/loading";
+import ProfilePageLoading from "../../profile/[id]/loading";
 
 const CommunityPageLoading = () => {
   return <ProfilePageLoading />;
