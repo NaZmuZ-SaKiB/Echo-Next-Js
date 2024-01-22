@@ -147,6 +147,7 @@ export const getUserThreadsCount = async (userId: Types.ObjectId) => {
   try {
     const threadsCount = await Thread.countDocuments({
       author: userId,
+      parentId: { $in: [undefined, null] },
     });
 
     return threadsCount;
