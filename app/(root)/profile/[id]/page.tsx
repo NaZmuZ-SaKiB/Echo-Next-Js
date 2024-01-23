@@ -13,26 +13,26 @@ import RepliesTab from "@/components/shared/RepliesTab";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
+  if (!user) redirect("/");
 
-  if (!user) return null;
+  const authUserInfo = await fetchUser(user.id);
+  if (!authUserInfo) redirect("/");
 
-  const userInfo = await fetchUser(params.id);
+  const profileUserInfo = await fetchUser(params.id);
+  if (!profileUserInfo) redirect("/");
+  if (!profileUserInfo?.onboarded) redirect("/onboarding");
 
-  if (!userInfo) redirect("/");
-
-  if (!userInfo?.onboarded) redirect("/onboarding");
-
-  const userThreadsCount = await getUserThreadsCount(userInfo._id);
+  const userThreadsCount = await getUserThreadsCount(profileUserInfo._id);
 
   return (
     <section>
       <ProfileHeader
-        accountId={userInfo.id}
+        profileUserId={profileUserInfo.id}
         authUserId={user.id}
-        name={userInfo.name!}
-        username={userInfo.username}
-        imgUrl={userInfo.image!}
-        bio={userInfo.bio || ""}
+        name={profileUserInfo.name!}
+        username={profileUserInfo.username}
+        imgUrl={profileUserInfo.image!}
+        bio={profileUserInfo.bio || ""}
       />
 
       <div className="mt-9">
@@ -57,8 +57,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUserId={user.id}
-                accountId={userInfo._id}
+                currentUser_Id={authUserInfo._id.toString()}
+                fetchAccount_Id={profileUserInfo._id.toString()}
                 accountType="User"
               />
             </Suspense>
@@ -69,7 +69,10 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             className="w-full text-light-1"
           >
             <Suspense fallback={<ThreadsTabLoading />}>
-              <RepliesTab currentUserId={user.id} user_id={userInfo._id} />
+              <RepliesTab
+                currentUser_Id={authUserInfo._id.toString()}
+                user_id={profileUserInfo._id.toString()}
+              />
             </Suspense>
           </TabsContent>
 
@@ -79,8 +82,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUserId={user.id}
-                accountId={userInfo._id}
+                currentUser_Id={authUserInfo._id.toString()}
+                fetchAccount_Id={profileUserInfo._id.toString()}
                 accountType="User"
               />
             </Suspense>

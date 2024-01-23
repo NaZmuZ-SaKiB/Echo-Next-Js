@@ -12,10 +12,11 @@ const CreateThreadPage = async () => {
   const userInfo = await fetchUser(user.id);
 
   if (!userInfo?.onboarded) redirect("/onboarding");
+
   return (
     <>
       <h1 className="head-text">Create Thread</h1>
-      <PostThread userId={userInfo._id.toString()} />
+      <PostThread user_Id={userInfo._id.toString()} />
     </>
   );
 };

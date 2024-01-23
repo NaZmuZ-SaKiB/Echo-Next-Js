@@ -22,9 +22,9 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
     <section className="relative">
       <div>
         <ThreadCard
-          threadId={thread._id}
-          currentUserId={user?.id || ""}
-          parentId={thread?.parentThread}
+          thread_Id={thread._id.toString()}
+          currentUser_Id={userInfo?._id.toString() || ""}
+          parent_Id={thread?.parentThread?.toString()}
           content={thread.text}
           author={thread.author as unknown as TUser}
           community={thread.community as unknown as TCommunity}
@@ -35,9 +35,9 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
 
       <div className="mt-7">
         <Comment
-          threadId={JSON.stringify(thread._id)}
+          thread_Id={thread._id.toString()}
           currentUserImg={userInfo.image || user.imageUrl}
-          currentUserId={JSON.stringify(userInfo._id)}
+          currentUser_Id={userInfo._id.toString()}
         />
       </div>
 
@@ -45,9 +45,9 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
         {thread.replies.map((reply) => (
           <ThreadCard
             key={reply._id.toString()}
-            threadId={reply._id}
-            currentUserId={user?.id || ""}
-            parentId={reply?.parentThread}
+            thread_Id={reply._id.toString()}
+            currentUser_Id={userInfo?._id.toString() || ""}
+            parent_Id={reply?.parentThread?.toString()}
             content={reply.text}
             author={reply.author as unknown as TUser}
             community={reply.community as unknown as TCommunity}

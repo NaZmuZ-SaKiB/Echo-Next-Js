@@ -19,12 +19,12 @@ import Image from "next/image";
 import { addCommentToThread } from "@/database/thread/thread.actions";
 
 type TProps = {
-  threadId: string;
+  thread_Id: string;
   currentUserImg: string;
-  currentUserId: string;
+  currentUser_Id: string;
 };
 
-const Comment = ({ threadId, currentUserId, currentUserImg }: TProps) => {
+const Comment = ({ thread_Id, currentUser_Id, currentUserImg }: TProps) => {
   // const router = useRouter();
   const pathname = usePathname();
 
@@ -38,8 +38,8 @@ const Comment = ({ threadId, currentUserId, currentUserImg }: TProps) => {
   const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
     await addCommentToThread({
       commentText: values.thread,
-      userId: JSON.parse(currentUserId),
-      threadId: JSON.parse(threadId),
+      userId: currentUser_Id,
+      threadId: thread_Id,
       path: pathname,
     });
 

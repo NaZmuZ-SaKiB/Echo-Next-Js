@@ -19,7 +19,7 @@ import { createThread } from "@/database/thread/thread.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { useOrganization } from "@clerk/nextjs";
 
-const PostThread = ({ userId }: { userId: string }) => {
+const PostThread = ({ user_Id }: { user_Id: string }) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -36,7 +36,7 @@ const PostThread = ({ userId }: { userId: string }) => {
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     await createThread({
       text: values.thread,
-      author: userId,
+      author: user_Id,
       communityId: organization ? organization.id : null,
       path: pathname,
     });

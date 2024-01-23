@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
 
-type TProfileHeaderProps = {
-  accountId: string;
+type TProps = {
+  profileUserId: string;
   authUserId: string;
   name: string;
   username: string;
@@ -13,14 +12,14 @@ type TProfileHeaderProps = {
 };
 
 const ProfileHeader = ({
-  accountId,
-  authUserId,
+  profileUserId, // clerk id
+  authUserId, // clerk id
   name,
   username,
   imgUrl,
   bio,
   type,
-}: TProfileHeaderProps) => {
+}: TProps) => {
   return (
     <div className="flex w-full flex-col justify-start">
       <div className="flex items-center justify-between">
@@ -40,7 +39,7 @@ const ProfileHeader = ({
             <p className="text-base-medium text-gray-1">@{username}</p>
           </div>
         </div>
-        {accountId === authUserId && type !== "Community" && (
+        {profileUserId === authUserId && type !== "Community" && (
           <Link href="/profile/edit">
             <div className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2">
               <Image

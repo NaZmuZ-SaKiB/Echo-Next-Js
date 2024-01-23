@@ -1,14 +1,13 @@
 import ThreadCard from "../cards/ThreadCard";
 import Link from "next/link";
-import { Types } from "mongoose";
 import { fetchUsersReplies } from "@/database/user/user.actions";
 
 type TProps = {
-  currentUserId: string;
-  user_id: Types.ObjectId;
+  currentUser_Id: string; // _id
+  user_id: string; // _id
 };
 
-const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
+const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
   const result = await fetchUsersReplies(user_id);
 
   return (
@@ -18,14 +17,15 @@ const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
           <Link
             href={`/thread/${reply.parentThread._id}`}
             className="w-[70%] h-32 overflow-hidden opacity-40 z-0"
-            key={reply.parentThread._id}
+            key={reply.parentThread._id.toString()}
           >
             <ThreadCard
-              threadId={reply.parentThread._id}
-              currentUserId={currentUserId}
-              parentId={null}
+              thread_Id={reply.parentThread._id.toString()}
+              currentUser_Id={currentUser_Id.toString()}
+              parent_Id={null}
               content={reply?.parentThread.text}
               author={{
+                _id: undefined,
                 id: reply?.parentThread?.author.id,
                 name: reply?.parentThread?.author.name,
                 image: reply?.parentThread?.author.image,
@@ -39,12 +39,13 @@ const RepliesTab = async ({ user_id, currentUserId }: TProps) => {
           </Link>
           <div className="-mt-16 z-10">
             <ThreadCard
-              key={reply._id}
-              threadId={reply._id}
-              currentUserId={currentUserId}
-              parentId={reply?.parentThread._id}
+              key={reply._id.toString()}
+              thread_Id={reply._id.toString()}
+              currentUser_Id={currentUser_Id.toString()}
+              parent_Id={reply?.parentThread._id.toString()}
               content={reply.text}
               author={{
+                _id: reply.author._id,
                 id: reply.author.id,
                 name: reply.author.name,
                 image: reply.author.image,

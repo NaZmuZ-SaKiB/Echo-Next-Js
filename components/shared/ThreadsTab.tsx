@@ -1,27 +1,26 @@
 import { redirect } from "next/navigation";
 import ThreadCard from "../cards/ThreadCard";
-import { fetchCommunityPosts } from "@/database/community/community.actions";
-import { Types } from "mongoose";
+import { fetchCommunityThreads } from "@/database/community/community.actions";
 import { fetchUserThreads } from "@/database/user/user.actions";
 
-type TThreadsTabProps = {
-  currentUserId: string;
-  accountId: Types.ObjectId;
+type TProps = {
+  currentUser_Id: string; // _id
+  fetchAccount_Id: string; // _id
   accountType: "User" | "Community";
 };
 
 const ThreadsTab = async ({
-  accountId,
+  fetchAccount_Id,
   accountType,
-  currentUserId,
-}: TThreadsTabProps) => {
+  currentUser_Id,
+}: TProps) => {
   let result: any;
 
   if (accountType === "Community") {
-    result = await fetchCommunityPosts(accountId);
+    result = await fetchCommunityThreads(fetchAccount_Id);
     if (!result) return redirect("/");
   } else {
-    result = await fetchUserThreads(accountId);
+    result = await fetchUserThreads(fetchAccount_Id);
     if (!result) return redirect("/");
   }
 
@@ -29,12 +28,13 @@ const ThreadsTab = async ({
     <section className="mt-9 flex flex-col gap-10">
       {result.map((thread: any) => (
         <ThreadCard
-          key={thread._id}
-          threadId={thread._id}
-          currentUserId={currentUserId}
-          parentId={thread?.parentThread}
+          key={thread._id.toString()}
+          thread_Id={thread._id.toString()}
+          currentUser_Id={currentUser_Id.toString()}
+          parent_Id={null}
           content={thread.text}
           author={{
+            _id: thread.author._id,
             name: thread.author.name,
             image: thread.author.image,
             id: thread.author.id,

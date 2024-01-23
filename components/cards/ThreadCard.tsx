@@ -2,15 +2,14 @@ import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import DeleteThread from "../forms/DeleteThread";
-import { Types } from "mongoose";
 import { TUser } from "@/database/user/user.interface";
 import { TCommunity } from "@/database/community/community.interface";
 import { TThread } from "@/database/thread/thread.interface";
 
 type TProps = {
-  threadId: Types.ObjectId;
-  currentUserId: string;
-  parentId: Types.ObjectId | null | undefined;
+  thread_Id: string; // _id
+  currentUser_Id: string; // _id
+  parent_Id: string | null | undefined; // _id
   content: string;
   author: TUser;
   community: TCommunity;
@@ -20,9 +19,9 @@ type TProps = {
 };
 
 const ThreadCard = ({
-  threadId,
-  currentUserId,
-  parentId,
+  thread_Id,
+  currentUser_Id,
+  parent_Id,
   content,
   author,
   community,
@@ -67,7 +66,7 @@ const ThreadCard = ({
                   height={24}
                   className="cursor-pointer object-contain"
                 />
-                <Link href={`/thread/${threadId}`}>
+                <Link href={`/thread/${thread_Id}`}>
                   <Image
                     src={"/assets/reply.svg"}
                     alt="heart"
@@ -92,7 +91,7 @@ const ThreadCard = ({
                 />
               </div>
               {isComment && comments.length > 0 && (
-                <Link href={`/thread/${threadId}`}>
+                <Link href={`/thread/${thread_Id}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
                     {comments.length} replies
                   </p>
@@ -103,9 +102,9 @@ const ThreadCard = ({
         </div>
 
         <DeleteThread
-          authorId={author.id}
-          currentUserId={currentUserId}
-          threadId={threadId}
+          author_Id={author?._id?.toString() || null}
+          currentUser_Id={currentUser_Id} // json.stringify version
+          thread_Id={thread_Id} // json.stringify version
         />
       </div>
 
@@ -122,7 +121,7 @@ const ThreadCard = ({
             />
           ))}
 
-          <Link href={`/thread/${threadId}`}>
+          <Link href={`/thread/${thread_Id}`}>
             <p className="mt-1 text-subtle-medium text-gray-1">
               {comments.length} repl{comments.length > 1 ? "ies" : "y"}
             </p>

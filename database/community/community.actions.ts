@@ -74,7 +74,7 @@ export const fetchCommunityDetails = async (id: string) => {
   }
 };
 
-export const fetchCommunityPosts = async (communityId: Types.ObjectId) => {
+export const fetchCommunityThreads = async (communityId: string) => {
   try {
     connectToDB();
 
@@ -113,6 +113,21 @@ export const fetchCommunityPosts = async (communityId: Types.ObjectId) => {
     // Handle any errors
     console.error("Error fetching community posts:", error);
     throw error;
+  }
+};
+
+export const getCommunityThreadsCount = async (communityId: string) => {
+  connectToDB();
+
+  try {
+    const threadsCount = await Thread.countDocuments({
+      community: communityId,
+      parentThread: { $in: [undefined, null] },
+    });
+
+    return threadsCount;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user threads count: ${error?.message}`);
   }
 };
 
@@ -194,12 +209,16 @@ export const addMemberToCommunity = async (
     }
 
     // Check if the user is already a member of the community
-    if (community.members.includes(user._id)) {
+    if (community?.members?.includes(user._id)) {
       throw new Error("User is already a member of the community");
     }
 
     // Add the user's _id to the members array in the community
-    community.members.push(user._id);
+    if (community.members) {
+      community.members.push(user._id);
+    } else {
+      community.members = [user._id];
+    }
     await community.save();
 
     // Add the community's _id to the communities array in the user

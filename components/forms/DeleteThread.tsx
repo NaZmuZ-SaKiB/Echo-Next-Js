@@ -7,16 +7,16 @@ import { deleteThread } from "@/database/thread/thread.actions";
 import { Types } from "mongoose";
 
 type TProps = {
-  threadId: Types.ObjectId;
-  currentUserId: string;
-  authorId: string;
+  thread_Id: string;
+  currentUser_Id: string;
+  author_Id: string | null;
 };
 
-function DeleteThread({ threadId, currentUserId, authorId }: TProps) {
+function DeleteThread({ thread_Id, currentUser_Id, author_Id }: TProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (currentUserId !== authorId || pathname === "/") return null;
+  if (currentUser_Id !== author_Id || pathname === "/") return null;
 
   return (
     <Image
@@ -26,7 +26,7 @@ function DeleteThread({ threadId, currentUserId, authorId }: TProps) {
       height={18}
       className="cursor-pointer object-contain"
       onClick={async () => {
-        await deleteThread(threadId, pathname);
+        await deleteThread(JSON.parse(thread_Id), pathname);
         // if (!parentId || !isComment) {
         //   router.push("/");
         // }

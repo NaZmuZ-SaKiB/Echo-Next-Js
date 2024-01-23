@@ -5,24 +5,36 @@ import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { communityTabs } from "@/constants";
 import ThreadsTab from "@/components/shared/ThreadsTab";
-import { fetchCommunityDetails } from "@/database/community/community.actions";
+import {
+  fetchCommunityDetails,
+  getCommunityThreadsCount,
+} from "@/database/community/community.actions";
 import UserCard from "@/components/cards/UserCard";
+import { fetchUser } from "@/database/user/user.actions";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
   if (!user) return null;
 
+  const userInfo = await fetchUser(user.id);
+  if (!userInfo) return null;
+
   const communityDetails = await fetchCommunityDetails(params.id);
+  if (!communityDetails) return null;
+
+  const communityThreadsCount = await getCommunityThreadsCount(
+    communityDetails._id.toString()
+  );
 
   return (
     <section>
       <ProfileHeader
-        accountId={communityDetails.id}
+        profileUserId={communityDetails.id}
         authUserId={user.id}
-        name={communityDetails.name}
+        name={communityDetails.name!}
         username={communityDetails.username}
-        imgUrl={communityDetails.image}
-        bio={communityDetails.bio}
+        imgUrl={communityDetails.image!}
+        bio={communityDetails.bio || ""}
         type="Community"
       />
 
@@ -35,7 +47,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
                 <p className="max-sm:hidden">{tab.label}</p>
                 {tab.label === "Threads" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 text-tiny-medium text-light-2">
-                    {communityDetails?.threads?.length}
+                    {communityThreadsCount}
                   </p>
                 )}
               </TabsTrigger>
@@ -44,8 +56,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="threads">
             <ThreadsTab
-              currentUserId={user.id}
-              accountId={communityDetails._id}
+              currentUser_Id={userInfo._id.toString()}
+              fetchAccount_Id={communityDetails._id.toString()}
               accountType="Community"
             />
           </TabsContent>
@@ -67,8 +79,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="requests">
             <ThreadsTab
-              currentUserId={user.id}
-              accountId={communityDetails._id}
+              currentUser_Id={userInfo._id.toString()}
+              fetchAccount_Id={communityDetails._id.toString()}
               accountType="Community"
             />
           </TabsContent>

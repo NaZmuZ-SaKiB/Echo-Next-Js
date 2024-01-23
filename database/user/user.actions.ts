@@ -59,7 +59,7 @@ export const fetchUser = async (userId: string) => {
   }
 };
 
-export const fetchUserThreads = async (userId: Types.ObjectId) => {
+export const fetchUserThreads = async (userId: string) => {
   connectToDB();
   try {
     const threads = await Thread.find({
@@ -96,7 +96,7 @@ export const fetchUserThreads = async (userId: Types.ObjectId) => {
   }
 };
 
-export const getUserThreadsCount = async (userId: Types.ObjectId) => {
+export const getUserThreadsCount = async (userId: string) => {
   connectToDB();
 
   try {
@@ -111,7 +111,7 @@ export const getUserThreadsCount = async (userId: Types.ObjectId) => {
   }
 };
 
-export const fetchUsersReplies = async (userId: Types.ObjectId) => {
+export const fetchUsersReplies = async (userId: string) => {
   connectToDB();
   try {
     const threads = await Thread.find({
@@ -121,6 +121,7 @@ export const fetchUsersReplies = async (userId: Types.ObjectId) => {
 
     const replyThreads = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
+      author: { $ne: userId },
     })
       .populate({
         path: "author",
