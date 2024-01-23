@@ -8,3 +8,9 @@ export type TThread = {
   parentThread?: Types.ObjectId;
   createdAt?: string;
 };
+
+export type TLike = {
+  _id?: Types.ObjectId;
+  threadId: Types.ObjectId;
+  likedBy: Types.ObjectId;
+};

@@ -1,5 +1,5 @@
 import { Model, Schema, model, models } from "mongoose";
-import { TThread } from "./thread.interface";
+import { TLike, TThread } from "./thread.interface";
 
 const threadSchema = new Schema<TThread>(
   {
@@ -26,7 +26,28 @@ const threadSchema = new Schema<TThread>(
   }
 );
 
+const likeSchema = new Schema<TLike>(
+  {
+    threadId: {
+      type: Schema.Types.ObjectId,
+      ref: "Thread",
+      required: true,
+    },
+    likedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const Thread: Model<TThread> =
   models.Thread || model<TThread>("Thread", threadSchema);
+
+export const Like: Model<TLike> =
+  models.Like || model<TLike>("Like", likeSchema);
 
 export default Thread;
