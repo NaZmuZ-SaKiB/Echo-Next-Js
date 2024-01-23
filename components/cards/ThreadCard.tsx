@@ -5,6 +5,7 @@ import DeleteThread from "../forms/DeleteThread";
 import { TUser } from "@/database/user/user.interface";
 import { TCommunity } from "@/database/community/community.interface";
 import { TThread } from "@/database/thread/thread.interface";
+import LikeThread from "../forms/LikeThread";
 
 type TProps = {
   thread_Id: string; // _id
@@ -59,13 +60,7 @@ const ThreadCard = ({
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
-                <Image
-                  src={"/assets/heart-gray.svg"}
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+                <LikeThread thread_Id={thread_Id} likedBy_Id={currentUser_Id} />
                 <Link href={`/thread/${thread_Id}`}>
                   <Image
                     src={"/assets/reply.svg"}
