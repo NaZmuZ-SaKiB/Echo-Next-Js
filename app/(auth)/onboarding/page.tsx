@@ -1,4 +1,5 @@
 import AccountProfile from "@/components/forms/AccountProfile";
+import AccountProfileLoading from "@/components/loaders/AccountProfileLoading";
 import { fetchUser } from "@/database/user/user.actions";
 import { TUser } from "@/database/user/user.interface";
 import { currentUser } from "@clerk/nextjs";

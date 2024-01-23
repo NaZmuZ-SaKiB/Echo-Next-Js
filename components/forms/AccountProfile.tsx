@@ -78,7 +78,6 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
 
     if (hasImageChanged) {
       const imgRes = await startUpload(files);
-      console.log("imageRes", imgRes);
 
       if (imgRes && imgRes[0]?.url) {
         values.profile_photo = imgRes[0]?.url;

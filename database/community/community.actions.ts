@@ -86,7 +86,10 @@ export const fetchCommunityThreads = async (communityId: string) => {
         model: User,
         select: "_id id name image",
       })
-      .populate("community");
+      .populate({
+        path: "community",
+        model: Community,
+      });
 
     const replies = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
@@ -96,7 +99,10 @@ export const fetchCommunityThreads = async (communityId: string) => {
         model: User,
         select: "_id id name image",
       })
-      .populate("community");
+      .populate({
+        path: "community",
+        model: Community,
+      });
 
     const threadsWithReplies = threads.map((thread) => {
       const threadReplies = replies.filter(

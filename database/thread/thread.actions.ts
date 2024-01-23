@@ -65,7 +65,10 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
         path: "author",
         model: User,
       })
-      .populate("community");
+      .populate({
+        path: "community",
+        model: Community,
+      });
 
     const totalthreadsCount = await Thread.countDocuments({
       parentThread: { $in: [null, undefined] },
@@ -94,7 +97,9 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
     const isNext = totalthreadsCount > skip + threads.length;
 
     return { threads: threadsWithReplies, isNext };
-  } catch (error) {}
+  } catch (error: any) {
+    throw new Error(`Failed to fetch threads : ${error.message}`);
+  }
 };
 
 export const fetchThreadById = async (id: string) => {
@@ -105,7 +110,10 @@ export const fetchThreadById = async (id: string) => {
         model: User,
         select: "_id id name image",
       })
-      .populate("community")
+      .populate({
+        path: "community",
+        model: Community,
+      })
       .exec();
 
     if (!thread) {
@@ -176,29 +184,33 @@ export const addCommentToThread = async ({
   }
 };
 
-const fetchAllChildThreads = async (
-  threadId: Types.ObjectId
-): Promise<any[]> => {
-  const childThreads = await Thread.find({ parentThread: threadId }).populate(
-    "author community"
-  );
+const fetchAllChildThreads = async (threadId: string): Promise<any[]> => {
+  const childThreads = await Thread.find({ parentThread: threadId })
+    .populate("author")
+    .populate({
+      path: "community",
+      model: Community,
+    });
 
   const descendantThreads = [];
   for (const childThread of childThreads) {
-    const descendants = await fetchAllChildThreads(childThread._id);
+    const descendants = await fetchAllChildThreads(childThread._id.toString());
     descendantThreads.push(childThread, ...descendants);
   }
 
   return descendantThreads;
 };
 
-export const deleteThread = async (id: Types.ObjectId, path: string) => {
+export const deleteThread = async (id: string, path: string) => {
   connectToDB();
 
   const session = await startSession();
 
   try {
-    const mainThread = await Thread.findById(id).populate("author community");
+    const mainThread = await Thread.findById(id).populate("author").populate({
+      path: "community",
+      model: Community,
+    });
 
     if (!mainThread) {
       throw new Error("Thread not found");
@@ -247,6 +259,8 @@ export const deleteThread = async (id: Types.ObjectId, path: string) => {
     await session.endSession();
 
     revalidatePath(path);
+
+    return { success: true };
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();

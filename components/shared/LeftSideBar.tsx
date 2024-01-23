@@ -17,7 +17,9 @@ const LeftSideBar = () => {
       <div className="flex w-full flex-1 gap-6 flex-col px-6">
         {sidebarLinks.map((link) => {
           const isActive =
-            (pathname.includes(link.route) && link.route.length > 1) ||
+            ((pathname.includes(link.route) ||
+              pathname.includes(link.label.toLowerCase())) &&
+              link.route.length > 1) ||
             pathname === link.route;
 
           if (link.route === "/profile") link.route = `/profile/${userId}`;

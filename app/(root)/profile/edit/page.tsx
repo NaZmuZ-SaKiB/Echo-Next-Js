@@ -28,7 +28,7 @@ const ProfileEditPage = async () => {
       <section className="mt-12">
         <AccountProfile
           user={userData as unknown as TUser}
-          btnTitle="Continue"
+          btnTitle="Save Changes"
         />
       </section>
     </>

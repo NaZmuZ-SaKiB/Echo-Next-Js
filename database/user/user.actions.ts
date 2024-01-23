@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FilterQuery, SortOrder, Types } from "mongoose";
+import { FilterQuery, SortOrder } from "mongoose";
 
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
@@ -53,7 +53,10 @@ export const fetchUser = async (userId: string) => {
   try {
     connectToDB();
 
-    return await User.findOne({ id: userId }).populate("communities");
+    return await User.findOne({ id: userId }).populate({
+      path: "communities",
+      model: Community,
+    });
   } catch (error: any) {
     throw new Error(`Failed to fetch user: ${error?.message}`);
   }
@@ -66,7 +69,10 @@ export const fetchUserThreads = async (userId: string) => {
       author: userId,
       parentThread: { $in: [undefined, null] },
     })
-      .populate("community")
+      .populate({
+        path: "community",
+        model: Community,
+      })
       .populate({
         path: "author",
         model: User,

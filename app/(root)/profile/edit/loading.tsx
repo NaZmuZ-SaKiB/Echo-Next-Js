@@ -7,7 +7,7 @@ const EditProfilePageLoading = () => {
       <p className="mt-3 text-base-regular text-light-2">Make any changes</p>
 
       <section className="mt-12">
-        <AccountProfileLoading btnTitle="Continue" />
+        <AccountProfileLoading btnTitle="Save Changes" />
       </section>
     </>
   );
