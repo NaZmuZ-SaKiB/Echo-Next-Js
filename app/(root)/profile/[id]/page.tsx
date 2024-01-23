@@ -58,7 +58,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
                 currentUserId={user.id}
-                accountId={userInfo.id}
+                accountId={userInfo._id}
                 accountType="User"
               />
             </Suspense>
@@ -80,7 +80,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
                 currentUserId={user.id}
-                accountId={userInfo.id}
+                accountId={userInfo._id}
                 accountType="User"
               />
             </Suspense>
