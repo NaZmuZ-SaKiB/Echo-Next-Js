@@ -28,6 +28,7 @@ const communitySchema = new Schema<TCommunity>({
     },
   ],
 });
+
 const Community: Model<TCommunity> =
   models.Community || model<TCommunity>("Community", communitySchema);
 
