@@ -3,7 +3,7 @@
 import { FilterQuery, SortOrder, Types, startSession } from "mongoose";
 
 import Community from "./community.model";
-import Thread from "../thread/thread.model";
+import Thread, { Like } from "../thread/thread.model";
 import User from "../user/user.model";
 
 import { connectToDB } from "@/database/mongoose";
@@ -91,6 +91,20 @@ export const fetchCommunityThreads = async (communityId: string) => {
         model: Community,
       });
 
+    const likes = await Like.find({
+      threadId: { $in: threads.map((thread) => thread._id) },
+    }).exec();
+
+    const threadsWithLikes = threads.map((thread) => {
+      const threadLikes = likes
+        .filter((like) => like.threadId.toString() === thread._id.toString())
+        .map((like) => like.likedBy.toString());
+      return {
+        ...thread.toObject(),
+        likes: threadLikes,
+      };
+    });
+
     const replies = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
     })
@@ -104,12 +118,12 @@ export const fetchCommunityThreads = async (communityId: string) => {
         model: Community,
       });
 
-    const threadsWithReplies = threads.map((thread) => {
+    const threadsWithReplies = threadsWithLikes.map((thread) => {
       const threadReplies = replies.filter(
         (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
-        ...thread.toObject(),
+        ...thread,
         replies: threadReplies,
       };
     });

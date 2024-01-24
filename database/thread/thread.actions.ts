@@ -1,6 +1,6 @@
 "use server";
 
-import { Types, startSession } from "mongoose";
+import { startSession } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import { connectToDB } from "@/database/mongoose";
@@ -80,14 +80,6 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
       threadId: { $in: threads.map((thread) => thread._id) },
     }).exec();
 
-    const replies = await Thread.find({
-      parentThread: { $in: threads.map((thread) => thread._id) },
-    }).populate({
-      path: "author",
-      model: User,
-      select: "_id id name image",
-    });
-
     const threadWithLikes = threads.map((thread) => {
       const threadLikes = likes
         .filter((like) => like.threadId.toString() === thread._id.toString())
@@ -96,6 +88,14 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
         ...thread.toObject(),
         likes: threadLikes,
       };
+    });
+
+    const replies = await Thread.find({
+      parentThread: { $in: threads.map((thread) => thread._id) },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "_id id name image",
     });
 
     const threadsWithReplies = threadWithLikes.map((thread) => {
@@ -260,19 +260,17 @@ export const deleteThread = async (id: string, path: string) => {
       ...descendantThreads.map((thread) => thread._id),
     ];
 
-    const uniqueAuthorIds = new Set(
-      [
-        mainThread?.author?._id?.toString(),
-        ...descendantThreads.map((thread) => thread?.author?._id?.toString()),
-      ].filter((id) => id !== undefined)
-    );
+    let likeIdsToDelete: string[];
 
-    const uniqueCommunityIds = new Set(
-      [
-        mainThread?.community?._id?.toString(),
-        ...descendantThreads.map((thread) => thread.community?._id?.toString()),
-      ].filter((id) => id !== undefined)
-    );
+    const likes = await Like.find({
+      threadId: { $in: threadsIdsToDelete },
+    }).exec();
+
+    if (likes.length) {
+      likeIdsToDelete = likes.map((like) => like._id.toString());
+    } else {
+      likeIdsToDelete = [];
+    }
 
     // * Main Transaction with DB starts here
 
@@ -280,17 +278,7 @@ export const deleteThread = async (id: string, path: string) => {
 
     await Thread.deleteMany({ _id: { $in: threadsIdsToDelete } });
 
-    // Update User model
-    await User.updateMany(
-      { _id: { $in: Array.from(uniqueAuthorIds) } },
-      { $pull: { threads: { $in: threadsIdsToDelete } } }
-    );
-
-    // Update Community model
-    await Community.updateMany(
-      { _id: { $in: Array.from(uniqueCommunityIds) } },
-      { $pull: { threads: { $in: threadsIdsToDelete } } }
-    );
+    await Like.deleteMany({ _id: { $in: likeIdsToDelete } });
 
     await session.commitTransaction();
     await session.endSession();
@@ -329,7 +317,7 @@ export const handleLikeTherad = async (
       if (pathname !== "/") {
         revalidatePath(pathname);
       }
-      return { success: false };
+      return { liked: false };
     } else {
       await Like.create({
         likedBy: userId,
@@ -339,7 +327,7 @@ export const handleLikeTherad = async (
       if (pathname !== "/") {
         revalidatePath(pathname);
       }
-      return { success: true };
+      return { liked: true };
     }
   } catch (error: any) {
     throw new Error(`Failed to like thread: ${error?.message}`);

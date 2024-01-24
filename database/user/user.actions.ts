@@ -6,7 +6,7 @@ import { FilterQuery, SortOrder } from "mongoose";
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
 import Community from "@/database/community/community.model";
-import Thread from "../thread/thread.model";
+import Thread, { Like } from "../thread/thread.model";
 
 type TUpdateUserParams = {
   userId: string;
@@ -78,6 +78,21 @@ export const fetchUserThreads = async (userId: string) => {
         model: User,
         select: "_id id name image",
       });
+
+    const likes = await Like.find({
+      threadId: { $in: threads.map((thread) => thread._id) },
+    }).exec();
+
+    const threadsWithLikes = threads.map((thread) => {
+      const threadLikes = likes
+        .filter((like) => like.threadId.toString() === thread._id.toString())
+        .map((like) => like.likedBy.toString());
+      return {
+        ...thread.toObject(),
+        likes: threadLikes,
+      };
+    });
+
     const replies = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
     }).populate({
@@ -86,12 +101,12 @@ export const fetchUserThreads = async (userId: string) => {
       select: "_id id name image",
     });
 
-    const threadsWithReplies = threads.map((thread) => {
+    const threadsWithReplies = threadsWithLikes.map((thread) => {
       const threadReplies = replies.filter(
         (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
-        ...thread.toObject(),
+        ...thread,
         replies: threadReplies,
       };
     });
@@ -125,7 +140,7 @@ export const fetchUsersReplies = async (userId: string) => {
       parentThread: { $in: [undefined, null] },
     }).select("_id");
 
-    const replyThreads = await Thread.find({
+    const mainReplies = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
       author: { $ne: userId },
     })
@@ -144,24 +159,40 @@ export const fetchUsersReplies = async (userId: string) => {
         },
       });
 
-    const repliesOfReplyThreads = await Thread.find({
-      parentThread: { $in: replyThreads.map((thread) => thread._id) },
+    const mainRepliesLikes = await Like.find({
+      threadId: { $in: mainReplies.map((thread) => thread._id) },
+    }).exec();
+
+    const mainRepliesWithLikes = mainReplies.map((thread) => {
+      const threadLikes = mainRepliesLikes
+        .filter((like) => like.threadId.toString() === thread._id.toString())
+        .map((like) => like.likedBy.toString());
+      return {
+        ...thread.toObject(),
+        likes: threadLikes,
+      };
+    });
+
+    const repliesOfMainReplies = await Thread.find({
+      parentThread: { $in: mainReplies.map((thread) => thread._id) },
     }).populate({
       path: "author",
       model: User,
       select: "_id id name image",
     });
 
-    const replyThreadsWithReplies = replyThreads.map((singleReplyThread) => {
-      const threadReplies = repliesOfReplyThreads.filter(
-        (reply) =>
-          reply.parentThread!.toString() === singleReplyThread._id.toString()
-      );
-      return {
-        ...singleReplyThread.toObject(),
-        replies: threadReplies,
-      };
-    });
+    const replyThreadsWithReplies = mainRepliesWithLikes.map(
+      (singleReplyThread) => {
+        const threadReplies = repliesOfMainReplies.filter(
+          (reply) =>
+            reply.parentThread!.toString() === singleReplyThread._id.toString()
+        );
+        return {
+          ...singleReplyThread,
+          replies: threadReplies,
+        };
+      }
+    );
 
     return replyThreadsWithReplies;
   } catch (error: any) {

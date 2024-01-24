@@ -34,6 +34,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
               community={reply?.parentThread?.community}
               createdAt={reply?.parentThread?.createdAt}
               comments={[]}
+              likes={[]}
               isComment={false}
             />
           </Link>
@@ -54,6 +55,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
               community={reply.community}
               createdAt={reply.createdAt}
               comments={reply?.replies}
+              likes={reply?.likes}
               isComment={false}
             />
           </div>

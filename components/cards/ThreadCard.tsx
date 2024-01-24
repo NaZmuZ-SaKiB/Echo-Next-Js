@@ -66,6 +66,7 @@ const ThreadCard = ({
                   thread_Id={thread_Id}
                   likedBy_Id={currentUser_Id}
                   isLiked={likes.includes(currentUser_Id)}
+                  likesCount={likes.length}
                 />
                 <Link href={`/thread/${thread_Id}`}>
                   <Image

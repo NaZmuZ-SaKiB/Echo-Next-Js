@@ -43,6 +43,7 @@ const ThreadsTab = async ({
           community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.replies}
+          likes={thread.likes}
           isComment={false}
         />
       ))}
