@@ -27,7 +27,7 @@ const OnboardingPage = async () => {
         Complete your profile now to use Threads.
       </p>
 
-      <section className="mt-9 bg-dark-2 p-10">
+      <section className="mt-9  max-sm:mt-5 bg-dark-2 p-10">
         <AccountProfile
           user={userData as unknown as TUser}
           btnTitle="Let's get started"

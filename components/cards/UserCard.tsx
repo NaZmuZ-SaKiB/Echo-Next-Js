@@ -28,7 +28,7 @@ const UserCard = ({
           alt="logo"
           width={48}
           height={48}
-          className="rounded-full"
+          className="rounded-full max-sm:size-10"
         />
 
         <div className="flex-1 text-ellipsis">

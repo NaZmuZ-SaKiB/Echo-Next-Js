@@ -103,7 +103,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col justify-start gap-10"
+        className="flex flex-col justify-start gap-10 max-sm:gap-6"
       >
         <FormField
           control={form.control}
@@ -118,7 +118,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
                     width={96}
                     height={96}
                     priority
-                    className="rounded-full object-contain"
+                    className="rounded-full object-contain max-sm:size-14"
                   />
                 ) : (
                   <Image

@@ -4,7 +4,7 @@ const CreateThreadLoading = () => {
   return (
     <section>
       <h1 className="head-text">Create Thread</h1>
-      <div className="mt-10 flex flex-col justify-start gap-10">
+      <div className="mt-10  max-sm:mt-4 flex flex-col justify-start gap-10">
         <div className="flex flex-col gap-3 w-full">
           <Skeleton className="opacity-60 w-12 h-3" />
           <div>

@@ -7,7 +7,7 @@ const ProfilePageLoading = () => {
     <section>
       <ProfileHeaderLoading />
 
-      <div className="mt-9">
+      <div className="mt-9 max-sm:mt-5">
         <div className="w-full">
           <Skeleton className="tab" />
 

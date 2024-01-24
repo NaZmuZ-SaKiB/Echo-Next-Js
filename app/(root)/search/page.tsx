@@ -21,7 +21,7 @@ const SearchPage = async ({ searchParams }: TProps) => {
   const query = searchParams.q || "";
   return (
     <section>
-      <h1 className="head-text mb-10">Search</h1>
+      <h1 className="head-text mb-10 max-sm:mb-4">Search</h1>
 
       <Searchbar routeType="search" />
 

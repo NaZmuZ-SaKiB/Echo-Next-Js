@@ -4,7 +4,7 @@ const ActivityPageLoading = () => {
   const skeletonWidths = [80, 40, 70, 30, 80];
   return (
     <section>
-      <h1 className="head-text mb-10">Activity</h1>
+      <h1 className="head-text mb-10 max-sm:mb-4">Activity</h1>
 
       <section className="mt-10 flex flex-col gap-5">
         {skeletonWidths.map((width) => (

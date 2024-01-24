@@ -2,10 +2,10 @@ import { Skeleton } from "../ui/skeleton";
 
 const AccountProfileLoading = ({ btnTitle }: { btnTitle: string }) => {
   return (
-    <div className="flex flex-col justify-start gap-10">
+    <div className="flex flex-col justify-start gap-10  max-sm:gap-6">
       <div className="flex items-center gap-4">
         <div className="account-form_image-label">
-          <Skeleton className="rounded-full size-[96px] opacity-10" />
+          <Skeleton className="rounded-full size-[96px]  max-sm:size-14 opacity-10" />
         </div>
         <div className="flex-1 text-base-semibold text-gray-200">
           <div className="account-form_image-input" />

@@ -33,8 +33,8 @@ const LikeThread = ({ thread_Id, likedBy_Id, isLiked, likesCount }: TProps) => {
         setLiked(result.liked);
 
         if (result.liked) {
-          setTotalLikes(likesCount + 1);
-        } else setTotalLikes(likesCount - 1);
+          setTotalLikes(totalLikes + 1);
+        } else setTotalLikes(totalLikes - 1);
       }
     } finally {
       setLiking(false);

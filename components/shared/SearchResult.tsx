@@ -37,7 +37,7 @@ const SearchResult = async ({ type, query, page }: TProps) => {
   }
   return (
     <div
-      className={`mt-14 flex gap-9 ${
+      className={`mt-14 max-sm:mt-5 flex gap-9  max-sm:gap-4 ${
         type === "User" ? "flex-col" : "flex-wrap justify-start"
       }`}
     >

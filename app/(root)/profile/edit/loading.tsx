@@ -6,7 +6,7 @@ const EditProfilePageLoading = () => {
       <h1 className="head-text">Edit Profile</h1>
       <p className="mt-3 text-base-regular text-light-2">Make any changes</p>
 
-      <section className="mt-12">
+      <section className="mt-12 max-sm:mt-6">
         <AccountProfileLoading btnTitle="Save Changes" />
       </section>
     </>

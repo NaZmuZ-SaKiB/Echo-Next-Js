@@ -15,7 +15,7 @@ const SearchResultLoading = ({ type }: { type: "User" | "Community" }) => {
             {type === "User" ? (
               <UserCardLoading key={`user-card-loader-${i}`} />
             ) : (
-              <CommunityCardLoading key={`user-card-loader-${i}`} />
+              <CommunityCardLoading key={`community-card-loader-${i}`} />
             )}
           </>
         ))}

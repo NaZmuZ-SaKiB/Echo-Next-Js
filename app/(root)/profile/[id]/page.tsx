@@ -22,7 +22,9 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   if (!profileUserInfo) redirect("/");
   if (!profileUserInfo?.onboarded) redirect("/onboarding");
 
-  const userThreadsCount = await getUserThreadsCount(profileUserInfo._id);
+  const userThreadsCount = await getUserThreadsCount(
+    profileUserInfo._id.toString()
+  );
 
   return (
     <section>
@@ -35,7 +37,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
         bio={profileUserInfo.bio || ""}
       />
 
-      <div className="mt-9">
+      <div className="mt-9 max-sm:mt-5">
         <Tabs defaultValue="threads" className="w-full">
           <TabsList className="tab">
             {profileTabs.map((tab: any) => (

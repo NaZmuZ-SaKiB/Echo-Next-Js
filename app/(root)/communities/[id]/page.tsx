@@ -38,7 +38,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
         type="Community"
       />
 
-      <div className="mt-9">
+      <div className="mt-9 max-sm:mt-5">
         <Tabs defaultValue="threads" className="w-full">
           <TabsList className="tab">
             {communityTabs.map((tab: any) => (

@@ -11,7 +11,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
   const result = await fetchUsersReplies(user_id);
 
   return (
-    <section className="mt-9 flex flex-col gap-10">
+    <section className="mt-9  max-sm:mt-5 flex flex-col gap-10  max-sm:gap-4">
       {result.map((reply: any) => (
         <>
           <Link

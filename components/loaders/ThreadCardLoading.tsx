@@ -10,14 +10,14 @@ const ThreadCardLoading = ({ isComment }: TProps) => {
     <div
       className={`
         flex w-full flex-col rounded-xl h-44
-        ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"}
+        ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7 max-sm:p-3"}
     `}
     >
       <div className="flex items-start justify-between">
-        <div className="flex w-full flex-1 flex-row gap-4">
+        <div className="flex w-full flex-1 flex-row gap-4 max-sm:gap-3">
           <div className="flex flex-col items-center">
             <div className="relative">
-              <Skeleton className="opacity-10 rounded-full size-11" />
+              <Skeleton className="opacity-10 rounded-full size-11 max-sm:size-9" />
             </div>
             <div className="thread-card_bar" />
           </div>
@@ -30,7 +30,11 @@ const ThreadCardLoading = ({ isComment }: TProps) => {
               <Skeleton className="opacity-45 w-[80%] h-3" />
               <Skeleton className="opacity-25 w-[30%] h-3" />
             </div>
-            <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
+            <div
+              className={`${
+                isComment && "mb-10"
+              } mt-5 max-sm:mt-3 flex flex-col gap-3`}
+            >
               <div className="flex gap-3.5">
                 <Image
                   src={"/assets/heart-gray.svg"}

@@ -17,7 +17,7 @@ const ProfileHeaderLoading = () => {
       {/* todo: community */}
       <Skeleton className="opacity-30 mt-6 max-w-[70%] h-3" />
       <Skeleton className="opacity-70 mt-2 max-w-[30%] h-3" />
-      <div className="mt-12 h-0.5 w-full bg-dark-3" />
+      <div className="mt-12 max-sm:mt-5 h-0.5 w-full bg-dark-3" />
     </div>
   );
 };
