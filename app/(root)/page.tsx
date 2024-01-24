@@ -1,10 +1,18 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { TCommunity } from "@/database/community/community.interface";
 import { fetchThreads } from "@/database/thread/thread.actions";
+import { fetchUser } from "@/database/user/user.actions";
 import { TUser } from "@/database/user/user.interface";
+import { currentUser } from "@clerk/nextjs";
 
 const Home = async () => {
   const result = await fetchThreads(1, 30);
+  const user = await currentUser();
+
+  let userInfo: any;
+  if (user) {
+    userInfo = await fetchUser(user?.id);
+  }
 
   return (
     <main>
@@ -18,13 +26,14 @@ const Home = async () => {
               <ThreadCard
                 key={thread._id.toString()}
                 thread_Id={thread._id.toString()}
-                currentUser_Id=""
+                currentUser_Id={userInfo?._id.toString() || ""}
                 parent_Id={null}
                 content={thread.text}
                 author={thread.author as unknown as TUser}
                 community={thread.community as unknown as TCommunity}
                 createdAt={thread.createdAt!}
                 comments={thread.replies}
+                likes={thread.likes}
               />
             ))}
           </>

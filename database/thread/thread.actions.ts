@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
-import Thread from "@/database/thread/thread.model";
+import Thread, { Like } from "@/database/thread/thread.model";
 import Community from "@/database/community/community.model";
 
 type TCreateThreadParams = {
@@ -76,6 +76,10 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
 
     const threads = await threadsQuery.exec();
 
+    const likes = await Like.find({
+      threadId: { $in: threads.map((thread) => thread._id) },
+    }).exec();
+
     const replies = await Thread.find({
       parentThread: { $in: threads.map((thread) => thread._id) },
     }).populate({
@@ -84,12 +88,22 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
       select: "_id id name image",
     });
 
-    const threadsWithReplies = threads.map((thread) => {
+    const threadWithLikes = threads.map((thread) => {
+      const threadLikes = likes
+        .filter((like) => like.threadId.toString() === thread._id.toString())
+        .map((like) => like.likedBy.toString());
+      return {
+        ...thread.toObject(),
+        likes: threadLikes,
+      };
+    });
+
+    const threadsWithReplies = threadWithLikes.map((thread) => {
       const threadReplies = replies.filter(
         (reply) => reply.parentThread!.toString() === thread._id.toString()
       );
       return {
-        ...thread.toObject(),
+        ...thread,
         replies: threadReplies,
       };
     });
@@ -120,6 +134,15 @@ export const fetchThreadById = async (id: string) => {
       throw new Error(`Faild to fetch thread. Thread not found`);
     }
 
+    const mainThreadLikes = await Like.find({
+      threadId: thread._id,
+    }).exec();
+
+    const mainThreadWithLikes = {
+      ...thread.toObject(),
+      likes: mainThreadLikes.map((like) => like.likedBy.toString()),
+    };
+
     const replies = await Thread.find({
       parentThread: thread._id,
     }).populate({
@@ -128,7 +151,21 @@ export const fetchThreadById = async (id: string) => {
       select: "_id id name image",
     });
 
-    const replyToAllReplies = await Thread.find({
+    const replyLikes = await Like.find({
+      threadId: { $in: replies.map((reply) => reply._id) },
+    }).exec();
+
+    const repliesWithLikes = replies.map((reply) => {
+      const likes = replyLikes
+        .filter((like) => like.threadId.toString() === reply._id.toString())
+        .map((like) => like.likedBy.toString());
+      return {
+        ...reply.toObject(),
+        likes,
+      };
+    });
+
+    const nestedReplies = await Thread.find({
       parentThread: { $in: replies.map((reply) => reply._id) },
     }).populate({
       path: "author",
@@ -136,21 +173,21 @@ export const fetchThreadById = async (id: string) => {
       select: "_id id name image",
     });
 
-    const threadWithReplies = {
-      ...thread.toObject(),
-      replies: replies.map((reply) => {
-        const repliesToReply = replyToAllReplies.filter(
+    const mainThreadWithReplies = {
+      ...mainThreadWithLikes,
+      replies: repliesWithLikes.map((reply) => {
+        const repliesToReply = nestedReplies.filter(
           (replyToReply) =>
             replyToReply.parentThread!.toString() === reply._id.toString()
         );
         return {
-          ...reply.toObject(),
+          ...reply,
           replies: repliesToReply,
         };
       }),
     };
 
-    return threadWithReplies;
+    return mainThreadWithReplies;
   } catch (error: any) {
     throw new Error(`Failed to fetch thread: ${error?.message}`);
   }
@@ -266,5 +303,45 @@ export const deleteThread = async (id: string, path: string) => {
     await session.endSession();
 
     throw new Error(`Failed to delete thread: ${error?.message}`);
+  }
+};
+
+//* ------------------------------------------------ *//
+//* --------------- Like Actions ------------------ *//
+//* ------------------------------------------------ *//
+
+export const handleLikeTherad = async (
+  threadId: string,
+  userId: string,
+  pathname: string
+) => {
+  connectToDB();
+
+  try {
+    const like = await Like.findOne({
+      threadId,
+      likedBy: userId,
+    });
+
+    if (like) {
+      await like.deleteOne();
+
+      if (pathname !== "/") {
+        revalidatePath(pathname);
+      }
+      return { success: false };
+    } else {
+      await Like.create({
+        likedBy: userId,
+        threadId,
+      });
+
+      if (pathname !== "/") {
+        revalidatePath(pathname);
+      }
+      return { success: true };
+    }
+  } catch (error: any) {
+    throw new Error(`Failed to like thread: ${error?.message}`);
   }
 };

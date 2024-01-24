@@ -30,6 +30,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
           community={thread.community as unknown as TCommunity}
           createdAt={thread.createdAt as unknown as string}
           comments={thread.replies}
+          likes={thread.likes}
         />
       </div>
 
@@ -53,6 +54,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
             community={reply.community as unknown as TCommunity}
             createdAt={reply.createdAt as unknown as string}
             comments={reply.replies}
+            likes={reply.likes}
             isComment={true}
           />
         ))}

@@ -16,6 +16,7 @@ type TProps = {
   community: TCommunity;
   createdAt: string;
   comments: TThread[];
+  likes: string[];
   isComment?: boolean;
 };
 
@@ -28,6 +29,7 @@ const ThreadCard = ({
   community,
   createdAt,
   comments,
+  likes,
   isComment,
 }: TProps) => {
   return (
@@ -60,7 +62,11 @@ const ThreadCard = ({
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
-                <LikeThread thread_Id={thread_Id} likedBy_Id={currentUser_Id} />
+                <LikeThread
+                  thread_Id={thread_Id}
+                  likedBy_Id={currentUser_Id}
+                  isLiked={likes.includes(currentUser_Id)}
+                />
                 <Link href={`/thread/${thread_Id}`}>
                   <Image
                     src={"/assets/reply.svg"}
