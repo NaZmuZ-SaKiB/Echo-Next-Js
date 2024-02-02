@@ -55,62 +55,153 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
   const skip = (pageNumber - 1) * pageSize;
 
   try {
-    const threadsQuery = Thread.find({
-      parentThread: { $in: [null, undefined] },
-    })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(pageSize)
-      .populate({
-        path: "author",
-        model: User,
-      })
-      .populate({
-        path: "community",
-        model: Community,
-      });
-
     const totalthreadsCount = await Thread.countDocuments({
       parentThread: { $in: [null, undefined] },
     });
 
-    const threads = await threadsQuery.exec();
-
-    const likes = await Like.find({
-      threadId: { $in: threads.map((thread) => thread._id) },
-    }).exec();
-
-    const threadWithLikes = threads.map((thread) => {
-      const threadLikes = likes
-        .filter((like) => like.threadId.toString() === thread._id.toString())
-        .map((like) => like.likedBy.toString());
-      return {
-        ...thread.toObject(),
-        likes: threadLikes,
-      };
-    });
-
-    const replies = await Thread.find({
-      parentThread: { $in: threads.map((thread) => thread._id) },
-    }).populate({
-      path: "author",
-      model: User,
-      select: "_id id name image",
-    });
-
-    const threadsWithReplies = threadWithLikes.map((thread) => {
-      const threadReplies = replies.filter(
-        (reply) => reply.parentThread!.toString() === thread._id.toString()
-      );
-      return {
-        ...thread,
-        replies: threadReplies,
-      };
-    });
-
+    const threads = await Thread.aggregate([
+      {
+        $match: { parentThread: { $in: [null, undefined] } },
+      },
+      // Lookup for replies
+      {
+        $lookup: {
+          from: "threads",
+          let: { threadId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$parentThread", "$$threadId"],
+                },
+              },
+            },
+            // Lookup for replies author
+            {
+              $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 1,
+                      id: 1,
+                      name: 1,
+                      image: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: "$author",
+            },
+          ],
+          as: "replies",
+        },
+      },
+      // Lookup for likes
+      {
+        $lookup: {
+          from: "likes",
+          let: { threadId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$threadId", "$$threadId"],
+                },
+              },
+            },
+          ],
+          as: "likes",
+        },
+      },
+      // Lookup for author
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                id: 1,
+                name: 1,
+                image: 1,
+              },
+            },
+          ],
+        },
+      },
+      // Unwind author
+      {
+        $unwind: "$author",
+      },
+      // Lookup for community
+      {
+        $lookup: {
+          from: "communities",
+          localField: "community",
+          foreignField: "_id",
+          as: "community",
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                id: 1,
+                name: 1,
+                image: 1,
+              },
+            },
+          ],
+        },
+      },
+      // Unwind community
+      {
+        $unwind: {
+          path: "$community",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      // Pagination
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: pageSize,
+      },
+      // Projecting the final result
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          likes: {
+            $map: {
+              input: "$likes",
+              as: "like",
+              in: { $toString: "$$like.likedBy" }, // Convert ObjectId to string
+            },
+          },
+          replies: 1,
+          author: 1,
+          community: {
+            $ifNull: ["$community", null],
+          },
+          createdAt: 1,
+        },
+      },
+    ]);
     const isNext = totalthreadsCount > skip + threads.length;
 
-    return { threads: threadsWithReplies, isNext };
+    return { threads: threads, isNext };
   } catch (error: any) {
     throw new Error(`Failed to fetch threads : ${error.message}`);
   }
