@@ -13,11 +13,10 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
   return (
     <section className="mt-9  max-sm:mt-5 flex flex-col gap-10  max-sm:gap-4">
       {result.map((reply: any) => (
-        <>
+        <div key={reply.parentThread._id.toString()}>
           <Link
             href={`/thread/${reply.parentThread._id}`}
             className="w-[70%] h-32 overflow-hidden opacity-40 z-0"
-            key={reply.parentThread._id.toString()}
           >
             <ThreadCard
               thread_Id={reply.parentThread._id.toString()}
@@ -59,7 +58,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
               isComment={false}
             />
           </div>
-        </>
+        </div>
       ))}
     </section>
   );
