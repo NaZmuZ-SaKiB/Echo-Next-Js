@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FilterQuery, SortOrder, Types } from "mongoose";
+import { FilterQuery, PipelineStage, SortOrder, Types } from "mongoose";
 
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
@@ -234,66 +234,155 @@ export const getUserThreadsCount = async (userId: string) => {
 export const fetchUsersReplies = async (userId: string) => {
   connectToDB();
   try {
-    const threads = await Thread.find({
-      author: userId,
-      parentThread: { $in: [undefined, null] },
-    }).select("_id");
-
-    const mainReplies = await Thread.find({
-      parentThread: { $in: threads.map((thread) => thread._id) },
-      author: { $ne: userId },
-    })
-      .populate({
-        path: "author",
-        model: User,
-        select: "_id id name image",
-      })
-      .populate({
-        path: "parentThread",
-        model: Thread,
-        populate: {
-          path: "author",
-          model: User,
-          select: "_id id name image",
+    const threads = await Thread.aggregate([
+      {
+        $match: {
+          author: new Types.ObjectId(userId),
+          parentThread: { $in: [undefined, null] },
         },
-      });
+      },
+      // lookup for author
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+        },
+      },
+      // unwind author
+      {
+        $unwind: "$author",
+      },
+      // lookup for main replies
+      {
+        $lookup: {
+          from: "threads",
+          let: { threadId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$parentThread", "$$threadId"],
+                },
+              },
+            },
+            // Lookup for replies author
+            {
+              $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 1,
+                      id: 1,
+                      name: 1,
+                      image: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: "$author",
+            },
+            // Lookup for replies likes
+            {
+              $lookup: {
+                from: "likes",
+                let: { threadId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$threadId", "$$threadId"],
+                      },
+                    },
+                  },
+                ],
+                as: "likes",
+              },
+            },
+            // lookup for nested replies
+            {
+              $lookup: {
+                from: "threads",
+                let: { threadId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$parentThread", "$$threadId"],
+                      },
+                    },
+                  },
+                  // Lookup for nested replies author
+                  {
+                    $lookup: {
+                      from: "users",
+                      localField: "author",
+                      foreignField: "_id",
+                      as: "author",
+                      pipeline: [
+                        {
+                          $project: {
+                            _id: 1,
+                            id: 1,
+                            name: 1,
+                            image: 1,
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    $unwind: "$author",
+                  },
+                ],
+                as: "replies",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                author: 1,
+                text: 1,
+                replies: 1,
+                likes: {
+                  $map: {
+                    input: "$likes",
+                    as: "like",
+                    in: { $toString: "$$like.likedBy" }, // Convert ObjectId to string
+                  },
+                },
+              },
+            },
+          ],
+          as: "replies",
+        },
+      },
+      // filter out threads with no replies
+      {
+        $match: { replies: { $ne: [] } },
+      },
+      // sorting
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          author: 1,
+          replies: 1,
+        },
+      },
+    ]);
 
-    const mainRepliesLikes = await Like.find({
-      threadId: { $in: mainReplies.map((thread) => thread._id) },
-    }).exec();
-
-    const mainRepliesWithLikes = mainReplies.map((thread) => {
-      const threadLikes = mainRepliesLikes
-        .filter((like) => like.threadId.toString() === thread._id.toString())
-        .map((like) => like.likedBy.toString());
-      return {
-        ...thread.toObject(),
-        likes: threadLikes,
-      };
-    });
-
-    const repliesOfMainReplies = await Thread.find({
-      parentThread: { $in: mainReplies.map((thread) => thread._id) },
-    }).populate({
-      path: "author",
-      model: User,
-      select: "_id id name image",
-    });
-
-    const replyThreadsWithReplies = mainRepliesWithLikes.map(
-      (singleReplyThread) => {
-        const threadReplies = repliesOfMainReplies.filter(
-          (reply) =>
-            reply.parentThread!.toString() === singleReplyThread._id.toString()
-        );
-        return {
-          ...singleReplyThread,
-          replies: threadReplies,
-        };
-      }
-    );
-
-    return replyThreadsWithReplies;
+    return threads;
   } catch (error: any) {
     throw new Error(`Failed to fetch user replies: ${error?.message}`);
   }
