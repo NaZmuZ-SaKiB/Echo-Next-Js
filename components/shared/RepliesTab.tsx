@@ -15,7 +15,11 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
         thread?.replies?.map((reply: any) => (
           <ReplayCard
             key={`thread-with-replies-${thread?._id?.toString()}`}
-            thread={thread}
+            thread={{
+              _id: thread?._id,
+              author: thread?.author,
+              text: thread?.text,
+            }}
             reply={reply}
             currentUser_Id={currentUser_Id.toString()}
           />
