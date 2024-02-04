@@ -6,7 +6,8 @@ import { TUser } from "@/database/user/user.interface";
 import { currentUser } from "@clerk/nextjs";
 
 const Home = async () => {
-  const result = await fetchThreads(1, 30);
+  const limit = 2;
+  const result = await fetchThreads(1, limit);
   const user = await currentUser();
 
   let userInfo: any;

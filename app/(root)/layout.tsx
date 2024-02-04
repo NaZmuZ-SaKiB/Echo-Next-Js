@@ -4,10 +4,10 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import "@/app/globals.css";
 
-import TopBar from "@/components/shared/TopBar";
-import LeftSideBar from "@/components/shared/LeftSideBar";
-import RightSideBar from "@/components/shared/RightSideBar";
-import BottomBar from "@/components/shared/BottomBar";
+import TopBar from "@/components/layout/TopBar";
+import LeftSideBar from "@/components/layout/LeftSideBar";
+import RightSideBar from "@/components/layout/RightSideBar";
+import BottomBar from "@/components/layout/BottomBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
