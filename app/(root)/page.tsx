@@ -1,4 +1,5 @@
 import ThreadCard from "@/components/cards/ThreadCard";
+import ThreadsInfiniteScroll from "@/components/shared/ThreadsInfiniteScroll";
 import { TCommunity } from "@/database/community/community.interface";
 import { fetchThreads } from "@/database/thread/thread.actions";
 import { fetchUser } from "@/database/user/user.actions";
@@ -6,7 +7,7 @@ import { TUser } from "@/database/user/user.interface";
 import { currentUser } from "@clerk/nextjs";
 
 const Home = async () => {
-  const limit = 2;
+  const limit = 4;
   const result = await fetchThreads(1, limit);
   const user = await currentUser();
 
@@ -14,7 +15,6 @@ const Home = async () => {
   if (user) {
     userInfo = await fetchUser(user?.id);
   }
-
   return (
     <main>
       <h1 className="head-text">Home</h1>
@@ -37,6 +37,10 @@ const Home = async () => {
                 likes={thread.likes}
               />
             ))}
+            <ThreadsInfiniteScroll
+              limit={limit}
+              user_Id={userInfo?._id.toString()}
+            />
           </>
         )}
       </section>
