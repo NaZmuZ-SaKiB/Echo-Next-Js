@@ -78,57 +78,151 @@ export const fetchCommunityThreads = async (communityId: string) => {
   try {
     connectToDB();
 
-    const threads = await Thread.find({
-      community: communityId,
-    })
-      .populate({
-        path: "author",
-        model: User,
-        select: "_id id name image",
-      })
-      .populate({
-        path: "community",
-        model: Community,
-      });
+    const threads = await Thread.aggregate([
+      {
+        $match: {
+          community: new Types.ObjectId(communityId),
+        },
+      },
+      // Lookup for replies
+      {
+        $lookup: {
+          from: "threads",
+          let: { threadId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$parentThread", "$$threadId"],
+                },
+              },
+            },
+            // Lookup for replies author
+            {
+              $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 1,
+                      id: 1,
+                      name: 1,
+                      image: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: "$author",
+            },
+          ],
+          as: "replies",
+        },
+      },
+      // Lookup for likes
+      {
+        $lookup: {
+          from: "likes",
+          let: { threadId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$threadId", "$$threadId"],
+                },
+              },
+            },
+          ],
+          as: "likes",
+        },
+      },
+      // Lookup for author
+      {
+        $lookup: {
+          from: "users",
+          localField: "author",
+          foreignField: "_id",
+          as: "author",
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                id: 1,
+                name: 1,
+                image: 1,
+              },
+            },
+          ],
+        },
+      },
+      // Unwind author
+      {
+        $unwind: "$author",
+      },
+      // Lookup for community
+      {
+        $lookup: {
+          from: "communities",
+          localField: "community",
+          foreignField: "_id",
+          as: "community",
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                id: 1,
+                name: 1,
+                image: 1,
+              },
+            },
+          ],
+        },
+      },
+      // Unwind community
+      {
+        $unwind: {
+          path: "$community",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      // Pagination
+      {
+        $sort: { createdAt: -1 },
+      },
+      // {
+      //   $skip: skip,
+      // },
+      // {
+      //   $limit: pageSize,
+      // },
 
-    const likes = await Like.find({
-      threadId: { $in: threads.map((thread) => thread._id) },
-    }).exec();
+      // Projecting the final result
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          likes: {
+            $map: {
+              input: "$likes",
+              as: "like",
+              in: { $toString: "$$like.likedBy" }, // Convert ObjectId to string
+            },
+          },
+          replies: 1,
+          author: 1,
+          community: {
+            $ifNull: ["$community", null],
+          },
+          createdAt: 1,
+        },
+      },
+    ]);
 
-    const threadsWithLikes = threads.map((thread) => {
-      const threadLikes = likes
-        .filter((like) => like.threadId.toString() === thread._id.toString())
-        .map((like) => like.likedBy.toString());
-      return {
-        ...thread.toObject(),
-        likes: threadLikes,
-      };
-    });
-
-    const replies = await Thread.find({
-      parentThread: { $in: threads.map((thread) => thread._id) },
-    })
-      .populate({
-        path: "author",
-        model: User,
-        select: "_id id name image",
-      })
-      .populate({
-        path: "community",
-        model: Community,
-      });
-
-    const threadsWithReplies = threadsWithLikes.map((thread) => {
-      const threadReplies = replies.filter(
-        (reply) => reply.parentThread!.toString() === thread._id.toString()
-      );
-      return {
-        ...thread,
-        replies: threadReplies,
-      };
-    });
-
-    return threadsWithReplies;
+    return threads;
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community posts:", error);

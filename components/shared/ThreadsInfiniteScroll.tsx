@@ -16,18 +16,20 @@ type TProps = {
 const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
   const [page, setPage] = useState<number>(1);
   const [isNext, setIsNext] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const { ref, inView } = useInView();
 
   const [threads, setThreads] = useState<any[]>([]);
 
   const fetchMore = () => {
-    if (!isNext) return;
+    if (!isNext || isFetching) return;
     setPage((prev) => prev + 1);
   };
 
   const fetchNewThreads = async () => {
     if (page === 1) return;
+    setIsFetching(true);
 
     const result = await fetchThreads(page, limit);
     setThreads((prev) => [...prev, ...result.threads]);
@@ -35,6 +37,8 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
     if (!result.isNext) {
       setIsNext(false);
     }
+
+    setIsFetching(false);
   };
 
   useEffect(() => {
@@ -46,23 +50,40 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
       fetchMore();
     }
   }, [inView]);
-
   return (
     <>
-      {threads.map((thread) => (
-        <ThreadCard
-          key={thread._id.toString()}
-          thread_Id={thread._id.toString()}
-          currentUser_Id={user_Id || ""}
-          parent_Id={null}
-          content={thread.text}
-          author={thread.author as unknown as TUser}
-          community={thread.community as unknown as TCommunity}
-          createdAt={thread.createdAt!}
-          comments={thread.replies}
-          likes={thread.likes}
-        />
-      ))}
+      {threads.map((thread) => {
+        const { _id, id, name, image } = thread.author;
+        const comments = thread.replies.map((reply: any) => ({
+          author: {
+            image: reply.author.image,
+          },
+        }));
+        console.log(thread);
+
+        return (
+          <ThreadCard
+            key={thread._id.toString()}
+            thread_Id={thread._id.toString()}
+            currentUser_Id={user_Id || ""}
+            parent_Id={null}
+            content={thread.text}
+            author={{ _id: _id.toString(), id, name, image } as TUser}
+            community={
+              thread.community
+                ? ({
+                    id: thread.community.id,
+                    name: thread.community.name,
+                    image: thread.community.image,
+                  } as TCommunity)
+                : (null as unknown as TCommunity)
+            }
+            createdAt={thread.createdAt!}
+            comments={comments}
+            likes={thread.likes}
+          />
+        );
+      })}
       {isNext ? (
         <div ref={ref}>
           <ThreadCardLoading isComment={false} />
