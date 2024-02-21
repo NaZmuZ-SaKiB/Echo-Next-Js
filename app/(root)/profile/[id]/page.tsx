@@ -22,9 +22,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   if (!profileUserInfo) redirect("/");
   if (!profileUserInfo?.onboarded) redirect("/onboarding");
 
-  const userThreadsCount = await getUserThreadsCount(
-    profileUserInfo._id.toString()
-  );
+  const userThreadsCount = await getUserThreadsCount(`${profileUserInfo._id}`);
 
   return (
     <section>
@@ -59,8 +57,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUser_Id={authUserInfo._id.toString()}
-                fetchAccount_Id={profileUserInfo._id.toString()}
+                currentUser_Id={`${authUserInfo._id}`}
+                fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />
             </Suspense>
@@ -72,8 +70,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <RepliesTab
-                currentUser_Id={authUserInfo._id.toString()}
-                user_id={profileUserInfo._id.toString()}
+                currentUser_Id={`${authUserInfo._id}`}
+                user_id={`${profileUserInfo._id}`}
               />
             </Suspense>
           </TabsContent>
@@ -84,8 +82,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUser_Id={authUserInfo._id.toString()}
-                fetchAccount_Id={profileUserInfo._id.toString()}
+                currentUser_Id={`${authUserInfo._id}`}
+                fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />
             </Suspense>

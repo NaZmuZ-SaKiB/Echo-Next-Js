@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import ThreadCard from "../cards/ThreadCard";
 import { fetchCommunityThreads } from "@/database/community/community.actions";
 import { fetchUserThreads } from "@/database/user/user.actions";
+import ThreadCard2 from "../cards/ThreadCard2";
+import { TThreadProfilePage } from "@/database/thread/thread.interface";
 
 type TProps = {
   currentUser_Id: string; // _id
@@ -26,24 +27,11 @@ const ThreadsTab = async ({
 
   return (
     <section className="mt-9  max-sm:mt-5 flex flex-col gap-10  max-sm:gap-4">
-      {result.map((thread: any) => (
-        <ThreadCard
-          key={thread._id.toString()}
-          thread_Id={thread._id.toString()}
-          currentUser_Id={currentUser_Id.toString()}
-          parent_Id={null}
-          content={thread.text}
-          author={{
-            _id: thread.author._id,
-            name: thread.author.name,
-            image: thread.author.image,
-            id: thread.author.id,
-            username: thread.author.username,
-          }}
-          community={thread.community}
-          createdAt={thread.createdAt}
-          comments={thread.replies}
-          likes={thread.likes}
+      {result.map((thread: TThreadProfilePage) => (
+        <ThreadCard2
+          key={`${thread._id}`}
+          currentUser_Id={currentUser_Id}
+          JSONThread={JSON.stringify(thread)}
           isComment={false}
         />
       ))}

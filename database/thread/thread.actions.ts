@@ -86,7 +86,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
                 pipeline: [
                   {
                     $project: {
-                      _id: 1,
+                      _id: { $toString: "$_id" },
                       id: 1,
                       name: 1,
                       image: 1,
@@ -97,6 +97,16 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
             },
             {
               $unwind: "$author",
+            },
+            {
+              $project: {
+                _id: { $toString: "$_id" },
+                text: 1,
+                author: 1,
+                community: { $toString: "$community" },
+                parentThread: { $toString: "$parentThread" },
+                createdAt: 1,
+              },
             },
           ],
           as: "replies",
@@ -129,7 +139,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -152,7 +162,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -181,7 +191,7 @@ export const fetchThreads = async (pageNumber = 1, pageSize = 20) => {
       // Projecting the final result
       {
         $project: {
-          _id: 1,
+          _id: { $toString: "$_id" },
           text: 1,
           likes: {
             $map: {

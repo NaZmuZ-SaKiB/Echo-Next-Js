@@ -107,7 +107,7 @@ export const fetchCommunityThreads = async (communityId: string) => {
                 pipeline: [
                   {
                     $project: {
-                      _id: 1,
+                      _id: { $toString: "$_id" },
                       id: 1,
                       name: 1,
                       image: 1,
@@ -150,7 +150,7 @@ export const fetchCommunityThreads = async (communityId: string) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -173,7 +173,7 @@ export const fetchCommunityThreads = async (communityId: string) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -203,7 +203,7 @@ export const fetchCommunityThreads = async (communityId: string) => {
       // Projecting the final result
       {
         $project: {
-          _id: 1,
+          _id: { $toString: "$_id" },
           text: 1,
           likes: {
             $map: {

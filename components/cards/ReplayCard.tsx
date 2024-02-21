@@ -1,6 +1,6 @@
 import Image from "next/image";
-import ThreadCard from "./ThreadCard";
 import Link from "next/link";
+import ThreadCard2 from "./ThreadCard2";
 
 const ReplayCard = ({
   thread,
@@ -45,23 +45,10 @@ const ReplayCard = ({
         </div>
       </Link>
 
-      <ThreadCard
-        key={reply._id.toString()}
-        thread_Id={reply._id.toString()}
-        currentUser_Id={currentUser_Id.toString()}
-        parent_Id={thread._id.toString()}
-        content={reply.text}
-        author={{
-          _id: reply.author._id,
-          id: reply.author.id,
-          name: reply.author.name,
-          image: reply.author.image,
-          username: reply.author.username,
-        }}
-        community={reply.community}
-        createdAt={reply.createdAt}
-        comments={reply?.replies}
-        likes={reply?.likes}
+      <ThreadCard2
+        key={`${reply._id}`}
+        currentUser_Id={currentUser_Id}
+        JSONThread={JSON.stringify(reply)}
         isComment={false}
       />
     </div>

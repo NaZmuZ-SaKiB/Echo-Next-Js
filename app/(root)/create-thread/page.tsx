@@ -1,5 +1,4 @@
 import PostThread from "@/components/forms/PostThread";
-import { Skeleton } from "@/components/ui/skeleton";
 import { fetchUser } from "@/database/user/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -16,7 +15,7 @@ const CreateThreadPage = async () => {
   return (
     <>
       <h1 className="head-text">Create Thread</h1>
-      <PostThread user_Id={userInfo._id.toString()} />
+      <PostThread user_Id={`${userInfo._id}`} />
     </>
   );
 };

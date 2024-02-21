@@ -2,11 +2,11 @@
 
 import { fetchThreads } from "@/database/thread/thread.actions";
 import { useEffect, useState } from "react";
-import ThreadCard from "../cards/ThreadCard";
 import { TUser } from "@/database/user/user.interface";
 import { TCommunity } from "@/database/community/community.interface";
 import ThreadCardLoading from "../loaders/ThreadCardLoading";
 import { useInView } from "react-intersection-observer";
+import ThreadCard2 from "../cards/ThreadCard2";
 
 type TProps = {
   limit: number;
@@ -53,34 +53,11 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
   return (
     <>
       {threads.map((thread) => {
-        const { _id, id, name, image } = thread.author;
-        const comments = thread.replies.map((reply: any) => ({
-          author: {
-            image: reply.author.image,
-          },
-        }));
-        console.log(thread);
-
         return (
-          <ThreadCard
-            key={thread._id.toString()}
-            thread_Id={thread._id.toString()}
-            currentUser_Id={user_Id || ""}
-            parent_Id={null}
-            content={thread.text}
-            author={{ _id: _id.toString(), id, name, image } as TUser}
-            community={
-              thread.community
-                ? ({
-                    id: thread.community.id,
-                    name: thread.community.name,
-                    image: thread.community.image,
-                  } as TCommunity)
-                : (null as unknown as TCommunity)
-            }
-            createdAt={thread.createdAt!}
-            comments={comments}
-            likes={thread.likes}
+          <ThreadCard2
+            key={`${thread._id}`}
+            currentUser_Id={user_Id}
+            JSONThread={JSON.stringify(thread)}
           />
         );
       })}

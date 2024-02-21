@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
-import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchUser } from "@/database/user/user.actions";
 import { fetchThreadById } from "@/database/thread/thread.actions";
 import Comment from "@/components/forms/Comment";
-import { TUser } from "@/database/user/user.interface";
-import { TCommunity } from "@/database/community/community.interface";
+import ThreadCard2 from "@/components/cards/ThreadCard2";
 
 const ThreadPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -21,40 +19,26 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="relative">
       <div>
-        <ThreadCard
-          thread_Id={thread._id.toString()}
-          currentUser_Id={userInfo?._id.toString() || ""}
-          parent_Id={thread?.parentThread?.toString()}
-          content={thread.text}
-          author={thread.author as unknown as TUser}
-          community={thread.community as unknown as TCommunity}
-          createdAt={thread.createdAt as unknown as string}
-          comments={thread.replies}
-          likes={thread.likes}
+        <ThreadCard2
+          currentUser_Id={`${userInfo?._id}` || ""}
+          JSONThread={JSON.stringify(thread)}
         />
       </div>
 
       <div className="mt-7">
         <Comment
-          thread_Id={thread._id.toString()}
+          thread_Id={`${thread._id}`}
           currentUserImg={userInfo.image || user.imageUrl}
-          currentUser_Id={userInfo._id.toString()}
+          currentUser_Id={`${userInfo._id}`}
         />
       </div>
 
       <div className="mt-10">
         {thread.replies.map((reply) => (
-          <ThreadCard
-            key={reply._id.toString()}
-            thread_Id={reply._id.toString()}
-            currentUser_Id={userInfo?._id.toString() || ""}
-            parent_Id={reply?.parentThread?.toString()}
-            content={reply.text}
-            author={reply.author as unknown as TUser}
-            community={reply.community as unknown as TCommunity}
-            createdAt={reply.createdAt as unknown as string}
-            comments={reply.replies}
-            likes={reply.likes}
+          <ThreadCard2
+            key={`${reply._id}`}
+            currentUser_Id={`${userInfo?._id}` || ""}
+            JSONThread={JSON.stringify(reply)}
             isComment={true}
           />
         ))}

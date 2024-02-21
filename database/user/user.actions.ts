@@ -95,7 +95,7 @@ export const fetchUserThreads = async (userId: string) => {
                 pipeline: [
                   {
                     $project: {
-                      _id: 1,
+                      _id: { $toString: "$_id" },
                       id: 1,
                       name: 1,
                       image: 1,
@@ -138,7 +138,7 @@ export const fetchUserThreads = async (userId: string) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -161,7 +161,7 @@ export const fetchUserThreads = async (userId: string) => {
           pipeline: [
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 id: 1,
                 name: 1,
                 image: 1,
@@ -191,7 +191,7 @@ export const fetchUserThreads = async (userId: string) => {
       // Projecting the final result
       {
         $project: {
-          _id: 1,
+          _id: { $toString: "$_id" },
           text: 1,
           likes: {
             $map: {
@@ -277,7 +277,7 @@ export const fetchUsersReplies = async (userId: string) => {
                 pipeline: [
                   {
                     $project: {
-                      _id: 1,
+                      _id: { $toString: "$_id" },
                       id: 1,
                       name: 1,
                       image: 1,
@@ -329,7 +329,7 @@ export const fetchUsersReplies = async (userId: string) => {
                       pipeline: [
                         {
                           $project: {
-                            _id: 1,
+                            _id: { $toString: "$_id" },
                             id: 1,
                             name: 1,
                             image: 1,
@@ -347,7 +347,7 @@ export const fetchUsersReplies = async (userId: string) => {
             },
             {
               $project: {
-                _id: 1,
+                _id: { $toString: "$_id" },
                 author: 1,
                 text: 1,
                 replies: 1,
@@ -374,7 +374,7 @@ export const fetchUsersReplies = async (userId: string) => {
       },
       {
         $project: {
-          _id: 1,
+          _id: { $toString: "$_id" },
           text: 1,
           author: 1,
           replies: 1,

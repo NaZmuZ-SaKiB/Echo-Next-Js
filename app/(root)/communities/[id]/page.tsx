@@ -23,7 +23,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   if (!communityDetails) return null;
 
   const communityThreadsCount = await getCommunityThreadsCount(
-    communityDetails._id.toString()
+    `${communityDetails._id}`
   );
 
   return (
@@ -56,8 +56,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="threads">
             <ThreadsTab
-              currentUser_Id={userInfo._id.toString()}
-              fetchAccount_Id={communityDetails._id.toString()}
+              currentUser_Id={`${userInfo._id}`}
+              fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"
             />
           </TabsContent>
@@ -79,8 +79,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="requests">
             <ThreadsTab
-              currentUser_Id={userInfo._id.toString()}
-              fetchAccount_Id={communityDetails._id.toString()}
+              currentUser_Id={`${userInfo._id}`}
+              fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"
             />
           </TabsContent>
