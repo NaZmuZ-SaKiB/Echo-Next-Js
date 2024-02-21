@@ -28,7 +28,12 @@ const Home = async () => {
                 JSONThread={JSON.stringify(thread)}
               />
             ))}
-            <ThreadsInfiniteScroll limit={limit} user_Id={`${userInfo?._id}`} />
+            <ThreadsInfiniteScroll
+              limit={limit}
+              user_Id={`${userInfo?._id}`}
+              fetchFunc={fetchThreads}
+              args={[]}
+            />
           </>
         )}
       </section>

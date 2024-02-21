@@ -74,9 +74,18 @@ export const fetchCommunityDetails = async (id: string) => {
   }
 };
 
-export const fetchCommunityThreads = async (communityId: string) => {
+export const fetchCommunityThreads = async (
+  communityId: string,
+  pageNumber: number,
+  pageSize: number
+) => {
+  connectToDB();
+
+  const skip = (pageNumber - 1) * pageSize;
   try {
-    connectToDB();
+    const totalthreadsCount = await Thread.countDocuments({
+      community: communityId,
+    });
 
     const threads = await Thread.aggregate([
       {
@@ -118,6 +127,12 @@ export const fetchCommunityThreads = async (communityId: string) => {
             },
             {
               $unwind: "$author",
+            },
+            {
+              $project: {
+                _id: { $toString: "$_id" },
+                author: 1,
+              },
             },
           ],
           as: "replies",
@@ -193,12 +208,12 @@ export const fetchCommunityThreads = async (communityId: string) => {
       {
         $sort: { createdAt: -1 },
       },
-      // {
-      //   $skip: skip,
-      // },
-      // {
-      //   $limit: pageSize,
-      // },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: pageSize,
+      },
 
       // Projecting the final result
       {
@@ -222,7 +237,13 @@ export const fetchCommunityThreads = async (communityId: string) => {
       },
     ]);
 
-    return threads;
+    const isNext = totalthreadsCount > skip + threads.length;
+    // console.log("total", totalthreadsCount);
+    // console.log("skip", skip);
+    // console.log("isnext", isNext);
+    // console.log(threads);
+
+    return { threads: threads, isNext };
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community posts:", error);

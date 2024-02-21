@@ -1,19 +1,26 @@
 "use client";
 
-import { fetchThreads } from "@/database/thread/thread.actions";
 import { useEffect, useState } from "react";
-import { TUser } from "@/database/user/user.interface";
-import { TCommunity } from "@/database/community/community.interface";
 import ThreadCardLoading from "../loaders/ThreadCardLoading";
 import { useInView } from "react-intersection-observer";
 import ThreadCard2 from "../cards/ThreadCard2";
+import ReplayCard from "../cards/ReplayCard";
 
 type TProps = {
   limit: number;
   user_Id: string;
+  fetchFunc: Function;
+  args: any[];
+  isReplayCard?: boolean;
 };
 
-const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
+const ThreadsInfiniteScroll = ({
+  limit,
+  user_Id,
+  fetchFunc,
+  args,
+  isReplayCard,
+}: TProps) => {
   const [page, setPage] = useState<number>(1);
   const [isNext, setIsNext] = useState<boolean>(true);
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -31,7 +38,7 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
     if (page === 1) return;
     setIsFetching(true);
 
-    const result = await fetchThreads(page, limit);
+    const result = await fetchFunc(...args, page, limit);
     setThreads((prev) => [...prev, ...result.threads]);
 
     if (!result.isNext) {
@@ -53,7 +60,18 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
   return (
     <>
       {threads.map((thread) => {
-        return (
+        return isReplayCard ? (
+          <ReplayCard
+            key={`thread-with-replies-${thread?._id}`}
+            thread={{
+              _id: thread?._id,
+              author: thread?.author,
+              text: thread?.text,
+            }}
+            reply={thread.replies}
+            currentUser_Id={user_Id}
+          />
+        ) : (
           <ThreadCard2
             key={`${thread._id}`}
             currentUser_Id={user_Id}
@@ -66,7 +84,9 @@ const ThreadsInfiniteScroll = ({ limit, user_Id }: TProps) => {
           <ThreadCardLoading isComment={false} />
         </div>
       ) : (
-        <p className="no-result">No more threads.</p>
+        <p className="no-result">
+          No more {isReplayCard ? "replies" : "threads"}.
+        </p>
       )}
     </>
   );

@@ -62,9 +62,20 @@ export const fetchUser = async (userId: string) => {
   }
 };
 
-export const fetchUserThreads = async (userId: string) => {
+export const fetchUserThreads = async (
+  userId: string,
+  pageNumber: number,
+  pageSize: number
+) => {
   connectToDB();
+
+  const skip = (pageNumber - 1) * pageSize;
   try {
+    const totalthreadsCount = await Thread.countDocuments({
+      author: userId,
+      parentThread: { $in: [null, undefined] },
+    });
+
     const threads = await Thread.aggregate([
       {
         $match: {
@@ -106,6 +117,13 @@ export const fetchUserThreads = async (userId: string) => {
             },
             {
               $unwind: "$author",
+            },
+
+            {
+              $project: {
+                _id: { $toString: "$_id" },
+                author: 1,
+              },
             },
           ],
           as: "replies",
@@ -181,12 +199,12 @@ export const fetchUserThreads = async (userId: string) => {
       {
         $sort: { createdAt: -1 },
       },
-      // {
-      //   $skip: skip,
-      // },
-      // {
-      //   $limit: pageSize,
-      // },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: pageSize,
+      },
 
       // Projecting the final result
       {
@@ -210,7 +228,9 @@ export const fetchUserThreads = async (userId: string) => {
       },
     ]);
 
-    return threads;
+    const isNext = totalthreadsCount > skip + threads.length;
+
+    return { threads: threads, isNext };
   } catch (error: any) {
     throw new Error(`Failed to fetch user posts: ${error?.message}`);
   }
@@ -231,9 +251,28 @@ export const getUserThreadsCount = async (userId: string) => {
   }
 };
 
-export const fetchUsersReplies = async (userId: string) => {
+export const fetchUsersReplies = async (
+  userId: string,
+  pageNumber: number,
+  pageSize: number
+) => {
   connectToDB();
+
+  const skip = (pageNumber - 1) * pageSize;
   try {
+    const usersAllThreads = await Thread.find({
+      author: userId,
+      parentThread: { $in: [null, undefined] },
+    })
+      .select("_id")
+      .exec();
+
+    const usersAllIds = usersAllThreads.map((thread) => thread._id);
+
+    const totalthreadsCount = await Thread.countDocuments({
+      parentThread: { $in: usersAllIds },
+    });
+
     const threads = await Thread.aggregate([
       {
         $match: {
@@ -248,6 +287,16 @@ export const fetchUsersReplies = async (userId: string) => {
           localField: "author",
           foreignField: "_id",
           as: "author",
+          pipeline: [
+            {
+              $project: {
+                _id: { $toString: "$_id" },
+                id: 1,
+                name: 1,
+                image: 1,
+              },
+            },
+          ],
         },
       },
       // unwind author
@@ -358,6 +407,7 @@ export const fetchUsersReplies = async (userId: string) => {
                     in: { $toString: "$$like.likedBy" }, // Convert ObjectId to string
                   },
                 },
+                createdAt: 1,
               },
             },
           ],
@@ -370,7 +420,17 @@ export const fetchUsersReplies = async (userId: string) => {
       },
       // sorting
       {
-        $sort: { createdAt: -1 },
+        $unwind: "$replies",
+      },
+      {
+        $sort: { "replies.createdAt": -1 },
+      },
+      // pagination
+      {
+        $skip: skip,
+      },
+      {
+        $limit: pageSize,
       },
       {
         $project: {
@@ -382,7 +442,9 @@ export const fetchUsersReplies = async (userId: string) => {
       },
     ]);
 
-    return threads;
+    const isNext = totalthreadsCount > skip + threads.length;
+
+    return { threads: threads, isNext };
   } catch (error: any) {
     throw new Error(`Failed to fetch user replies: ${error?.message}`);
   }
