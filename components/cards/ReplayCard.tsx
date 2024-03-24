@@ -14,7 +14,7 @@ const ReplayCard = ({
   return (
     <div>
       <Link
-        href={`/thread/${thread?._id}`}
+        href={`/echo/${thread?._id}`}
         className={`flex w-full flex-col rounded-xl bg-dark-4 opacity-50 p-5 max-h-20 max-w-[70%] overflow-hidden max-sm:p-3`}
       >
         <div className="flex items-start justify-between">

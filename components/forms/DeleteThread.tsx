@@ -4,7 +4,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { deleteThread } from "@/database/thread/thread.actions";
-import { useFormStatus } from "react-dom";
 import { useState } from "react";
 
 type TProps = {

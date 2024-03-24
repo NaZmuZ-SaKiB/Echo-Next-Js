@@ -23,7 +23,7 @@ const ActivityPage = async () => {
           activities.map((activity: any) => (
             <Link
               key={activity._id}
-              href={`/thread/${activity.parentThread._id}`}
+              href={`/echo/${activity.parentThread._id}`}
             >
               <article className="activity-card">
                 <Image

@@ -61,7 +61,7 @@ const ThreadCard2 = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
                   isLiked={thread.likes.includes(currentUser_Id)}
                   likesCount={thread.likes.length}
                 />
-                <Link href={`/thread/${thread._id}`}>
+                <Link href={`/echo/${thread._id}`}>
                   <Image
                     src={"/assets/reply.svg"}
                     alt="heart"
@@ -86,7 +86,7 @@ const ThreadCard2 = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
                 />
               </div>
               {isComment && thread.replies.length > 0 && (
-                <Link href={`/thread/${thread._id}`}>
+                <Link href={`/echo/${thread._id}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
                     {thread.replies.length} replies
                   </p>
@@ -116,7 +116,7 @@ const ThreadCard2 = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
             />
           ))}
 
-          <Link href={`/thread/${thread._id}`}>
+          <Link href={`/echo/${thread._id}`}>
             <p className="mt-1 text-subtle-medium text-gray-1">
               {thread.replies.length} repl
               {thread.replies.length > 1 ? "ies" : "y"}

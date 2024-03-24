@@ -75,7 +75,7 @@ const ThreadCard = ({
                   isLiked={likes.includes(currentUser_Id)}
                   likesCount={likes.length}
                 />
-                <Link href={`/thread/${thread_Id}`}>
+                <Link href={`/echo/${thread_Id}`}>
                   <Image
                     src={"/assets/reply.svg"}
                     alt="heart"
@@ -100,7 +100,7 @@ const ThreadCard = ({
                 />
               </div>
               {isComment && comments.length > 0 && (
-                <Link href={`/thread/${thread_Id}`}>
+                <Link href={`/echo/${thread_Id}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
                     {comments.length} replies
                   </p>
@@ -130,7 +130,7 @@ const ThreadCard = ({
             />
           ))}
 
-          <Link href={`/thread/${thread_Id}`}>
+          <Link href={`/echo/${thread_Id}`}>
             <p className="mt-1 text-subtle-medium text-gray-1">
               {comments.length} repl{comments.length > 1 ? "ies" : "y"}
             </p>
