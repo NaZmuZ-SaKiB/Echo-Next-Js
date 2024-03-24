@@ -16,8 +16,8 @@ export const sidebarLinks = [
   },
   {
     imgURL: "/assets/create.svg",
-    route: "/create-thread",
-    label: "Create Thread",
+    route: "/create-echo",
+    label: "Create Echo",
   },
   {
     imgURL: "/assets/community.svg",
