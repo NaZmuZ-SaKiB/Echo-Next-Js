@@ -14,7 +14,7 @@ const CreateThreadPage = async () => {
 
   return (
     <>
-      <h1 className="head-text">Create Thread</h1>
+      <h1 className="head-text">Create Echo</h1>
       <PostThread user_Id={`${userInfo._id}`} />
     </>
   );

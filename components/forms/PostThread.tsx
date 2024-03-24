@@ -77,7 +77,7 @@ const PostThread = ({ user_Id }: { user_Id: string }) => {
         >
           {form.formState.isSubmitting
             ? "Uploading your thoughts..."
-            : "Post Thread"}
+            : "Post Echo"}
         </Button>
       </form>
     </Form>
