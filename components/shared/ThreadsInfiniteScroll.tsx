@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ThreadCardLoading from "../loaders/ThreadCardLoading";
 import { useInView } from "react-intersection-observer";
-import ThreadCard2 from "../cards/ThreadCard2";
+import ThreadCard from "../cards/ThreadCard";
 import ReplayCard from "../cards/ReplayCard";
 
 type TProps = {
@@ -72,7 +72,7 @@ const ThreadsInfiniteScroll = ({
             currentUser_Id={user_Id}
           />
         ) : (
-          <ThreadCard2
+          <ThreadCard
             key={`${thread._id}`}
             currentUser_Id={user_Id}
             JSONThread={JSON.stringify(thread)}

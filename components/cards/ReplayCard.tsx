@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import ThreadCard2 from "./ThreadCard2";
+import ThreadCard from "./ThreadCard";
 
 const ReplayCard = ({
   thread,
@@ -45,7 +45,7 @@ const ReplayCard = ({
         </div>
       </Link>
 
-      <ThreadCard2
+      <ThreadCard
         key={`${reply._id}`}
         currentUser_Id={currentUser_Id}
         JSONThread={JSON.stringify(reply)}

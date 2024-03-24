@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs";
 import { fetchUser } from "@/database/user/user.actions";
 import { fetchThreadById } from "@/database/thread/thread.actions";
 import Comment from "@/components/forms/Comment";
-import ThreadCard2 from "@/components/cards/ThreadCard2";
+import ThreadCard from "@/components/cards/ThreadCard";
 
 const ThreadPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -19,7 +19,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="relative">
       <div>
-        <ThreadCard2
+        <ThreadCard
           currentUser_Id={`${userInfo?._id}` || ""}
           JSONThread={JSON.stringify(thread)}
         />
@@ -35,7 +35,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
 
       <div className="mt-10">
         {thread.replies.map((reply) => (
-          <ThreadCard2
+          <ThreadCard
             key={`${reply._id}`}
             currentUser_Id={`${userInfo?._id}` || ""}
             JSONThread={JSON.stringify(reply)}

@@ -1,4 +1,4 @@
-import ThreadCard2 from "@/components/cards/ThreadCard2";
+import ThreadCard from "@/components/cards/ThreadCard";
 import ThreadsInfiniteScroll from "@/components/shared/ThreadsInfiniteScroll";
 import { fetchThreads } from "@/database/thread/thread.actions";
 import { fetchUser } from "@/database/user/user.actions";
@@ -22,7 +22,7 @@ const Home = async () => {
         ) : (
           <>
             {result?.threads.map((thread) => (
-              <ThreadCard2
+              <ThreadCard
                 key={`${thread._id}`}
                 currentUser_Id={`${userInfo?._id}` || ""}
                 JSONThread={JSON.stringify(thread)}
