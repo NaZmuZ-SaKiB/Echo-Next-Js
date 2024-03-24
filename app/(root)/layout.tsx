@@ -12,7 +12,7 @@ import BottomBar from "@/components/layout/BottomBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Threads",
+  title: "Echo",
   description: "A place to share your thoughts",
 };
 
