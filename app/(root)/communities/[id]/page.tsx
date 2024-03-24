@@ -39,13 +39,13 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
       />
 
       <div className="mt-9 max-sm:mt-5">
-        <Tabs defaultValue="threads" className="w-full">
+        <Tabs defaultValue="echos" className="w-full">
           <TabsList className="tab">
             {communityTabs.map((tab: any) => (
               <TabsTrigger key={tab.label} value={tab.value} className="tab ">
                 <Image src={tab.icon} alt={tab.label} height={24} width={24} />
                 <p className="max-sm:hidden">{tab.label}</p>
-                {tab.label === "Threads" && (
+                {tab.label === "Echos" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 text-tiny-medium text-light-2">
                     {communityThreadsCount}
                   </p>
@@ -54,7 +54,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
             ))}
           </TabsList>
 
-          <TabsContent value="threads">
+          <TabsContent value="echos">
             <ThreadsTab
               currentUser_Id={`${userInfo._id}`}
               fetchAccount_Id={`${communityDetails._id}`}
