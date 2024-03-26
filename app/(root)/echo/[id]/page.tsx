@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import { currentUser } from "@clerk/nextjs";
-import { fetchUser } from "@/database/user/user.actions";
 import { fetchThreadById } from "@/database/thread/thread.actions";
 import Comment from "@/components/forms/Comment";
 import ThreadCard from "@/components/cards/ThreadCard";
+import { currentUser } from "@/database/auth/auth.actions";
 
 const ThreadPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
@@ -11,8 +10,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!user?.onboarded) redirect("/onboarding");
 
   const thread = await fetchThreadById(params.id);
 
@@ -20,7 +18,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
     <section className="relative">
       <div>
         <ThreadCard
-          currentUser_Id={`${userInfo?._id}` || ""}
+          currentUser_Id={`${user?._id}` || ""}
           JSONThread={JSON.stringify(thread)}
         />
       </div>
@@ -28,8 +26,8 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
       <div className="mt-7">
         <Comment
           thread_Id={`${thread._id}`}
-          currentUserImg={userInfo.image || user.imageUrl}
-          currentUser_Id={`${userInfo._id}`}
+          currentUserImg={user.image || ""}
+          currentUser_Id={`${user._id}`}
         />
       </div>
 
@@ -37,7 +35,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
         {thread.replies.map((reply) => (
           <ThreadCard
             key={`${reply._id}`}
-            currentUser_Id={`${userInfo?._id}` || ""}
+            currentUser_Id={`${user?._id}` || ""}
             JSONThread={JSON.stringify(reply)}
             isComment={true}
           />
