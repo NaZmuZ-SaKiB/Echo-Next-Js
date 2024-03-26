@@ -1,11 +1,10 @@
 import { Suspense } from "react";
-import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { fetchUser } from "@/database/user/user.actions";
 import Searchbar from "@/components/shared/Searchbar";
 import SearchResult from "@/components/shared/SearchResult";
 import SearchResultLoading from "@/components/loaders/SearchResultLoading";
+import { currentUser } from "@/database/auth/auth.actions";
 
 type TProps = {
   searchParams: { [key: string]: string | undefined };
@@ -15,8 +14,7 @@ const CommunityPage = async ({ searchParams }: TProps) => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!user?.onboarded) redirect("/onboarding");
 
   const query = searchParams?.q || "";
 
