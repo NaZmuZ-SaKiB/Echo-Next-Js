@@ -11,3 +11,8 @@ export const SignUpValidation = z
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
+
+export const SignInValidation = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});

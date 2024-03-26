@@ -16,6 +16,7 @@ const userSchema = new Schema<TUser>(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     name: {
       type: String,
@@ -26,6 +27,7 @@ const userSchema = new Schema<TUser>(
     onboarded: {
       type: Boolean,
       default: false,
+      required: true,
     },
     communities: [
       {

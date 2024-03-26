@@ -17,13 +17,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
 import { createThread } from "@/database/thread/thread.actions";
 import { usePathname, useRouter } from "next/navigation";
-import { useOrganization } from "@clerk/nextjs";
 
 const PostThread = ({ user_Id }: { user_Id: string }) => {
   const router = useRouter();
   const pathname = usePathname();
-
-  const { organization } = useOrganization();
 
   const form = useForm({
     resolver: zodResolver(ThreadValidation),
@@ -37,7 +34,7 @@ const PostThread = ({ user_Id }: { user_Id: string }) => {
     await createThread({
       text: values.thread,
       author: user_Id,
-      communityId: organization ? organization.id : null,
+      communityId: null,
       path: pathname,
     });
 

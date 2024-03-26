@@ -1,9 +1,9 @@
-import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import UserCard from "../cards/UserCard";
 import { fetchUser, searchUsers } from "@/database/user/user.actions";
 import { searchCommunities } from "@/database/community/community.actions";
 import CommunityCard from "../cards/CommunityCard";
+import { currentUser } from "@/database/auth/auth.actions";
 
 type TProps = {
   type: "User" | "Community";
@@ -15,13 +15,12 @@ const SearchResult = async ({ type, query, page }: TProps) => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!user?.onboarded) redirect("/onboarding");
 
   let result: any;
   if (type === "User") {
     result = await searchUsers({
-      userId: user.id,
+      userId: `${user._id}`,
       searchString: query || "",
       pageNumber: page ? +page : 1,
       pageSize: 25,
@@ -47,8 +46,8 @@ const SearchResult = async ({ type, query, page }: TProps) => {
         <>
           {result?.users?.map((person: any) => (
             <UserCard
-              key={person.id}
-              id={person.id}
+              key={`${person._id}`}
+              id={`${person._id}`}
               name={person.name}
               username={person.username}
               imgUrl={person.image}
@@ -64,8 +63,8 @@ const SearchResult = async ({ type, query, page }: TProps) => {
         <>
           {result?.communities?.map((community: any) => (
             <CommunityCard
-              key={community.id}
-              id={community.id}
+              key={`${community._id}`}
+              id={`${community._id}`}
               name={community.name}
               username={community.username}
               imgUrl={community.image}

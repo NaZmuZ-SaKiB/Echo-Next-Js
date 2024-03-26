@@ -1,14 +1,15 @@
 import { searchCommunities } from "@/database/community/community.actions";
 import { searchUsers } from "@/database/user/user.actions";
-import { currentUser } from "@clerk/nextjs";
+
 import UserCard from "../cards/UserCard";
 
-const RightSideBar = async () => {
-  const user = await currentUser();
-  if (!user) return null;
+type TProps = {
+  userId: string | null;
+};
 
+const RightSideBar = async ({ userId }: TProps) => {
   const similarMinds = await searchUsers({
-    userId: user.id,
+    userId: userId || "",
     searchString: "",
     pageNumber: 1,
     pageSize: 4,

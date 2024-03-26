@@ -1,16 +1,22 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { SignOutButton, SignedIn, useAuth } from "@clerk/nextjs";
 
 import { sidebarLinks } from "@/constants";
+import { signOut } from "@/database/auth/auth.actions";
 
-const LeftSideBar = () => {
-  const { userId, isSignedIn } = useAuth();
-  const router = useRouter();
+type TProps = {
+  userId: string | null;
+};
+
+const LeftSideBar = ({ userId }: TProps) => {
   const pathname = usePathname();
+
+  const logout = async () => {
+    await signOut();
+  };
 
   return (
     <section className="custom-scrollbar leftsidebar">
@@ -42,31 +48,15 @@ const LeftSideBar = () => {
         })}
       </div>
       <div className="mt-10 px-6">
-        {isSignedIn ? (
-          <SignedIn>
-            <SignOutButton signOutCallback={() => router.push("/sign-in")}>
-              <div className="flex cursor-pointer gap-4 p-4">
-                <Image
-                  src={"/assets/logout.svg"}
-                  width={24}
-                  height={24}
-                  alt="logout"
-                />
-                <p className="text-light-1 max-lg:hidden">Logout</p>
-              </div>
-            </SignOutButton>
-          </SignedIn>
-        ) : (
-          <Link href={"/sign-in"} className={`leftsidebar_link`}>
-            <Image
-              src={"/assets/login.svg"}
-              alt={"log in"}
-              width={24}
-              height={24}
-            />
-            <p className="text-light-1 max-lg:hidden">Login</p>
-          </Link>
-        )}
+        <div className="flex cursor-pointer gap-4 p-4" onClick={logout}>
+          <Image
+            src={"/assets/logout.svg"}
+            width={24}
+            height={24}
+            alt="logout"
+          />
+          <p className="text-light-1 max-lg:hidden">Logout</p>
+        </div>
       </div>
     </section>
   );

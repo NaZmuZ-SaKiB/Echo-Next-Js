@@ -1,23 +1,21 @@
 import AccountProfile from "@/components/forms/AccountProfile";
+import { currentUser } from "@/database/auth/auth.actions";
 import { fetchUser } from "@/database/user/user.actions";
 import { TUser } from "@/database/user/user.interface";
-import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 const ProfileEditPage = async () => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!user?.onboarded) redirect("/onboarding");
 
   const userData = {
-    id: user.id,
-    _id: userInfo?._id,
-    username: userInfo ? userInfo?.username : user.username,
-    name: userInfo ? userInfo?.name : user.firstName ?? "",
-    bio: userInfo ? userInfo?.bio : "",
-    image: userInfo ? userInfo?.image : user.imageUrl,
+    _id: `${user?._id}`,
+    username: user?.username || "",
+    name: user?.name || "",
+    bio: user?.bio || "",
+    image: user?.image || null,
   };
 
   return (

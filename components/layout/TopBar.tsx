@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  OrganizationSwitcher,
-  SignOutButton,
-  SignedIn,
-  useAuth,
-} from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const TopBar = () => {
-  const { isSignedIn } = useAuth();
-  const router = useRouter();
   return (
     <nav className="topbar">
       <Link href={"/"} className="flex items-center gap-4">
@@ -21,7 +12,7 @@ const TopBar = () => {
         <p className="text-heading3-bold text-light-1 max-xs:hidden">Echo</p>
       </Link>
       <div className="flex items-center gap-1">
-        {isSignedIn ? (
+        {/* {isSignedIn ? (
           <div className="block md:hidden">
             <SignedIn>
               <SignOutButton signOutCallback={() => router.push("/sign-in")}>
@@ -40,15 +31,15 @@ const TopBar = () => {
           <Link href={"/sign-in"} className="block md:hidden text-light-1">
             Login
           </Link>
-        )}
-        <OrganizationSwitcher
+        )} */}
+        {/* <OrganizationSwitcher
           appearance={{
             elements: {
               organizationSwitcherTrigger: "py-2 px-4",
             },
             baseTheme: dark,
           }}
-        />
+        /> */}
       </div>
     </nav>
   );

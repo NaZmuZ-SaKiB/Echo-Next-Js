@@ -35,10 +35,10 @@ export const updateUser = async ({
 }: TUpdateUserParams): Promise<void> => {
   connectToDB();
   try {
-    await User.findOneAndUpdate(
-      { id: userId },
+    await User.findByIdAndUpdate(
+      userId,
       { username: username.toLowerCase(), name, bio, image, onboarded: true },
-      { upsert: true, new: true }
+      { runValidators: true, new: true }
     );
 
     if (path === "/profile/edit") {
@@ -53,7 +53,7 @@ export const fetchUser = async (userId: string) => {
   try {
     connectToDB();
 
-    return await User.findOne({ id: userId }).populate({
+    return await User.findById(userId).populate({
       path: "communities",
       model: Community,
     });
@@ -464,7 +464,8 @@ export const searchUsers = async ({
     const regex = new RegExp(searchString, "i");
 
     const query: FilterQuery<typeof User> = {
-      id: { $ne: userId },
+      _id: { $ne: userId },
+      onboarded: true,
     };
 
     if (searchString.trim() !== "") {

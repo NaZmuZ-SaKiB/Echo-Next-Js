@@ -85,7 +85,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
     }
 
     await updateUser({
-      userId: user.id,
+      userId: `${user._id}`,
       username: values.username,
       name: values.name,
       bio: values.bio,

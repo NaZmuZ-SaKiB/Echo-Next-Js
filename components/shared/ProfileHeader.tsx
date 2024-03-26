@@ -12,8 +12,8 @@ type TProps = {
 };
 
 const ProfileHeader = ({
-  profileUserId, // clerk id
-  authUserId, // clerk id
+  profileUserId,
+  authUserId,
   name,
   username,
   imgUrl,

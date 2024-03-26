@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { currentUser } from "@clerk/nextjs";
 
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,13 +9,11 @@ import ThreadsTab from "@/components/shared/ThreadsTab";
 import { Suspense } from "react";
 import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
 import RepliesTab from "@/components/shared/RepliesTab";
+import { currentUser } from "@/database/auth/auth.actions";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
-  if (!user) redirect("/");
-
-  const authUserInfo = await fetchUser(user.id);
-  if (!authUserInfo) redirect("/");
+  if (!user) redirect("/sign-in");
 
   const profileUserInfo = await fetchUser(params.id);
   if (!profileUserInfo) redirect("/");
@@ -27,8 +24,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   return (
     <section>
       <ProfileHeader
-        profileUserId={profileUserInfo.id}
-        authUserId={user.id}
+        profileUserId={`${profileUserInfo._id}`}
+        authUserId={`${user._id}`}
         name={profileUserInfo.name!}
         username={profileUserInfo.username}
         imgUrl={profileUserInfo.image!}
@@ -57,7 +54,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUser_Id={`${authUserInfo._id}`}
+                currentUser_Id={`${user._id}`}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />
@@ -70,7 +67,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <RepliesTab
-                currentUser_Id={`${authUserInfo._id}`}
+                currentUser_Id={`${user._id}`}
                 user_id={`${profileUserInfo._id}`}
               />
             </Suspense>
@@ -82,7 +79,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<ThreadsTabLoading />}>
               <ThreadsTab
-                currentUser_Id={`${authUserInfo._id}`}
+                currentUser_Id={`${user._id}`}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />
