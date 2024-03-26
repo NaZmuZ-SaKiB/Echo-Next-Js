@@ -1,18 +1,18 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import ThreadsInfiniteScroll from "@/components/shared/ThreadsInfiniteScroll";
+import { currentUser } from "@/database/auth/auth.actions";
 import { fetchThreads } from "@/database/thread/thread.actions";
-import { fetchUser } from "@/database/user/user.actions";
-import { currentUser } from "@clerk/nextjs";
 
 const Home = async () => {
   const limit = 4;
   const result = await fetchThreads(1, limit);
+  // const user = await currentUser();
   const user = await currentUser();
 
-  let userInfo: any;
-  if (user) {
-    userInfo = await fetchUser(user?.id);
-  }
+  let userInfo = {
+    id: "user_2bARJaBCwFPcIZ0mHBIuJU4Kvkw",
+    _id: "65afca928860cc939ce280b1",
+  };
   return (
     <main>
       <h1 className="head-text">Home</h1>
