@@ -1,24 +1,21 @@
 import AccountProfile from "@/components/forms/AccountProfile";
+import { currentUser } from "@/database/auth/auth.actions";
 import { fetchUser } from "@/database/user/user.actions";
 import { TUser } from "@/database/user/user.interface";
-import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 const OnboardingPage = async () => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-
-  if (userInfo?.onboarded) redirect("/");
+  if (user?.onboarded) redirect("/");
 
   const userData = {
-    id: user.id,
-    _id: userInfo?._id,
-    username: userInfo?.username || user?.username,
-    name: userInfo?.name || user?.firstName,
-    bio: userInfo?.bio || "",
-    image: userInfo?.image || user?.imageUrl,
+    _id: `${user._id}`,
+    username: user?.username || "",
+    name: user?.name || "",
+    bio: user?.bio || "",
+    image: user?.image || null,
   };
   return (
     <main className="mx-auto flex max-w-3xl flex-col justify-start px-10 py-20">
