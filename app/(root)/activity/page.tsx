@@ -1,16 +1,15 @@
-import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { fetchUser, getUserActivity } from "@/database/user/user.actions";
+import { getUserActivity } from "@/database/user/user.actions";
 import Link from "next/link";
 import Image from "next/image";
+import { currentUser } from "@/database/auth/auth.actions";
 
 const ActivityPage = async () => {
   const user = await currentUser();
   if (!user) return null;
 
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
+  if (!user?.onboarded) redirect("/onboarding");
 
   // const activities = await getUserActivity(userInfo._id);
   const activities: any[] = [];
