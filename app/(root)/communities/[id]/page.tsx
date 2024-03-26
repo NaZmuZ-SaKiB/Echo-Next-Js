@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { currentUser } from "@clerk/nextjs";
 
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,13 +10,11 @@ import {
 } from "@/database/community/community.actions";
 import UserCard from "@/components/cards/UserCard";
 import { fetchUser } from "@/database/user/user.actions";
+import { currentUser } from "@/database/auth/auth.actions";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
   if (!user) return null;
-
-  const userInfo = await fetchUser(user.id);
-  if (!userInfo) return null;
 
   const communityDetails = await fetchCommunityDetails(params.id);
   if (!communityDetails) return null;
@@ -56,7 +53,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="echos">
             <ThreadsTab
-              currentUser_Id={`${userInfo._id}`}
+              currentUser_Id={`${user._id}`}
               fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"
             />
@@ -66,8 +63,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
             <section className="mt-9 flex flex-col gap-10">
               {communityDetails?.members?.map((member: any) => (
                 <UserCard
-                  key={member.id}
-                  id={member.id}
+                  key={`${member._id}`}
+                  id={`${member._id}`}
                   name={member.name}
                   username={member.username}
                   imgUrl={member.image}
@@ -79,7 +76,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="requests">
             <ThreadsTab
-              currentUser_Id={`${userInfo._id}`}
+              currentUser_Id={`${user._id}`}
               fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"
             />
