@@ -1,10 +1,33 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { jwtHelpers } from "./utils/jwt";
 
-export default authMiddleware({
-  publicRoutes: ["/", "/api/webhook/clerk", "/api/uploadthing"],
-  ignoredRoutes: ["/api/webhook/clerk"],
-});
+export const middleware = async (req: NextRequest) => {
+  console.log("middleware", req.url);
+
+  const jwt = cookies().get("jwt");
+
+  if (!jwt?.value) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  try {
+    await jwtHelpers.verifyToken(jwt.value, process.env.JWT_SECRET as string);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  return NextResponse.next();
+};
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/",
+    "/profile/:path*",
+    "/search",
+    "/create-echo",
+    "/communities/:path*",
+    "/activity",
+  ],
 };
