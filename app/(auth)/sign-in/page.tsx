@@ -14,10 +14,13 @@ import { signIn } from "@/database/auth/auth.actions";
 import { SignInValidation } from "@/database/auth/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const SignInPage = () => {
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
   const form = useForm({
@@ -29,9 +32,15 @@ const SignInPage = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof SignInValidation>) => {
-    await signIn(values.email, values.password);
-    form.reset();
-    router.push("/");
+    setError(null);
+
+    try {
+      await signIn(values.email, values.password);
+      form.reset();
+      router.push("/");
+    } catch (error: any) {
+      setError(error?.message || "An error occurred.");
+    }
   };
   return (
     <div className="w-full max-w-lg">
@@ -41,6 +50,10 @@ const SignInPage = () => {
           className="flex flex-col justify-start gap-10 max-sm:gap-6"
         >
           <h1 className="head-text">Sign in</h1>
+
+          {error && (
+            <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+          )}
 
           <FormField
             control={form.control}

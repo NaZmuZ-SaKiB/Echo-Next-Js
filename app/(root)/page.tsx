@@ -4,15 +4,11 @@ import { currentUser } from "@/database/auth/auth.actions";
 import { fetchThreads } from "@/database/thread/thread.actions";
 
 const Home = async () => {
-  const limit = 4;
-  const result = await fetchThreads(1, limit);
-  // const user = await currentUser();
   const user = await currentUser();
 
-  let userInfo = {
-    id: "user_2bARJaBCwFPcIZ0mHBIuJU4Kvkw",
-    _id: "65afca928860cc939ce280b1",
-  };
+  const limit = 4;
+  const result = await fetchThreads(1, limit);
+
   return (
     <main>
       <h1 className="head-text">Home</h1>
@@ -24,13 +20,13 @@ const Home = async () => {
             {result?.threads.map((thread) => (
               <ThreadCard
                 key={`${thread._id}`}
-                currentUser_Id={`${userInfo?._id}` || ""}
+                currentUser_Id={`${user?._id}` || ""}
                 JSONThread={JSON.stringify(thread)}
               />
             ))}
             <ThreadsInfiniteScroll
               limit={limit}
-              user_Id={`${userInfo?._id}`}
+              user_Id={`${user?._id}`}
               fetchFunc={fetchThreads}
               args={[]}
             />

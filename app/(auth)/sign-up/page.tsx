@@ -14,20 +14,28 @@ import { sendVerificationEmail, signUp } from "@/database/auth/auth.actions";
 import { SignUpValidation } from "@/database/auth/auth.validation";
 import { generateVerificationCode, verifyCode } from "@/utils/verificationCode";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+type TVerificationCode = {
+  code: string;
+  createdAt: number;
+} | null;
+
 const SignUpPage = () => {
+  const [verificationCode, setVerificationCode] =
+    useState<TVerificationCode>(null);
   const [verified, setVerified] = useState<false | string>(false);
+  const [codeSent, setCodeSent] = useState<boolean>(false);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [codeSent, setCodeSent] = useState<boolean>(false);
-  const [verificationCode, setVerificationCode] = useState<{
-    code: string;
-    createdAt: number;
-  } | null>(null);
+
   const [code, setCode] = useState<string>("");
+
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(SignUpValidation),
@@ -60,13 +68,16 @@ const SignUpPage = () => {
       await sendVerificationEmail(form.getValues("email"), result.code);
       setCodeSent(true);
     } catch (error) {
+      setError("Failed to send verification code. Please try again.");
     } finally {
       setLoading(false);
+      router.push("/sign-in");
     }
   };
 
   const onSubmit = async (values: z.infer<typeof SignUpValidation>) => {
     setError(null);
+
     if (!verified) return;
     if (verified !== values.email) {
       setError("Email changed. Please verify again.");
@@ -99,6 +110,10 @@ const SignUpPage = () => {
           className="flex flex-col justify-start gap-10 max-sm:gap-6"
         >
           <h1 className="head-text">Sign up</h1>
+
+          {error && (
+            <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+          )}
 
           <FormField
             control={form.control}
@@ -213,8 +228,6 @@ const SignUpPage = () => {
               </Button>
             </div>
           )}
-
-          {error && <div className="text-red-500 text-sm">{error}</div>}
 
           {verified && (
             <Button
