@@ -4,5 +4,5 @@ export const ThreadValidation = z.object({
   thread: z
     .string()
     .min(3, { message: "Thread must be at least 3 characters long" }),
-  accountId: z.string(),
+  communityId: z.string().optional(),
 });

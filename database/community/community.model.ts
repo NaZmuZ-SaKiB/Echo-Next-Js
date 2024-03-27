@@ -2,10 +2,6 @@ import { Model, Schema, model, models } from "mongoose";
 import { TCommunity } from "./community.interface";
 
 const communitySchema = new Schema<TCommunity>({
-  id: {
-    type: String,
-    required: true,
-  },
   username: {
     type: String,
     required: true,

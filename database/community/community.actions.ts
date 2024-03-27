@@ -49,7 +49,28 @@ export const createCommunity = async (
   } catch (error) {
     // Handle any errors
     console.error("Error creating community:", error);
-    throw error;
+    throw new Error("Failed to create community");
+  }
+};
+
+export const getUsersCommunities = async (userId: string) => {
+  try {
+    connectToDB();
+
+    const communities = await Community.find({
+      $or: [
+        {
+          createdBy: userId,
+        },
+        {
+          members: { $in: [userId] },
+        },
+      ],
+    }).select("_id name image");
+
+    return communities;
+  } catch (error) {
+    throw new Error("Failed to fetch user communities");
   }
 };
 
@@ -62,7 +83,7 @@ export const fetchCommunityDetails = async (id: string) => {
       {
         path: "members",
         model: User,
-        select: "name username image _id id",
+        select: "name username image _id",
       },
     ]);
 
@@ -117,7 +138,6 @@ export const fetchCommunityThreads = async (
                   {
                     $project: {
                       _id: { $toString: "$_id" },
-                      id: 1,
                       name: 1,
                       image: 1,
                     },
@@ -166,7 +186,6 @@ export const fetchCommunityThreads = async (
             {
               $project: {
                 _id: { $toString: "$_id" },
-                id: 1,
                 name: 1,
                 image: 1,
               },
@@ -189,7 +208,6 @@ export const fetchCommunityThreads = async (
             {
               $project: {
                 _id: { $toString: "$_id" },
-                id: 1,
                 name: 1,
                 image: 1,
               },

@@ -31,16 +31,10 @@ export const createThread = async ({
   connectToDB();
 
   try {
-    const communityObject = await Community.findOne({ id: communityId }).select(
-      "_id"
-    );
-
-    const communityObjectId = communityObject ? communityObject._id : null;
-
     await Thread.create({
       text,
       author,
-      community: communityObjectId,
+      community: communityId || null,
     });
 
     revalidatePath(path);
