@@ -27,9 +27,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { TCommunity } from "@/database/community/community.interface";
 import { useState } from "react";
 
-type TProps = { user_Id: string; jsonCommunities: string };
+type TProps = { user_Id: string; jsonCommunities: string; user_name: string };
 
-const PostThread = ({ user_Id, jsonCommunities }: TProps) => {
+const PostThread = ({ user_Id, jsonCommunities, user_name }: TProps) => {
   const communities: TCommunity[] = JSON.parse(jsonCommunities);
 
   const [error, setError] = useState<string>("");
@@ -109,14 +109,14 @@ const PostThread = ({ user_Id, jsonCommunities }: TProps) => {
                   </SelectTrigger>
                   <SelectContent className="border border-gray-1 bg-dark-3 text-light-1">
                     <SelectItem
-                      className="border border-dark-4 bg-dark-3"
+                      className="border border-dark-4 bg-dark-3 focus:bg-dark-4 focus:text-light-1 cursor-pointer"
                       value={user_Id}
                     >
-                      Yourself
+                      {user_name} - ( you )
                     </SelectItem>
                     {communities.map((community) => (
                       <SelectItem
-                        className="border border-dark-4 bg-dark-3"
+                        className="border border-dark-4 bg-dark-3 focus:bg-dark-4 focus:text-light-1 cursor-pointer"
                         key={`${community._id}`}
                         value={`${community._id}`}
                       >

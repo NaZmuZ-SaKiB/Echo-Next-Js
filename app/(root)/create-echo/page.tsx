@@ -17,6 +17,7 @@ const CreateThreadPage = async () => {
       <PostThread
         user_Id={`${user._id}`}
         jsonCommunities={JSON.stringify(communities)}
+        user_name={user?.name || "Yourself"}
       />
     </>
   );
