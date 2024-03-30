@@ -61,7 +61,7 @@ export const signIn = async (email: string, password: string) => {
     );
 
     cookies().set("jwt", token, {
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       expires: Date.now() + 1000 * 60 * 60 * 24 * 3,
       path: "/",
