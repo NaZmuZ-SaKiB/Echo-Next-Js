@@ -24,6 +24,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { updateUser } from "@/database/user/user.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser } from "@/database/user/user.interface";
+import { deleteImage } from "@/lib/actions/uploadthing.action";
 
 interface IProps {
   user: TUser;
@@ -32,6 +33,7 @@ interface IProps {
 
 const AccountProfile = ({ user, btnTitle }: IProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const { startUpload } = useUploadThing("media");
 
@@ -68,35 +70,50 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
         fieldChange(imageDataUrl);
       };
 
+      // When read is completed then the above onload executes
       fileReader.readAsDataURL(file);
     }
   };
 
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
-    const blob = values.profile_photo;
-    const hasImageChanged = isBase64Image(blob);
+    setError(null);
+    try {
+      const blob = values.profile_photo;
+      const hasImageChanged = isBase64Image(blob);
 
-    if (hasImageChanged) {
-      const imgRes = await startUpload(files);
+      if (hasImageChanged) {
+        // remove the previous image
+        if (pathname === "/profile/edit" && user?.image) {
+          const result = await deleteImage(user.image);
+          if (!result.success) {
+            return;
+          }
+        }
+        // upload the new image
+        const imgRes = await startUpload(files);
 
-      if (imgRes && imgRes[0]?.url) {
-        values.profile_photo = imgRes[0]?.url;
+        if (imgRes && imgRes[0]?.url) {
+          values.profile_photo = imgRes[0]?.url;
+          console.log(imgRes);
+        }
       }
-    }
 
-    await updateUser({
-      userId: `${user._id}`,
-      username: values.username,
-      name: values.name,
-      bio: values.bio,
-      image: values.profile_photo,
-      path: pathname,
-    });
+      await updateUser({
+        userId: `${user._id}`,
+        username: values.username,
+        name: values.name,
+        bio: values.bio,
+        image: values.profile_photo,
+        path: pathname,
+      });
 
-    if (pathname === "/profile/edit") {
-      router.back();
-    } else {
-      router.push("/");
+      if (pathname === "/profile/edit") {
+        router.back();
+      } else {
+        router.push("/");
+      }
+    } catch (error: any) {
+      setError(error?.message || "Something went wrong");
     }
   };
   return (
@@ -105,6 +122,9 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col justify-start gap-10 max-sm:gap-6"
       >
+        {error && (
+          <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+        )}
         <FormField
           control={form.control}
           name="profile_photo"
@@ -118,7 +138,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
                     width={96}
                     height={96}
                     priority
-                    className="rounded-full object-contain max-sm:size-14"
+                    className="rounded-full size-full object-cover max-sm:size-14"
                   />
                 ) : (
                   <Image
@@ -126,7 +146,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
                     alt="profile photo"
                     width={24}
                     height={24}
-                    className="object-contain"
+                    className="object-cover"
                   />
                 )}
               </FormLabel>
