@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtHelpers } from "./utils/jwt";
 
 export const middleware = async (req: NextRequest) => {
   console.log("middleware", req.url);
 
-  const jwt = cookies().get("jwt");
+  const jwt = req.cookies.get("jwt");
 
   if (!jwt?.value) {
     return NextResponse.redirect(new URL("/sign-in", req.url));

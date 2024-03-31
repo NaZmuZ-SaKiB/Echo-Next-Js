@@ -7,11 +7,13 @@ const userSchema = new Schema<TUser>(
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
     password: {
       type: String,
@@ -21,9 +23,14 @@ const userSchema = new Schema<TUser>(
     name: {
       type: String,
       required: false,
+      trim: true,
     },
     image: String,
-    bio: String,
+    bio: {
+      type: String,
+      required: false,
+      trim: true,
+    },
     onboarded: {
       type: Boolean,
       default: false,

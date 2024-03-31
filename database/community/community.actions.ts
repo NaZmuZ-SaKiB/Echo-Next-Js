@@ -3,39 +3,46 @@
 import { FilterQuery, SortOrder, Types, startSession } from "mongoose";
 
 import Community from "./community.model";
-import Thread, { Like } from "../thread/thread.model";
+import Thread from "../thread/thread.model";
 import User from "../user/user.model";
 
 import { connectToDB } from "@/database/mongoose";
 
-export const createCommunity = async (
-  id: string,
-  name: string,
-  username: string,
-  image: string,
-  bio: string,
-  createdById: string // Change the parameter name to reflect it's an id
-) => {
-  try {
-    connectToDB();
+type TCreateCommunity = {
+  name: string;
+  username: string;
+  image: string;
+  bio: string;
+  createdById: string;
+};
 
+export const createCommunity = async ({
+  name,
+  username,
+  image,
+  bio,
+  createdById,
+}: TCreateCommunity) => {
+  connectToDB();
+  const session = await startSession();
+  try {
     // Find the user with the provided unique id
-    const user = await User.findOne({ id: createdById });
+    const user = await User.findById(createdById);
 
     if (!user) {
-      throw new Error("User not found"); // Handle the case if the user with the id is not found
+      throw new Error("User not found");
     }
 
+    session.startTransaction();
     const newCommunity = new Community({
-      id,
       name,
       username,
       image,
       bio,
-      createdBy: user._id, // Use the mongoose ID of the user
+      createdBy: user._id,
     });
 
-    const createdCommunity = await newCommunity.save();
+    const createdCommunity = await newCommunity.save({ session });
 
     // Update User model
     if (user.communities) {
@@ -43,13 +50,22 @@ export const createCommunity = async (
     } else {
       user.communities = [createdCommunity._id];
     }
-    await user.save();
+    await user.save({ session });
 
-    return createdCommunity;
-  } catch (error) {
+    // commit the transaction
+    await session.commitTransaction();
+    await session.endSession();
+
+    console.log("Community created successfully", createdCommunity);
+
+    return JSON.stringify(createdCommunity);
+  } catch (error: any) {
     // Handle any errors
-    console.error("Error creating community:", error);
-    throw new Error("Failed to create community");
+    console.log("Error creating community:", error);
+
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(error?.message || "Failed to create community");
   }
 };
 
@@ -431,20 +447,31 @@ export const removeUserFromCommunity = async (
   }
 };
 
-export const updateCommunityInfo = async (
-  communityId: string,
-  name: string,
-  username: string,
-  image: string
-) => {
+type TUpdateCommunity = {
+  communityId: string;
+  name: string;
+  username: string;
+  image: string;
+  bio: string;
+};
+
+export const updateCommunityInfo = async ({
+  communityId,
+  name,
+  username,
+  image,
+  bio,
+}: TUpdateCommunity) => {
   try {
     connectToDB();
 
     // Find the community by its _id and update the information
-    const updatedCommunity = await Community.findOneAndUpdate(
-      { id: communityId },
-      { name, username, image }
-    );
+    const updatedCommunity = await Community.findByIdAndUpdate(communityId, {
+      name,
+      username,
+      image,
+      bio,
+    });
 
     if (!updatedCommunity) {
       throw new Error("Community not found");
@@ -453,8 +480,7 @@ export const updateCommunityInfo = async (
     return updatedCommunity;
   } catch (error) {
     // Handle any errors
-    console.error("Error updating community information:", error);
-    throw error;
+    throw new Error("Failed to update community information");
   }
 };
 

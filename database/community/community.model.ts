@@ -6,13 +6,19 @@ const communitySchema = new Schema<TCommunity>({
     type: String,
     required: true,
     unique: true,
+    trim: true,
   },
   name: {
     type: String,
     required: false,
+    trim: true,
   },
   image: String,
-  bio: String,
+  bio: {
+    type: String,
+    required: false,
+    trim: true,
+  },
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: "User",

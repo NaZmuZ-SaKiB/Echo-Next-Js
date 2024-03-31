@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CommentValidation } from "@/database/community/community.validation";
 import Image from "next/image";
 import { addCommentToThread } from "@/database/thread/thread.actions";
+import { CommentValidation } from "@/database/thread/thread.validation";
 
 type TProps = {
   thread_Id: string;
