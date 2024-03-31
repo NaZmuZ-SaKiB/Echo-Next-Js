@@ -8,4 +8,14 @@ export type TCommunity = {
   bio?: string;
   createdBy: Types.ObjectId;
   members?: Types.ObjectId[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TCommunityRequest = {
+  _id?: Types.ObjectId;
+  userId: Types.ObjectId;
+  communityId: Types.ObjectId;
+  createdAt: string;
+  updatedAt: string;
 };

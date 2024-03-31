@@ -8,13 +8,16 @@ export type TThread = {
   author: Types.ObjectId;
   community?: Types.ObjectId;
   parentThread?: Types.ObjectId;
-  createdAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TLike = {
   _id?: Types.ObjectId;
   threadId: Types.ObjectId;
   likedBy: Types.ObjectId;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TThreadPopulated = {
@@ -23,7 +26,8 @@ export type TThreadPopulated = {
   author: TUser;
   community?: TCommunity | null;
   parentThread?: Types.ObjectId;
-  createdAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TThreadProfilePage = {
@@ -34,4 +38,5 @@ export type TThreadProfilePage = {
   author: TUser;
   community: TCommunity | null;
   createdAt: string;
+  updatedAt: string;
 };

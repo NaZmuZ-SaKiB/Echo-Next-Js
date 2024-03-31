@@ -11,4 +11,6 @@ export type TUser = {
   bio?: string;
   onboarded?: boolean;
   communities?: Types.ObjectId[];
+  createdAt: string;
+  updatedAt: string;
 };
