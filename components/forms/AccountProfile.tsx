@@ -220,7 +220,7 @@ const AccountProfile = ({ user, btnTitle }: IProps) => {
           type="submit"
           disabled={form.formState.isSubmitting}
         >
-          {!form.formState.isSubmitting ? btnTitle || "Submit" : "Updating..."}
+          {!form.formState.isSubmitting ? btnTitle || "Submit" : "Saving..."}
         </Button>
       </form>
     </Form>

@@ -32,6 +32,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
         imgUrl={communityDetails.image!}
         bio={communityDetails.bio || ""}
         type="Community"
+        communityOwner={`${communityDetails.createdBy._id}` === `${user._id}`}
       />
 
       <div className="mt-9 max-sm:mt-5">

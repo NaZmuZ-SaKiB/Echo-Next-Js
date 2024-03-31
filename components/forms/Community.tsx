@@ -32,7 +32,7 @@ type TProps = {
   JsonCommunity?: string | null;
   btnTitle?: string;
 };
-const CreateCommunity = ({ userId, JsonCommunity, btnTitle }: TProps) => {
+const Community = ({ userId, JsonCommunity, btnTitle }: TProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -103,7 +103,7 @@ const CreateCommunity = ({ userId, JsonCommunity, btnTitle }: TProps) => {
         }
       }
 
-      if (pathname === "/communities/edit") {
+      if (pathname.includes("/communities/edit")) {
         await updateCommunityInfo({
           ...values,
           username: values.username.toLowerCase().split(" ").join("_"),
@@ -231,11 +231,11 @@ const CreateCommunity = ({ userId, JsonCommunity, btnTitle }: TProps) => {
           type="submit"
           disabled={form.formState.isSubmitting}
         >
-          {!form.formState.isSubmitting ? btnTitle || "Submit" : "Updating..."}
+          {!form.formState.isSubmitting ? btnTitle || "Submit" : "Saving..."}
         </Button>
       </form>
     </Form>
   );
 };
 
-export default CreateCommunity;
+export default Community;

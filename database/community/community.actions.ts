@@ -7,6 +7,7 @@ import Thread from "../thread/thread.model";
 import User from "../user/user.model";
 
 import { connectToDB } from "@/database/mongoose";
+import { revalidatePath } from "next/cache";
 
 type TCreateCommunity = {
   name: string;
@@ -87,6 +88,20 @@ export const getUsersCommunities = async (userId: string) => {
     return communities;
   } catch (error) {
     throw new Error("Failed to fetch user communities");
+  }
+};
+
+export const fetchCommunityInfo = async (id: string) => {
+  try {
+    connectToDB();
+
+    const communityInfo = await Community.findById(id);
+
+    return communityInfo;
+  } catch (error) {
+    // Handle any errors
+    console.error("Error fetching community info:", error);
+    throw new Error("Failed to fetch community info");
   }
 };
 
@@ -476,6 +491,8 @@ export const updateCommunityInfo = async ({
     if (!updatedCommunity) {
       throw new Error("Community not found");
     }
+
+    revalidatePath("/community/[id]".replace("[id]", communityId));
 
     return updatedCommunity;
   } catch (error) {

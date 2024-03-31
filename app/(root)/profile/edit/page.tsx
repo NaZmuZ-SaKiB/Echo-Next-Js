@@ -1,6 +1,5 @@
 import AccountProfile from "@/components/forms/AccountProfile";
 import { currentUser } from "@/database/auth/auth.actions";
-import { fetchUser } from "@/database/user/user.actions";
 import { TUser } from "@/database/user/user.interface";
 import { redirect } from "next/navigation";
 

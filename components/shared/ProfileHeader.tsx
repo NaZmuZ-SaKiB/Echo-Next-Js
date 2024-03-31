@@ -8,7 +8,8 @@ type TProps = {
   username: string;
   imgUrl: string;
   bio: string;
-  type?: string;
+  type?: "Community" | "User";
+  communityOwner?: boolean;
 };
 
 const ProfileHeader = ({
@@ -19,6 +20,7 @@ const ProfileHeader = ({
   imgUrl,
   bio,
   type,
+  communityOwner,
 }: TProps) => {
   return (
     <div className="flex w-full flex-col justify-start">
@@ -50,6 +52,20 @@ const ProfileHeader = ({
               />
 
               <p className="text-light-2 max-sm:hidden">Edit Profile</p>
+            </div>
+          </Link>
+        )}
+        {type === "Community" && communityOwner && (
+          <Link href={`/communities/edit/${profileUserId}`}>
+            <div className="flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2">
+              <Image
+                src="/assets/edit.svg"
+                alt="logout"
+                width={16}
+                height={16}
+              />
+
+              <p className="text-light-2 max-sm:hidden">Edit Community</p>
             </div>
           </Link>
         )}

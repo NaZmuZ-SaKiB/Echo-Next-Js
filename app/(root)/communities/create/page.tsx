@@ -1,4 +1,4 @@
-import CreateCommunity from "@/components/forms/CreateCommunity";
+import Community from "@/components/forms/Community";
 import { currentUser } from "@/database/auth/auth.actions";
 import { redirect } from "next/navigation";
 
@@ -12,7 +12,7 @@ const CreateCommunityPage = async () => {
       <h1 className="head-text mb-10 max-sm:mb-4">Create Community</h1>
 
       <section className="mt-9  max-sm:mt-5 bg-dark-2 p-10">
-        <CreateCommunity userId={user.id} btnTitle="Create Community" />
+        <Community userId={user.id} btnTitle="Create Community" />
       </section>
     </main>
   );
