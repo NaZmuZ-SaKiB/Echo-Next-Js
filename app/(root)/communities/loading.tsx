@@ -1,4 +1,3 @@
-import CommunityCardLoading from "@/components/loaders/CommunityCardLoading";
 import SearchResultLoading from "@/components/loaders/SearchResultLoading";
 import Searchbar from "@/components/shared/Searchbar";
 
