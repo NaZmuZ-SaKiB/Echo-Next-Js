@@ -27,7 +27,7 @@ const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
         <div className="flex w-full flex-1 flex-row gap-4 max-sm:gap-3">
           <div className="flex flex-col items-center">
             <Link
-              href={`/profile/${thread.author.id}`}
+              href={`/profile/${thread.author._id}`}
               className="relative size-11 max-sm:size-9"
             >
               <Image
@@ -41,7 +41,7 @@ const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
           </div>
 
           <div className="flex w-full flex-col">
-            <Link href={`/profile/${thread.author.id}`} className="w-fit">
+            <Link href={`/profile/${thread.author._id}`} className="w-fit">
               <h4 className="cursor-pointer text-base-semibold text-light-1">
                 {thread.author.name}
               </h4>
@@ -127,7 +127,7 @@ const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
 
       {!isComment && thread.community && (
         <Link
-          href={`/communities/${thread.community.id}`}
+          href={`/communities/${thread.community._id}`}
           className="mt-5 flex items-center"
         >
           <p className="text-subtle-medium text-gray-1">

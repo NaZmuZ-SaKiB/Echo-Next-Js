@@ -9,6 +9,9 @@ import LeftSideBar from "@/components/layout/LeftSideBar";
 import RightSideBar from "@/components/layout/RightSideBar";
 import BottomBar from "@/components/layout/BottomBar";
 import { currentUser } from "@/database/auth/auth.actions";
+import { getUsersCommunities } from "@/database/community/community.actions";
+import { TCommunity } from "@/database/community/community.interface";
+import { redirect } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,11 +27,22 @@ export default async function RootLayout({
 }) {
   const user = await currentUser();
 
+  let communities: TCommunity[] = [];
+
+  if (user && user.onboarded) {
+    communities = await getUsersCommunities(`${user?._id}`);
+  } else {
+    redirect("/onboarding");
+  }
+
   return (
     <AuthContextWrapper>
       <html lang="en">
         <body className={inter.className}>
-          <TopBar />
+          <TopBar
+            JsonCommunities={JSON.stringify(communities)}
+            JsonUser={JSON.stringify(user)}
+          />
           <main className="flex">
             <LeftSideBar userId={user ? `${user._id}` : null} />
             <section className="main-container">

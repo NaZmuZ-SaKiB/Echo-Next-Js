@@ -35,8 +35,8 @@ const RightSideBar = async ({ userId }: TProps) => {
             <>
               {suggestedCommunities.communities.map((community) => (
                 <UserCard
-                  key={community.id}
-                  id={community.id}
+                  key={`${community._id}`}
+                  id={`${community._id}`}
                   name={community.name || "Community"}
                   username={community.username}
                   imgUrl={community.image || ""}
@@ -59,8 +59,8 @@ const RightSideBar = async ({ userId }: TProps) => {
             <>
               {similarMinds.users.map((person) => (
                 <UserCard
-                  key={person.id}
-                  id={person.id}
+                  key={`${person._id}`}
+                  id={`${person._id}`}
                   name={person.name || "User"}
                   username={person.username}
                   imgUrl={person.image || ""}

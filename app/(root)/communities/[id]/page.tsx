@@ -9,7 +9,6 @@ import {
   getCommunityThreadsCount,
 } from "@/database/community/community.actions";
 import UserCard from "@/components/cards/UserCard";
-import { fetchUser } from "@/database/user/user.actions";
 import { currentUser } from "@/database/auth/auth.actions";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
@@ -26,8 +25,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   return (
     <section>
       <ProfileHeader
-        profileUserId={communityDetails.id}
-        authUserId={user.id}
+        profileUserId={`${communityDetails._id}`}
+        authUserId={`${user._id}`}
         name={communityDetails.name!}
         username={communityDetails.username}
         imgUrl={communityDetails.image!}
