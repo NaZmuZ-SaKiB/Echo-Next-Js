@@ -2,12 +2,13 @@
 
 import { FilterQuery, SortOrder, Types, startSession } from "mongoose";
 
-import Community from "./community.model";
+import Community, { CommunityRequest } from "./community.model";
 import Thread from "../thread/thread.model";
 import User from "../user/user.model";
 
 import { connectToDB } from "@/database/mongoose";
 import { revalidatePath } from "next/cache";
+import { TCommunity, TCommunityRequest } from "./community.interface";
 
 type TCreateCommunity = {
   name: string;
@@ -118,7 +119,18 @@ export const fetchCommunityDetails = async (id: string) => {
       },
     ]);
 
-    return communityDetails;
+    const joinRequests = await CommunityRequest.find({
+      communityId: id,
+    });
+
+    const joinRequestIds = joinRequests.map((item) => `${item.userId}`);
+
+    const combineData: TCommunity & { requests: string[] } = {
+      ...(communityDetails?.toObject() as TCommunity),
+      requests: joinRequestIds,
+    };
+
+    return combineData;
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community details:", error);
@@ -550,5 +562,84 @@ export const deleteCommunity = async (communityId: string) => {
 
     console.error("Error deleting community: ", error);
     throw error;
+  }
+};
+
+export const createCommunityJoinRequest = async (
+  communityId: string,
+  userId: string
+) => {
+  try {
+    connectToDB();
+
+    const isAlreadyRequested = await CommunityRequest.findOne({
+      communityId,
+      userId,
+    });
+    if (isAlreadyRequested) return;
+
+    await CommunityRequest.create({
+      communityId,
+      userId,
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error("Error sending community join request:", error);
+    throw new Error("Failed to send join request!");
+  }
+};
+
+export const cancelCommunityJoinRequest = async (
+  communityId: string,
+  userId: string
+) => {
+  try {
+    connectToDB();
+
+    await CommunityRequest.findOneAndDelete({
+      communityId,
+      userId,
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error("Error sending community join request:", error);
+    throw new Error("Failed to send join request!");
+  }
+};
+
+export const acceptCommunityJoinRequest = async (
+  communityRequestId: string
+) => {
+  connectToDB();
+  const session = await startSession();
+  try {
+    // Checking if request exists
+    const joinRequest = await CommunityRequest.findById(communityRequestId);
+    if (!joinRequest) {
+      throw new Error(
+        "Request not found. Try refreshing the page may solve the problem."
+      );
+    }
+
+    session.startTransaction();
+
+    await Community.findByIdAndUpdate(
+      joinRequest?.communityId,
+      {
+        $addToSet: { members: joinRequest.userId },
+      },
+      { runValidators: true, session }
+    );
+
+    await CommunityRequest.findByIdAndDelete(communityRequestId, { session });
+
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    // Handle any errors
+    console.error("Error accepting community join request:", error);
+    throw new Error("Failed to accept join request!");
   }
 };
