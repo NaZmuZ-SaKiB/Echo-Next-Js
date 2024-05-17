@@ -8,7 +8,7 @@ import User from "../user/user.model";
 
 import { connectToDB } from "@/database/mongoose";
 import { revalidatePath } from "next/cache";
-import { TCommunity, TCommunityRequest } from "./community.interface";
+import { TCommunity, TCommunityRequestPopulated } from "./community.interface";
 
 type TCreateCommunity = {
   name: string;
@@ -565,6 +565,28 @@ export const deleteCommunity = async (communityId: string) => {
   }
 };
 
+//* ------------------------------------------------------------ *//
+//* --------------- Community Request Actions ------------------ *//
+//* ------------------------------------------------------------ *//
+
+export const fetchCommunityJoinRequests = async (communityId: string) => {
+  connectToDB();
+  try {
+    const requests = await CommunityRequest.find({
+      communityId,
+    }).populate({
+      path: "userId",
+      model: User,
+      select: "_id name image username",
+    });
+
+    return requests as unknown as TCommunityRequestPopulated[];
+  } catch (error) {
+    console.error("Error fetching community requests: ", error);
+    throw new Error("Error fetching community requests");
+  }
+};
+
 export const createCommunityJoinRequest = async (
   communityId: string,
   userId: string
@@ -608,7 +630,8 @@ export const cancelCommunityJoinRequest = async (
 };
 
 export const acceptCommunityJoinRequest = async (
-  communityRequestId: string
+  communityRequestId: string,
+  pathName: string
 ) => {
   connectToDB();
   const session = await startSession();
@@ -631,15 +654,67 @@ export const acceptCommunityJoinRequest = async (
       { runValidators: true, session }
     );
 
+    await User.findByIdAndUpdate(joinRequest.userId, {
+      $addToSet: { communities: joinRequest.communityId },
+    });
+
     await CommunityRequest.findByIdAndDelete(communityRequestId, { session });
 
     await session.commitTransaction();
     await session.endSession();
+
+    revalidatePath(pathName);
   } catch (error) {
     await session.abortTransaction();
     await session.endSession();
     // Handle any errors
     console.error("Error accepting community join request:", error);
     throw new Error("Failed to accept join request!");
+  }
+};
+
+export const rejectCommunityJoinRequest = async (
+  communityRequestId: string,
+  pathName: string
+) => {
+  try {
+    connectToDB();
+
+    await CommunityRequest.findByIdAndDelete(communityRequestId);
+
+    revalidatePath(pathName);
+  } catch (error) {
+    // Handle any errors
+    console.error("Error sending community join request:", error);
+    throw new Error("Failed to send join request!");
+  }
+};
+
+export const kickCommunityMember = async (
+  communityId: string,
+  memberId: string
+) => {
+  try {
+    connectToDB();
+
+    await Community.findByIdAndUpdate(
+      communityId,
+      {
+        $pull: { members: memberId },
+      },
+      { runValidators: true }
+    );
+
+    await User.findByIdAndUpdate(
+      memberId,
+      {
+        $pull: { communities: communityId },
+      },
+      { runValidators: true }
+    );
+  } catch (error) {
+    // Handle any errors
+    console.error("Error kicking community member:", error);
+    throw new Error("Failed to kick community member!");
   }
 };
