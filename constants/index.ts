@@ -42,3 +42,8 @@ export const communityTabs = [
   { value: "members", label: "Members", icon: "/assets/members.svg" },
   { value: "requests", label: "Requests", icon: "/assets/request.svg" },
 ];
+
+export const publicCommunityTabs = [
+  { value: "echos", label: "Echos", icon: "/assets/reply.svg" },
+  { value: "members", label: "Members", icon: "/assets/members.svg" },
+];
