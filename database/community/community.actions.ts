@@ -692,7 +692,8 @@ export const rejectCommunityJoinRequest = async (
 
 export const kickCommunityMember = async (
   communityId: string,
-  memberId: string
+  memberId: string,
+  pathName: string
 ) => {
   try {
     connectToDB();
@@ -712,6 +713,8 @@ export const kickCommunityMember = async (
       },
       { runValidators: true }
     );
+
+    revalidatePath(pathName);
   } catch (error) {
     // Handle any errors
     console.error("Error kicking community member:", error);

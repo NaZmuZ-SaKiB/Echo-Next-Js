@@ -8,9 +8,9 @@ import {
   fetchCommunityDetails,
   getCommunityThreadsCount,
 } from "@/database/community/community.actions";
-import UserCard from "@/components/cards/UserCard";
 import { currentUser } from "@/database/auth/auth.actions";
 import CommunityRequestsTab from "@/components/shared/CommunityRequestsTab";
+import CommunityMembersTab from "@/components/shared/CommunityMembersTab";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -18,8 +18,6 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
   const communityDetails = await fetchCommunityDetails(params.id);
   if (!communityDetails) return null;
-
-  console.log(communityDetails);
 
   const communityThreadsCount = await getCommunityThreadsCount(
     `${communityDetails._id}`
@@ -79,18 +77,10 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
           </TabsContent>
 
           <TabsContent value="members">
-            <section className="mt-9 flex flex-col gap-10">
-              {communityDetails?.members?.map((member: any) => (
-                <UserCard
-                  key={`${member._id}`}
-                  id={`${member._id}`}
-                  name={member.name}
-                  username={member.username}
-                  imgUrl={member.image}
-                  personType="User"
-                />
-              ))}
-            </section>
+            <CommunityMembersTab
+              communityId={`${communityDetails._id}`}
+              JSONmembers={JSON.stringify(communityDetails?.members)}
+            />
           </TabsContent>
 
           {
