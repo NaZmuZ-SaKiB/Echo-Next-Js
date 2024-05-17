@@ -18,8 +18,14 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const communityDetails = await fetchCommunityDetails(params.id);
   if (!communityDetails) return null;
 
+  console.log(communityDetails);
+
   const communityThreadsCount = await getCommunityThreadsCount(
     `${communityDetails._id}`
+  );
+
+  const isCommunityMember = !!communityDetails?.members?.find(
+    (member) => member._id === user._id
   );
 
   return (
@@ -33,6 +39,8 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
         bio={communityDetails.bio || ""}
         type="Community"
         communityOwner={`${communityDetails.createdBy._id}` === `${user._id}`}
+        isCommunityMember={isCommunityMember}
+        requestSent={communityDetails.requests.includes(`${user._id}`)}
       />
 
       <div className="mt-9 max-sm:mt-5">
