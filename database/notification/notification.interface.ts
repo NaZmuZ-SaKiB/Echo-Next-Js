@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { TUser } from "../user/user.interface";
+import { TCommunity } from "../community/community.interface";
 
 export type TNotificationType = "liked" | "replied" | "invited";
 
@@ -23,7 +24,7 @@ export type TNotificationPopulated = {
   user: TUser;
   people?: TUser[];
   read: boolean;
-  communityId?: Types.ObjectId;
+  communityId?: TCommunity;
   accepted?: boolean;
   createdAt: string;
   updatedAt: string;

@@ -1,11 +1,13 @@
 import { Model, Schema, model, models } from "mongoose";
 import { TNotification } from "./notification.interface";
-import { notificationTypes } from "@/constants";
+import { notificationTypeEnum } from "@/constants";
 
 const notificationSchema = new Schema<TNotification>(
   {
     type: {
-      enum: notificationTypes,
+      type: String,
+      enum: notificationTypeEnum,
+      required: true,
     },
     link: {
       type: String,

@@ -50,3 +50,19 @@ export const readNotification = async (notificationId: string) => {
     console.log(`Failed to read notification: ${error?.message}`);
   }
 };
+
+export const getMyNotifications = async (userId: string) => {
+  connectToDB();
+
+  try {
+    const notifications = await Notification.find({
+      user: userId,
+    })
+      .populate("communityId people")
+      .sort({ createdAt: -1 });
+
+    return notifications;
+  } catch (error: any) {
+    console.log(`Failed to get notifications: ${error?.message}`);
+  }
+};
