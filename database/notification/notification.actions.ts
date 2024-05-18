@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import Community from "../community/community.model";
 import { connectToDB } from "../mongoose";
 import Notification from "./notification.model";
+import { notificationTypeEnum } from "@/constants";
 
 export const createCommunityInvitationNotification = async (
   communityId: string,
@@ -18,6 +19,7 @@ export const createCommunityInvitationNotification = async (
     }
 
     const isAlreadyInvited = await Notification.findOne({
+      type: notificationTypeEnum.INVITED,
       user: userId,
       communityId: communityId,
     });
@@ -27,11 +29,24 @@ export const createCommunityInvitationNotification = async (
     }
 
     await Notification.create({
+      type: notificationTypeEnum.INVITED,
       link: `/communities/${communityId}`,
       user: userId,
       communityId: communityId,
     });
   } catch (error: any) {
     throw new Error(`Failed to send invitation: ${error?.message}`);
+  }
+};
+
+export const readNotification = async (notificationId: string) => {
+  connectToDB();
+
+  try {
+    await Notification.findByIdAndUpdate(notificationId, {
+      read: true,
+    });
+  } catch (error: any) {
+    console.log(`Failed to read notification: ${error?.message}`);
   }
 };

@@ -5,6 +5,7 @@ export type TNotificationType = "liked" | "replied" | "invited";
 
 export type TNotification = {
   _id?: Types.ObjectId;
+  type: TNotificationType;
   link: string;
   user: Types.ObjectId;
   people?: Types.ObjectId[];
@@ -17,6 +18,7 @@ export type TNotification = {
 
 export type TNotificationPopulated = {
   _id?: Types.ObjectId;
+  type: TNotificationType;
   link: string;
   user: TUser;
   people?: TUser[];

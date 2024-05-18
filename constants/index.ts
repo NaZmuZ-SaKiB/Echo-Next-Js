@@ -1,3 +1,5 @@
+import { TNotificationType } from "@/database/notification/notification.interface";
+
 export const sidebarLinks = [
   {
     imgURL: "/assets/home.svg",
@@ -47,3 +49,15 @@ export const publicCommunityTabs = [
   { value: "echos", label: "Echos", icon: "/assets/reply.svg" },
   { value: "members", label: "Members", icon: "/assets/members.svg" },
 ];
+
+export const notificationTypes: TNotificationType[] = [
+  "liked",
+  "replied",
+  "invited",
+];
+
+export const notificationTypeEnum = {
+  LIKED: "liked",
+  REPLIED: "replied",
+  INVITED: "invited",
+} as const;

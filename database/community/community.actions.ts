@@ -9,6 +9,8 @@ import User from "../user/user.model";
 import { connectToDB } from "@/database/mongoose";
 import { revalidatePath } from "next/cache";
 import { TCommunity, TCommunityRequestPopulated } from "./community.interface";
+import Notification from "../notification/notification.model";
+import { notificationTypeEnum } from "@/constants";
 
 type TCreateCommunity = {
   name: string;
@@ -719,5 +721,24 @@ export const kickCommunityMember = async (
     // Handle any errors
     console.error("Error kicking community member:", error);
     throw new Error("Failed to kick community member!");
+  }
+};
+
+export const getInvitedUsersList = async (communityId: string) => {
+  connectToDB();
+
+  try {
+    const notifications = await Notification.find({
+      type: notificationTypeEnum.INVITED,
+      communityId: communityId,
+    });
+
+    const invitedUsers: string[] = notifications.map(
+      (notification) => `${notification.user}`
+    );
+
+    return invitedUsers;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch invited users list: ${error?.message}`);
   }
 };

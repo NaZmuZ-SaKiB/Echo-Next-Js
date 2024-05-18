@@ -4,7 +4,7 @@ import CommunityRequestButton from "../forms/CommunityRequestButton";
 import { Button } from "../ui/button";
 
 type TProps = {
-  profileUserId: string;
+  profileUserId: string; // or communityId
   authUserId: string;
   name: string;
   username: string;
@@ -74,7 +74,7 @@ const ProfileHeader = ({
 
       <p className="mt-6 max-w-lg text-base-regular text-light-2">{bio}</p>
 
-      {/* Request to join community  */}
+      {/* Request to join community Button */}
       {type === "Community" && !communityOwner && !isCommunityMember && (
         <div className="mt-4">
           <CommunityRequestButton
@@ -83,6 +83,15 @@ const ProfileHeader = ({
             userId={authUserId}
           />
         </div>
+      )}
+
+      {/* Invite to community Button  */}
+      {type === "Community" && communityOwner && (
+        <Link href={`/communities/invite/${profileUserId}`} className="mt-3">
+          <Button className="bg-primary-500 hover:bg-primary-500">
+            Invite People
+          </Button>
+        </Link>
       )}
 
       {/* Leave Community Button  */}
