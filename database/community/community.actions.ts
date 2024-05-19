@@ -675,6 +675,54 @@ export const acceptCommunityJoinRequest = async (
   }
 };
 
+export const acceptCommunityJoinInvitation = async (
+  notificationId: string,
+  pathName: string
+) => {
+  connectToDB();
+  const session = await startSession();
+  try {
+    // Checking if request exists
+    const joinNotification = await Notification.findById(notificationId);
+    if (!joinNotification) {
+      throw new Error(
+        "Invitation not found. Try refreshing the page may solve the problem."
+      );
+    }
+
+    session.startTransaction();
+
+    await Community.findByIdAndUpdate(
+      joinNotification?.communityId,
+      {
+        $addToSet: { members: joinNotification.user },
+      },
+      { runValidators: true, session }
+    );
+
+    await User.findByIdAndUpdate(joinNotification.user, {
+      $addToSet: { communities: joinNotification.communityId },
+    });
+
+    await Notification.findByIdAndUpdate(
+      notificationId,
+      { accepted: true },
+      { session }
+    );
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    revalidatePath(pathName);
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    // Handle any errors
+    console.error("Error accepting community join request:", error);
+    throw new Error("Failed to accept join request!");
+  }
+};
+
 export const rejectCommunityJoinRequest = async (
   communityRequestId: string,
   pathName: string
@@ -731,7 +779,7 @@ export const getInvitedUsersList = async (communityId: string) => {
     const notifications = await Notification.find({
       type: notificationTypeEnum.INVITED,
       communityId: communityId,
-    });
+    }).select("user");
 
     const invitedUsers: string[] = notifications.map(
       (notification) => `${notification.user}`
@@ -740,5 +788,25 @@ export const getInvitedUsersList = async (communityId: string) => {
     return invitedUsers;
   } catch (error: any) {
     throw new Error(`Failed to fetch invited users list: ${error?.message}`);
+  }
+};
+
+export const isUserInvitedToThisCommunity = async (
+  communityId: string,
+  userId: string
+) => {
+  connectToDB();
+
+  try {
+    const invitation = await Notification.findOne({
+      communityId: communityId,
+      user: userId,
+      accepted: false,
+    });
+
+    return invitation ? `${invitation?._id}` : null;
+  } catch (error: any) {
+    console.log("Error checking if user is invited:", error);
+    throw new Error("Failed to check if user is invited");
   }
 };

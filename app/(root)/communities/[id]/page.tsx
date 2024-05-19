@@ -1,16 +1,17 @@
 import Image from "next/image";
 
-import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { communityTabs, publicCommunityTabs } from "@/constants";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import {
   fetchCommunityDetails,
   getCommunityThreadsCount,
+  isUserInvitedToThisCommunity,
 } from "@/database/community/community.actions";
 import { currentUser } from "@/database/auth/auth.actions";
 import CommunityRequestsTab from "@/components/shared/CommunityRequestsTab";
 import CommunityMembersTab from "@/components/shared/CommunityMembersTab";
+import CommunityProfileHeader from "@/components/shared/CommunityProfileHeader";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const user = await currentUser();
@@ -19,12 +20,17 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   const communityDetails = await fetchCommunityDetails(params.id);
   if (!communityDetails) return null;
 
+  const isInvited = await isUserInvitedToThisCommunity(
+    params.id,
+    `${user._id}`
+  );
+
   const communityThreadsCount = await getCommunityThreadsCount(
     `${communityDetails._id}`
   );
 
   const isCommunityMember = !!communityDetails?.members?.find(
-    (member) => member._id === user._id
+    (member) => `${member._id}` === `${user._id}`
   );
 
   const isCommunityOwner =
@@ -32,17 +38,17 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
   return (
     <section>
-      <ProfileHeader
-        profileUserId={`${communityDetails._id}`}
+      <CommunityProfileHeader
+        communityId={`${communityDetails._id}`}
         authUserId={`${user._id}`}
         name={communityDetails.name!}
         username={communityDetails.username}
         imgUrl={communityDetails.image!}
         bio={communityDetails.bio || ""}
-        type="Community"
         communityOwner={isCommunityOwner}
         isCommunityMember={isCommunityMember}
         requestSent={communityDetails.requests.includes(`${user._id}`)}
+        isInvited={isInvited}
       />
 
       <div className="mt-9 max-sm:mt-5">
