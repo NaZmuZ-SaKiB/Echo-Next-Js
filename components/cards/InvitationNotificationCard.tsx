@@ -44,7 +44,9 @@ const InvitationNotificationCard = ({
           You are invited to join the "{communityName}" community.
         </p>
         <Button
-          className={`ml-auto ${!accepted && "bg-primary-500"}`}
+          className={`ml-auto ${
+            !accepted && "bg-primary-500"
+          } !text-small-regular text-light-1`}
           size="sm"
         >
           {accepted ? "Accepted" : "Accept"}
