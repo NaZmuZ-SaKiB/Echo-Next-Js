@@ -14,7 +14,7 @@ type TProps = {
   isComment?: boolean;
 };
 
-const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
+const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
   const thread = JSON.parse(JSONThread) as TThreadProfilePage;
   return (
     <article
@@ -37,7 +37,7 @@ const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
                 className="cursor-pointer rounded-full"
               />
             </Link>
-            <div className="thread-card_bar" />
+            <div className="echo-card_bar" />
           </div>
 
           <div className="flex w-full flex-col">
@@ -147,4 +147,4 @@ const ThreadCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
   );
 };
 
-export default ThreadCard;
+export default EchoCard;

@@ -1,6 +1,6 @@
 import { fetchUsersReplies } from "@/database/user/user.actions";
 import ReplayCard from "../cards/ReplayCard";
-import ThreadsInfiniteScroll from "./ThreadsInfiniteScroll";
+import EchosInfiniteScroll from "./EchosInfiniteScroll";
 
 type TProps = {
   currentUser_Id: string; // _id
@@ -25,7 +25,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
           currentUser_Id={currentUser_Id}
         />
       ))}
-      <ThreadsInfiniteScroll
+      <EchosInfiniteScroll
         user_Id={currentUser_Id}
         isReplayCard={true}
         limit={limit}

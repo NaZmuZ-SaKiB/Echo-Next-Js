@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import ThreadCard from "./ThreadCard";
+import EchoCard from "./EchoCard";
 
 const ReplayCard = ({
   thread,
@@ -28,7 +28,7 @@ const ReplayCard = ({
                   className="rounded-full"
                 />
               </div>
-              <div className="thread-card_bar" />
+              <div className="echo-card_bar" />
             </div>
 
             <div className="flex w-full flex-col">
@@ -45,7 +45,7 @@ const ReplayCard = ({
         </div>
       </Link>
 
-      <ThreadCard
+      <EchoCard
         key={`${reply._id}`}
         currentUser_Id={currentUser_Id}
         JSONThread={JSON.stringify(reply)}

@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Threads",
+  title: "Echo",
   description: "A place to share your thoughts",
 };
 

@@ -29,7 +29,7 @@ import { useState } from "react";
 
 type TProps = { user_Id: string; jsonCommunities: string; user_name: string };
 
-const PostThread = ({ user_Id, jsonCommunities, user_name }: TProps) => {
+const PostEcho = ({ user_Id, jsonCommunities, user_name }: TProps) => {
   const communities: TCommunity[] = JSON.parse(jsonCommunities);
 
   const [error, setError] = useState<string>("");
@@ -145,4 +145,4 @@ const PostThread = ({ user_Id, jsonCommunities, user_name }: TProps) => {
   );
 };
 
-export default PostThread;
+export default PostEcho;

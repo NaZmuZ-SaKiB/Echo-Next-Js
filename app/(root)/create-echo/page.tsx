@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import PostThread from "@/components/forms/PostThread";
+import PostEcho from "@/components/forms/PostEcho";
 import { currentUser } from "@/database/auth/auth.actions";
 import { getUsersCommunities } from "@/database/community/community.actions";
 
@@ -14,7 +14,7 @@ const CreateThreadPage = async () => {
   return (
     <>
       <h1 className="head-text">Create Echo</h1>
-      <PostThread
+      <PostEcho
         user_Id={`${user._id}`}
         jsonCommunities={JSON.stringify(communities)}
         user_name={user?.name || "Yourself"}

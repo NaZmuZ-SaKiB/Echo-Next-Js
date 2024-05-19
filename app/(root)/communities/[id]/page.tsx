@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { communityTabs, publicCommunityTabs } from "@/constants";
-import ThreadsTab from "@/components/shared/ThreadsTab";
+import EchosTab from "@/components/shared/EchosTab";
 import {
   fetchCommunityDetails,
   getCommunityThreadsCount,
@@ -75,7 +75,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
           </TabsList>
 
           <TabsContent value="echos">
-            <ThreadsTab
+            <EchosTab
               currentUser_Id={`${user._id}`}
               fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"

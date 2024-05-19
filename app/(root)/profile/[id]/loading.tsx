@@ -1,5 +1,5 @@
 import ProfileHeaderLoading from "@/components/loaders/ProfileHeaderLoading";
-import ThreadCardLoading from "@/components/loaders/ThreadCardLoading";
+import EchoCardLoading from "@/components/loaders/EchoCardLoading";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProfilePageLoading = () => {
@@ -12,8 +12,8 @@ const ProfilePageLoading = () => {
           <Skeleton className="tab" />
 
           <div className="w-full mt-10 space-y-10">
-            <ThreadCardLoading isComment={false} />
-            <ThreadCardLoading isComment={false} />
+            <EchoCardLoading isComment={false} />
+            <EchoCardLoading isComment={false} />
           </div>
         </div>
       </div>

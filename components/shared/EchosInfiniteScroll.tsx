@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ThreadCardLoading from "../loaders/ThreadCardLoading";
+import EchoCardLoading from "../loaders/EchoCardLoading";
 import { useInView } from "react-intersection-observer";
-import ThreadCard from "../cards/ThreadCard";
+import EchoCard from "../cards/EchoCard";
 import ReplayCard from "../cards/ReplayCard";
 
 type TProps = {
@@ -14,7 +14,7 @@ type TProps = {
   isReplayCard?: boolean;
 };
 
-const ThreadsInfiniteScroll = ({
+const EchosInfiniteScroll = ({
   limit,
   user_Id,
   fetchFunc,
@@ -72,7 +72,7 @@ const ThreadsInfiniteScroll = ({
             currentUser_Id={user_Id}
           />
         ) : (
-          <ThreadCard
+          <EchoCard
             key={`${thread._id}`}
             currentUser_Id={user_Id}
             JSONThread={JSON.stringify(thread)}
@@ -81,15 +81,15 @@ const ThreadsInfiniteScroll = ({
       })}
       {isNext ? (
         <div ref={ref}>
-          <ThreadCardLoading isComment={false} />
+          <EchoCardLoading isComment={false} />
         </div>
       ) : (
         <p className="no-result">
-          No more {isReplayCard ? "replies" : "threads"}.
+          No more {isReplayCard ? "replies" : "echos"}.
         </p>
       )}
     </>
   );
 };
 
-export default ThreadsInfiniteScroll;
+export default EchosInfiniteScroll;

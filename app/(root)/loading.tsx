@@ -1,4 +1,4 @@
-import ThreadCardLoading from "@/components/loaders/ThreadCardLoading";
+import EchoCardLoading from "@/components/loaders/EchoCardLoading";
 
 const loading = () => {
   return (
@@ -8,10 +8,7 @@ const loading = () => {
         {Array(3)
           .fill(0)
           .map((_, i) => (
-            <ThreadCardLoading
-              key={`thread-card-loader-${i}`}
-              isComment={false}
-            />
+            <EchoCardLoading key={`echo-card-loader-${i}`} isComment={false} />
           ))}
       </section>
     </main>

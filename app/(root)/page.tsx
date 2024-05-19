@@ -1,5 +1,5 @@
-import ThreadCard from "@/components/cards/ThreadCard";
-import ThreadsInfiniteScroll from "@/components/shared/ThreadsInfiniteScroll";
+import EchoCard from "@/components/cards/EchoCard";
+import EchosInfiniteScroll from "@/components/shared/EchosInfiniteScroll";
 import { currentUser } from "@/database/auth/auth.actions";
 import { fetchThreads } from "@/database/thread/thread.actions";
 
@@ -18,13 +18,13 @@ const Home = async () => {
         ) : (
           <>
             {result?.threads.map((thread) => (
-              <ThreadCard
+              <EchoCard
                 key={`${thread._id}`}
                 currentUser_Id={`${user?._id}` || ""}
                 JSONThread={JSON.stringify(thread)}
               />
             ))}
-            <ThreadsInfiniteScroll
+            <EchosInfiniteScroll
               limit={limit}
               user_Id={`${user?._id}`}
               fetchFunc={fetchThreads}

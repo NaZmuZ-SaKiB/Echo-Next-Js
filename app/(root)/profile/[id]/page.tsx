@@ -5,9 +5,9 @@ import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import { fetchUser, getUserThreadsCount } from "@/database/user/user.actions";
-import ThreadsTab from "@/components/shared/ThreadsTab";
+import EchosTab from "@/components/shared/EchosTab";
 import { Suspense } from "react";
-import ThreadsTabLoading from "@/components/loaders/ThreadsTabLoading";
+import EchosTabLoading from "@/components/loaders/EchosTabLoading";
 import RepliesTab from "@/components/shared/RepliesTab";
 import { currentUser } from "@/database/auth/auth.actions";
 
@@ -52,8 +52,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             value={profileTabs[0].value}
             className="w-full text-light-1"
           >
-            <Suspense fallback={<ThreadsTabLoading />}>
-              <ThreadsTab
+            <Suspense fallback={<EchosTabLoading />}>
+              <EchosTab
                 currentUser_Id={`${user._id}`}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
@@ -65,7 +65,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             value={profileTabs[1].value}
             className="w-full text-light-1"
           >
-            <Suspense fallback={<ThreadsTabLoading />}>
+            <Suspense fallback={<EchosTabLoading />}>
               <RepliesTab
                 currentUser_Id={`${user._id}`}
                 user_id={`${profileUserInfo._id}`}
@@ -77,8 +77,8 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
             value={profileTabs[2].value}
             className="w-full text-light-1"
           >
-            <Suspense fallback={<ThreadsTabLoading />}>
-              <ThreadsTab
+            <Suspense fallback={<EchosTabLoading />}>
+              <EchosTab
                 currentUser_Id={`${user._id}`}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"

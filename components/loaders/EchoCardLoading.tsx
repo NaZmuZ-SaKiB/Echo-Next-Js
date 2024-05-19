@@ -5,7 +5,7 @@ type TProps = {
   isComment: boolean;
 };
 
-const ThreadCardLoading = ({ isComment }: TProps) => {
+const EchoCardLoading = ({ isComment }: TProps) => {
   return (
     <div
       className={`
@@ -19,7 +19,7 @@ const ThreadCardLoading = ({ isComment }: TProps) => {
             <div className="relative">
               <Skeleton className="opacity-10 rounded-full size-11 max-sm:size-9" />
             </div>
-            <div className="thread-card_bar" />
+            <div className="echo-card_bar" />
           </div>
 
           <div className="flex w-full flex-col">
@@ -73,4 +73,4 @@ const ThreadCardLoading = ({ isComment }: TProps) => {
   );
 };
 
-export default ThreadCardLoading;
+export default EchoCardLoading;

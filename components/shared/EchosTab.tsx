@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { fetchCommunityThreads } from "@/database/community/community.actions";
 import { fetchUserThreads } from "@/database/user/user.actions";
-import ThreadCard from "../cards/ThreadCard";
+import EchoCard from "../cards/EchoCard";
 import { TThreadProfilePage } from "@/database/thread/thread.interface";
-import ThreadsInfiniteScroll from "./ThreadsInfiniteScroll";
+import EchosInfiniteScroll from "./EchosInfiniteScroll";
 
 type TProps = {
   currentUser_Id: string; // _id
@@ -11,7 +11,7 @@ type TProps = {
   accountType: "User" | "Community";
 };
 
-const ThreadsTab = async ({
+const EchosTab = async ({
   fetchAccount_Id,
   accountType,
   currentUser_Id,
@@ -30,14 +30,14 @@ const ThreadsTab = async ({
   return (
     <section className="mt-9  max-sm:mt-5 flex flex-col gap-10  max-sm:gap-4">
       {result.threads.map((thread: TThreadProfilePage) => (
-        <ThreadCard
+        <EchoCard
           key={`${thread._id}`}
           currentUser_Id={currentUser_Id}
           JSONThread={JSON.stringify(thread)}
           isComment={false}
         />
       ))}
-      <ThreadsInfiniteScroll
+      <EchosInfiniteScroll
         limit={limit}
         user_Id={currentUser_Id}
         fetchFunc={
@@ -49,4 +49,4 @@ const ThreadsTab = async ({
   );
 };
 
-export default ThreadsTab;
+export default EchosTab;

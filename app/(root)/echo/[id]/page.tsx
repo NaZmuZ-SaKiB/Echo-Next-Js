@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { fetchThreadById } from "@/database/thread/thread.actions";
 import Comment from "@/components/forms/Comment";
-import ThreadCard from "@/components/cards/ThreadCard";
+import EchoCard from "@/components/cards/EchoCard";
 import { currentUser } from "@/database/auth/auth.actions";
 
 const ThreadPage = async ({ params }: { params: { id: string } }) => {
@@ -17,7 +17,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
   return (
     <section className="relative">
       <div>
-        <ThreadCard
+        <EchoCard
           currentUser_Id={`${user?._id}` || ""}
           JSONThread={JSON.stringify(thread)}
         />
@@ -33,7 +33,7 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
 
       <div className="mt-10">
         {thread.replies.map((reply) => (
-          <ThreadCard
+          <EchoCard
             key={`${reply._id}`}
             currentUser_Id={`${user?._id}` || ""}
             JSONThread={JSON.stringify(reply)}

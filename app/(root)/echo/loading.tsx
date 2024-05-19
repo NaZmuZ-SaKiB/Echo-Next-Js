@@ -1,11 +1,11 @@
-import ThreadCardLoading from "@/components/loaders/ThreadCardLoading";
+import EchoCardLoading from "@/components/loaders/EchoCardLoading";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ThreadPageLoading = () => {
   return (
     <section className="relative">
       <div>
-        <ThreadCardLoading isComment={false} />
+        <EchoCardLoading isComment={false} />
       </div>
 
       <div className="mt-7">
@@ -24,7 +24,7 @@ const ThreadPageLoading = () => {
         {Array(2)
           .fill(0)
           .map((_, index) => (
-            <ThreadCardLoading
+            <EchoCardLoading
               key={`thread-card-loader-${index}`}
               isComment={true}
             />
