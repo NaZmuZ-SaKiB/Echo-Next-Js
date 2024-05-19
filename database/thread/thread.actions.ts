@@ -7,6 +7,7 @@ import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
 import Thread, { Like } from "@/database/thread/thread.model";
 import Community from "@/database/community/community.model";
+import { createThreadLikeNotification } from "../notification/notification.actions";
 
 type TCreateThreadParams = {
   text: string;
@@ -422,6 +423,8 @@ export const handleLikeTherad = async (
       if (pathname !== "/") {
         revalidatePath(pathname);
       }
+
+      createThreadLikeNotification(threadId, userId);
       return { liked: true };
     }
   } catch (error: any) {

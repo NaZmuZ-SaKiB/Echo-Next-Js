@@ -30,7 +30,7 @@ const InvitationNotificationCard = ({
     }
   };
   return (
-    <Link key={activityId} href={link} onClick={handleReadNotification}>
+    <Link href={link} onClick={handleReadNotification}>
       <article className="activity-card">
         {!read && <div className="size-3 bg-primary-500 rounded-full mr-2" />}
         <Image

@@ -5,6 +5,7 @@ import { getMyNotifications } from "@/database/notification/notification.actions
 import { TNotificationPopulated } from "@/database/notification/notification.interface";
 import { notificationTypeEnum } from "@/constants";
 import InvitationNotificationCard from "@/components/cards/InvitationNotificationCard";
+import LikeNotificationCard from "@/components/cards/LikeNotificationCard";
 
 const ActivityPage = async () => {
   const user = await currentUser();
@@ -22,10 +23,11 @@ const ActivityPage = async () => {
 
       <section className="mt-10 flex flex-col gap-5">
         {activities && activities?.length > 0 ? (
-          activities.map((activity) => (
-            <>
-              {activity.type == notificationTypeEnum.INVITED && (
+          activities.map((activity) => {
+            if (activity.type == notificationTypeEnum.INVITED) {
+              return (
                 <InvitationNotificationCard
+                  key={`${activity._id}`}
                   activityId={`${activity._id}`}
                   image={activity.communityId?.image}
                   link={activity.link}
@@ -33,9 +35,22 @@ const ActivityPage = async () => {
                   read={activity.read}
                   accepted={activity.accepted || false}
                 />
-              )}
-            </>
-          ))
+              );
+            } else if (activity.type == notificationTypeEnum.LIKED) {
+              return (
+                <LikeNotificationCard
+                  key={`${activity._id}`}
+                  activityId={`${activity._id}`}
+                  link={activity.link}
+                  read={activity.read}
+                  JSONPeople={JSON.stringify(activity.people)}
+                  peopleCount={Number(activity?.peopleCount)}
+                />
+              );
+            } else {
+              return null;
+            }
+          })
         ) : (
           <p className="!text-base-regular text-light-3">No acivity yet</p>
         )}

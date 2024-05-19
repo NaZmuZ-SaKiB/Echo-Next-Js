@@ -24,9 +24,16 @@ const notificationSchema = new Schema<TNotification>(
         ref: "User",
       },
     ],
+    peopleCount: {
+      type: Number,
+    },
     read: {
       type: Boolean,
       default: false,
+    },
+    thread: {
+      type: Schema.Types.ObjectId,
+      ref: "Thread",
     },
     communityId: {
       type: Schema.Types.ObjectId,
