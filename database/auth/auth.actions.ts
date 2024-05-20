@@ -99,3 +99,37 @@ export const signOut = async () => {
   cookies().delete("jwt");
   redirect("/sign-in");
 };
+
+type TChangePasswordParams = {
+  oldPassword: string;
+  newPassword: string;
+};
+
+export const changePassword = async (
+  userId: string,
+  { oldPassword, newPassword }: TChangePasswordParams
+) => {
+  connectToDB();
+
+  try {
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const isCorrectPassword: Boolean = await bcrypt.compare(
+      oldPassword,
+      user.password
+    );
+
+    if (!isCorrectPassword) {
+      throw new Error("Invalid credentials.");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+  } catch (error: any) {
+    console.log(`Failed to change password: ${error.message}`);
+    throw error;
+  }
+};

@@ -28,5 +28,6 @@ export const config = {
     "/create-echo",
     "/communities/:path*",
     "/activity",
+    "/change-password",
   ],
 };

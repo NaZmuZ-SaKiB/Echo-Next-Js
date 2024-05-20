@@ -25,6 +25,7 @@ import { updateUser } from "@/database/user/user.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { TUser } from "@/database/user/user.interface";
 import { deleteImage } from "@/lib/actions/uploadthing.action";
+import Link from "next/link";
 
 interface IProps {
   user: TUser;

@@ -16,3 +16,8 @@ export const SignInValidation = z.object({
   email: z.string().email(),
   password: z.string(),
 });
+
+export const ChangePasswordValidation = z.object({
+  oldPassword: z.string(),
+  newPassword: z.string().min(8),
+});
