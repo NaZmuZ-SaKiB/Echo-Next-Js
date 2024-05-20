@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { TCommunity, TCommunityRequestPopulated } from "./community.interface";
 import Notification from "../notification/notification.model";
 import { notificationTypeEnum } from "@/constants";
+import { deleteThread } from "../thread/thread.actions";
 
 type TCreateCommunity = {
   name: string;
@@ -534,7 +535,13 @@ export const deleteCommunity = async (communityId: string) => {
     }
 
     // Delete all threads associated with the community
-    await Thread.deleteMany({ community: communityId }, { session });
+    const threadsToDelete = await Thread.find({ community: communityId });
+
+    const threadIdsToDelete = threadsToDelete.map((thread) => thread._id);
+
+    for (const threadId of threadIdsToDelete) {
+      await deleteThread(`${threadId}`, "/", session);
+    }
 
     // Find all users who are part of the community
     const communityUsers = await User.find({ communities: communityId }).select(

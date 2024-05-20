@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { readNotification } from "@/database/notification/notification.actions";
 import { TUser } from "@/database/user/user.interface";
+import Image from "next/image";
 
 type TProps = {
   activityId: string;
@@ -10,14 +11,16 @@ type TProps = {
   read: boolean;
   JSONPeople: string;
   peopleCount: number;
+  type: "liked" | "replied";
 };
 
-const LikeNotificationCard = ({
+const LikeAndReplyNotificationCard = ({
   activityId,
   link,
   read,
   JSONPeople,
   peopleCount,
+  type,
 }: TProps) => {
   const people: TUser[] = JSON.parse(JSONPeople);
 
@@ -29,15 +32,22 @@ const LikeNotificationCard = ({
     }
   };
 
+  const renderName = (name?: string) => {
+    return <span className="font-bold">{name}</span>;
+  };
+
   const renderPeopleNames = () => {
-    if (people.length === 1) return people[0].name;
-    if (people.length === 2) return `${people[0].name} and ${people[1].name}`;
+    if (people.length === 1) return renderName(people[0].name);
+    if (people.length === 2)
+      return `${renderName(people[0].name)} and ${renderName(people[1].name)}`;
     if (people.length === 3)
-      return `${people[0].name}, ${people[1].name} and ${people[2].name}`;
+      return `${renderName(people[0].name)}, ${renderName(
+        people[1].name
+      )} and ${renderName(people[2].name)}`;
     if (people.length > 3)
-      return `${people[0].name}, ${people[1].name}, ${people[2].name} and ${
-        peopleCount - 3
-      } others`;
+      return `${renderName(people[0].name)}, ${renderName(
+        people[1].name
+      )}, ${renderName(people[2].name)} and ${peopleCount - 3} others`;
     return "";
   };
   return (
@@ -45,8 +55,16 @@ const LikeNotificationCard = ({
       <article className="activity-card">
         {!read && <div className="size-3 bg-primary-500 rounded-full mr-2" />}
 
+        <Image
+          src={people[0].image || "/assets/profile.svg"}
+          alt="user_logo"
+          width={20}
+          height={20}
+          className="rounded-full object-cover"
+        />
+
         <p className="!text-small-regular text-light-1">
-          {renderPeopleNames()} {peopleCount > 1 ? "have" : "has"} liked your
+          {renderPeopleNames()} {peopleCount > 1 ? "have" : "has"} {type} your
           post
         </p>
       </article>
@@ -54,4 +72,4 @@ const LikeNotificationCard = ({
   );
 };
 
-export default LikeNotificationCard;
+export default LikeAndReplyNotificationCard;

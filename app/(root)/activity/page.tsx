@@ -5,7 +5,7 @@ import { getMyNotifications } from "@/database/notification/notification.actions
 import { TNotificationPopulated } from "@/database/notification/notification.interface";
 import { notificationTypeEnum } from "@/constants";
 import InvitationNotificationCard from "@/components/cards/InvitationNotificationCard";
-import LikeNotificationCard from "@/components/cards/LikeNotificationCard";
+import LikeAndReplyNotificationCard from "@/components/cards/LikeAndReplyNotificationCard";
 
 const ActivityPage = async () => {
   const user = await currentUser();
@@ -38,13 +38,26 @@ const ActivityPage = async () => {
               );
             } else if (activity.type == notificationTypeEnum.LIKED) {
               return (
-                <LikeNotificationCard
+                <LikeAndReplyNotificationCard
                   key={`${activity._id}`}
                   activityId={`${activity._id}`}
                   link={activity.link}
                   read={activity.read}
                   JSONPeople={JSON.stringify(activity.people)}
                   peopleCount={Number(activity?.peopleCount)}
+                  type="liked"
+                />
+              );
+            } else if (activity.type == notificationTypeEnum.REPLIED) {
+              return (
+                <LikeAndReplyNotificationCard
+                  key={`${activity._id}`}
+                  activityId={`${activity._id}`}
+                  link={activity.link}
+                  read={activity.read}
+                  JSONPeople={JSON.stringify(activity.people)}
+                  peopleCount={Number(activity?.peopleCount)}
+                  type="replied"
                 />
               );
             } else {

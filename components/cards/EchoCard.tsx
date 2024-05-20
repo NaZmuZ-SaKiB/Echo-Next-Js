@@ -1,7 +1,7 @@
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import DeleteThread from "../forms/DeleteThread";
+import DeleteEcho from "../forms/DeleteEcho";
 import { TUser } from "@/database/user/user.interface";
 import { TThreadProfilePage } from "@/database/thread/thread.interface";
 import LikeThread from "../forms/LikeThread";
@@ -96,7 +96,7 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
           </div>
         </div>
 
-        <DeleteThread
+        <DeleteEcho
           author_Id={`${thread.author?._id}` || null}
           currentUser_Id={currentUser_Id} // json.stringify version
           thread_Id={`${thread._id}`} // json.stringify version

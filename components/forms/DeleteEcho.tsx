@@ -12,7 +12,7 @@ type TProps = {
   author_Id: string | null;
 };
 
-function DeleteThread({ thread_Id, currentUser_Id, author_Id }: TProps) {
+function DeleteEcho({ thread_Id, currentUser_Id, author_Id }: TProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -54,4 +54,4 @@ function DeleteThread({ thread_Id, currentUser_Id, author_Id }: TProps) {
   );
 }
 
-export default DeleteThread;
+export default DeleteEcho;

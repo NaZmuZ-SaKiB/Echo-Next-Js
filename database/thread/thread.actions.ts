@@ -1,13 +1,17 @@
 "use server";
 
-import { startSession } from "mongoose";
+import { ClientSession, startSession } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import { connectToDB } from "@/database/mongoose";
 import User from "@/database/user/user.model";
 import Thread, { Like } from "@/database/thread/thread.model";
 import Community from "@/database/community/community.model";
-import { createThreadLikeNotification } from "../notification/notification.actions";
+import {
+  createThreadLikeNotification,
+  createThreadRepliedNotification,
+} from "../notification/notification.actions";
+import Notification from "../notification/notification.model";
 
 type TCreateThreadParams = {
   text: string;
@@ -311,6 +315,8 @@ export const addCommentToThread = async ({
 
     await commentThread.save();
 
+    createThreadRepliedNotification(threadId, userId);
+
     revalidatePath(path);
   } catch (error: any) {
     throw new Error(`Failed to add comment to thread: ${error?.message}`);
@@ -318,12 +324,7 @@ export const addCommentToThread = async ({
 };
 
 const fetchAllChildThreads = async (threadId: string): Promise<any[]> => {
-  const childThreads = await Thread.find({ parentThread: threadId })
-    .populate("author")
-    .populate({
-      path: "community",
-      model: Community,
-    });
+  const childThreads = await Thread.find({ parentThread: threadId });
 
   const descendantThreads = [];
   for (const childThread of childThreads) {
@@ -334,10 +335,20 @@ const fetchAllChildThreads = async (threadId: string): Promise<any[]> => {
   return descendantThreads;
 };
 
-export const deleteThread = async (id: string, path: string) => {
+export const deleteThread = async (
+  id: string,
+  path: string,
+  parentSession?: ClientSession
+) => {
   connectToDB();
 
-  const session = await startSession();
+  let session: ClientSession;
+
+  if (parentSession) {
+    session = parentSession;
+  } else {
+    session = await startSession();
+  }
 
   try {
     const mainThread = await Thread.findById(id).populate("author").populate({
@@ -360,7 +371,9 @@ export const deleteThread = async (id: string, path: string) => {
 
     const likes = await Like.find({
       threadId: { $in: threadsIdsToDelete },
-    }).exec();
+    })
+      .select("_id")
+      .exec();
 
     if (likes.length) {
       likeIdsToDelete = likes.map((like) => like._id.toString());
@@ -368,13 +381,34 @@ export const deleteThread = async (id: string, path: string) => {
       likeIdsToDelete = [];
     }
 
+    let notificationsToDelete: string[];
+
+    const notifications = await Notification.find({
+      threadId: { $in: threadsIdsToDelete },
+    })
+      .select("_id")
+      .exec();
+
+    if (notifications.length) {
+      notificationsToDelete = notifications.map((notification) =>
+        notification._id.toString()
+      );
+    } else {
+      notificationsToDelete = [];
+    }
+
     // * Main Transaction with DB starts here
 
     session.startTransaction();
 
-    await Thread.deleteMany({ _id: { $in: threadsIdsToDelete } });
+    await Thread.deleteMany({ _id: { $in: threadsIdsToDelete } }, { session });
 
-    await Like.deleteMany({ _id: { $in: likeIdsToDelete } });
+    await Like.deleteMany({ _id: { $in: likeIdsToDelete } }, { session });
+
+    await Notification.deleteMany(
+      { _id: { $in: notificationsToDelete } },
+      { session }
+    );
 
     await session.commitTransaction();
     await session.endSession();

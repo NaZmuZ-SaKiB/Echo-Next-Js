@@ -4,7 +4,7 @@ import Comment from "@/components/forms/Comment";
 import EchoCard from "@/components/cards/EchoCard";
 import { currentUser } from "@/database/auth/auth.actions";
 
-const ThreadPage = async ({ params }: { params: { id: string } }) => {
+const EchoPage = async ({ params }: { params: { id: string } }) => {
   if (!params.id) return null;
 
   const user = await currentUser();
@@ -45,4 +45,4 @@ const ThreadPage = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default ThreadPage;
+export default EchoPage;

@@ -86,6 +86,54 @@ export const createThreadLikeNotification = async (
   }
 };
 
+export const createThreadRepliedNotification = async (
+  threadId: string,
+  userId: string
+) => {
+  connectToDB();
+
+  try {
+    const thread = await Thread.findById(threadId);
+
+    const isLikeNotificationExists = await Notification.findOne({
+      type: notificationTypeEnum.REPLIED,
+      thread: threadId,
+    });
+
+    if (!isLikeNotificationExists) {
+      await Notification.create({
+        type: notificationTypeEnum.REPLIED,
+        link: `/echo/${threadId}`,
+        user: thread?.author,
+        peopleCount: 1,
+        people: [userId],
+        thread: threadId,
+      });
+    } else {
+      const read = (isLikeNotificationExists.peopleCount as number) / 3 === 0;
+
+      await Notification.findByIdAndUpdate(isLikeNotificationExists._id, {
+        $inc: { peopleCount: 1 },
+        $push: {
+          people: {
+            $each: [userId],
+            $position: 0,
+            $slice: 3,
+          },
+        },
+        read: !read,
+      });
+    }
+  } catch (error: any) {
+    console.log(
+      `Failed to create thread reply notification: ${error?.message}`
+    );
+    throw new Error(
+      `Failed to create thread reply notification: ${error?.message}`
+    );
+  }
+};
+
 export const readNotification = async (notificationId: string) => {
   connectToDB();
 
