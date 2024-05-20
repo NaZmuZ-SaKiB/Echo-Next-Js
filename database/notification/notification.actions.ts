@@ -6,6 +6,7 @@ import { connectToDB } from "../mongoose";
 import Notification from "./notification.model";
 import { notificationTypeEnum } from "@/constants";
 import Thread from "../thread/thread.model";
+import { revalidatePath } from "next/cache";
 
 export const createCommunityInvitationNotification = async (
   communityId: string,
@@ -141,6 +142,8 @@ export const readNotification = async (notificationId: string) => {
     await Notification.findByIdAndUpdate(notificationId, {
       read: true,
     });
+
+    revalidatePath("/");
   } catch (error: any) {
     console.log(`Failed to read notification: ${error?.message}`);
   }
@@ -159,5 +162,21 @@ export const getMyNotifications = async (userId: string) => {
     return notifications;
   } catch (error: any) {
     console.log(`Failed to get notifications: ${error?.message}`);
+  }
+};
+
+export const getUnreadNotificationsCount = async (userId: string) => {
+  connectToDB();
+
+  try {
+    const notificationsCount = await Notification.countDocuments({
+      user: userId,
+      read: false,
+    });
+
+    return notificationsCount;
+  } catch (error: any) {
+    console.log(`Failed to get unread notifications count: ${error?.message}`);
+    return 0;
   }
 };

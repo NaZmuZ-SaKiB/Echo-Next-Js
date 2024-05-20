@@ -8,10 +8,11 @@ import { sidebarLinks } from "@/constants";
 import { signOut } from "@/database/auth/auth.actions";
 
 type TProps = {
-  userId: string | null;
+  userId: string;
+  activityCount: number;
 };
 
-const LeftSideBar = ({ userId }: TProps) => {
+const LeftSideBar = ({ userId, activityCount }: TProps) => {
   const pathname = usePathname();
 
   const logout = async () => {
@@ -28,12 +29,16 @@ const LeftSideBar = ({ userId }: TProps) => {
               link.route.length > 1) ||
             pathname === link.route;
 
+          const isActivityIcon = link.route === "/activity";
+
           if (link.route === "/profile") link.route = `/profile/${userId}`;
           return (
             <div key={link.label}>
               <Link
                 href={link.route}
-                className={`leftsidebar_link ${isActive && "bg-primary-500"}`}
+                className={`leftsidebar_link ${
+                  isActive && "bg-primary-500"
+                } relative`}
               >
                 <Image
                   src={link.imgURL}
@@ -41,6 +46,11 @@ const LeftSideBar = ({ userId }: TProps) => {
                   width={24}
                   height={24}
                 />
+                {isActivityIcon && activityCount > 0 && (
+                  <span className="size-6 flex justify-center items-center text-[12px] rounded-full bg-red-500 text-light-1 absolute left-8 top-0">
+                    {activityCount > 99 ? "99+" : activityCount}
+                  </span>
+                )}
                 <p className="text-light-1 max-lg:hidden">{link.label}</p>
               </Link>
             </div>
