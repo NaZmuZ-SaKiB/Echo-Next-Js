@@ -8,13 +8,14 @@ import { connectToDB } from "../mongoose";
 import User from "../user/user.model";
 import { jwtHelpers } from "@/utils/jwt";
 import { redirect } from "next/navigation";
+import generatePasswordResetLinkHtml from "@/utils/generatePasswordResetLinkHtml";
 
 export const sendVerificationEmail = async (email: string, code: string) => {
   if (!code) return;
 
   await sendMail({
     to: email,
-    subject: "Verify your email",
+    subject: "Echo | Verify your email",
     html: signUpVerificationTemplate(code),
   });
 };
@@ -130,6 +131,59 @@ export const changePassword = async (
     await User.findByIdAndUpdate(user._id, { password: hashedPassword });
   } catch (error: any) {
     console.log(`Failed to change password: ${error.message}`);
+    throw error;
+  }
+};
+
+export const sendPasswordResetEmail = async (email: string) => {
+  connectToDB();
+
+  try {
+    const user = await User.findOne({ email }).select("_id");
+
+    if (!user) {
+      throw new Error(`User not found with email : ${email}.`);
+    }
+
+    const token = await jwtHelpers.generateToken(
+      { id: user._id },
+      process.env.JWT_SECRET as string,
+      "5m"
+    );
+
+    const resetUrl = process.env.LIVE_SITE_URL + `/reset-password/${token}`;
+
+    await sendMail({
+      to: email,
+      subject: "Echo | Password Reset Link",
+      html: generatePasswordResetLinkHtml(resetUrl),
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    console.log(`Failed to send password reset email:`, error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (token: string, password: string) => {
+  connectToDB();
+
+  try {
+    const decoded = await jwtHelpers.verifyToken(
+      token,
+      process.env.JWT_SECRET as string
+    );
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    await User.findByIdAndUpdate(decoded.payload.id, {
+      password: hashedPassword,
+    });
+
+    redirect("/sign-in");
+  } catch (error: any) {
+    console.log(`Failed to reset password: ${error.message}`);
     throw error;
   }
 };

@@ -20,7 +20,7 @@ export const signUpVerificationTemplate = (code: string) => {
 
         <p style="color: #A0AEC0">This is an automated email, please do not reply.</p>
 
-        <p style="color: #A0AEC0">© 2021 Echo. All rights reserved.</p>
+        <p style="color: #A0AEC0">© 2024 Echo. All rights reserved.</p>
   `;
 };
 

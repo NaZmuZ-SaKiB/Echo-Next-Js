@@ -14,6 +14,7 @@ import { sendVerificationEmail, signUp } from "@/database/auth/auth.actions";
 import { SignUpValidation } from "@/database/auth/auth.validation";
 import { generateVerificationCode, verifyCode } from "@/utils/verificationCode";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -229,18 +230,22 @@ const SignUpPage = () => {
             </div>
           )}
 
-          {verified && (
-            <Button
-              className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {!form.formState.isSubmitting
-                ? "Sign Up"
-                : "Creating new account..."}
-            </Button>
-          )}
+          <Button
+            className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
+            type="submit"
+            disabled={form.formState.isSubmitting || !verified}
+          >
+            {!form.formState.isSubmitting
+              ? "Sign Up"
+              : "Creating new account..."}
+          </Button>
         </form>
+        <p className="text-light-1 mt-3">
+          Already have an account?{" "}
+          <Link href="/sign-in" className="text-primary-500">
+            Sign in
+          </Link>
+        </p>
       </Form>
     </div>
   );

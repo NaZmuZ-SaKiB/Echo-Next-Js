@@ -21,3 +21,12 @@ export const ChangePasswordValidation = z.object({
   oldPassword: z.string(),
   newPassword: z.string().min(8),
 });
+
+export const ForgotPasswordValidation = z.object({
+  email: z.string().email(),
+});
+
+export const ResetPasswordValidation = z.object({
+  password: z.string().min(8),
+  confirmPassword: z.string().min(8),
+});

@@ -48,65 +48,64 @@ const ChangePasswordForm = ({ userId }: { userId: string }) => {
     }
   };
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col justify-start gap-10 max-sm:gap-6"
-        >
-          {error && (
-            <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col justify-start gap-10 max-sm:gap-6"
+      >
+        {error && (
+          <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+        )}
+
+        <FormField
+          control={form.control}
+          name="oldPassword"
+          render={({ field }) => (
+            <FormItem className="flex flex-col gap-3 w-full">
+              <FormLabel className="text-base-semibold text-light-2">
+                Old Password
+              </FormLabel>
+              <FormControl>
+                <Input
+                  className="account-form_input no-focus w-full"
+                  {...field}
+                  type="password"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
+        />
 
-          <FormField
-            control={form.control}
-            name="oldPassword"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-3 w-full">
-                <FormLabel className="text-base-semibold text-light-2">
-                  Old Password
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    className="account-form_input no-focus w-full"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="newPassword"
+          render={({ field }) => (
+            <FormItem className="flex flex-col gap-3 w-full">
+              <FormLabel className="text-base-semibold text-light-2">
+                New Password
+              </FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  className="account-form_input no-focus w-full"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-3 w-full">
-                <FormLabel className="text-base-semibold text-light-2">
-                  New Password
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    className="account-form_input no-focus w-full"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
-            type="submit"
-            disabled={form.formState.isSubmitting}
-          >
-            {!form.formState.isSubmitting ? "Change Password" : "Updating..."}
-          </Button>
-        </form>
-      </Form>
-    </div>
+        <Button
+          className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
+          type="submit"
+          disabled={form.formState.isSubmitting}
+        >
+          {!form.formState.isSubmitting ? "Change Password" : "Updating..."}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

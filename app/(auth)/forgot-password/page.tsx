@@ -10,35 +10,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/database/auth/auth.actions";
-import { SignInValidation } from "@/database/auth/auth.validation";
+import { sendPasswordResetEmail } from "@/database/auth/auth.actions";
+import { ForgotPasswordValidation } from "@/database/auth/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const SignInPage = () => {
+const page = () => {
   const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
+  const [success, setSuccess] = useState<string | null>(null);
 
   const form = useForm({
-    resolver: zodResolver(SignInValidation),
+    resolver: zodResolver(ForgotPasswordValidation),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof SignInValidation>) => {
+  const onSubmit = async (values: z.infer<typeof ForgotPasswordValidation>) => {
     setError(null);
+    setSuccess(null);
 
     try {
-      await signIn(values.email, values.password);
+      await sendPasswordResetEmail(values.email);
       form.reset();
-      router.push("/");
+      setSuccess("Check your email. Password reset link has been sent.");
     } catch (error: any) {
       setError(error?.message || "An error occurred.");
     }
@@ -50,10 +48,13 @@ const SignInPage = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col justify-start gap-10 max-sm:gap-6"
         >
-          <h1 className="head-text">Sign in</h1>
+          <h1 className="head-text">Get Password Reset Link</h1>
 
           {error && (
             <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
+          )}
+          {success && (
+            <div className="bg-green-700 text-white p-2 text-sm">{success}</div>
           )}
 
           <FormField
@@ -72,29 +73,9 @@ const SignInPage = () => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-3 w-full">
-                <FormLabel className="text-base-semibold text-light-2">
-                  Password
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    className="account-form_input no-focus"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <p className="text-light-1">
-            <Link href="/forgot-password" className="text-primary-500">
-              Forgot Password?
+            <Link href="/sign-in" className="text-primary-500">
+              Back to sign in page
             </Link>
           </p>
 
@@ -103,7 +84,7 @@ const SignInPage = () => {
             type="submit"
             disabled={form.formState.isSubmitting}
           >
-            {!form.formState.isSubmitting ? "Sign In" : "Signing In..."}
+            {!form.formState.isSubmitting ? "Get Reset Link" : "Sending..."}
           </Button>
         </form>
         <p className="text-light-1 mt-3">
@@ -117,4 +98,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default page;

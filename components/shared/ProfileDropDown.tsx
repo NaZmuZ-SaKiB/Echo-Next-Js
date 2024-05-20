@@ -37,7 +37,7 @@ const ProfileDropDown = ({ JsonUser, JsonCommunities }: TProps) => {
           <h4 className="text-base-semibold text-light-1">{user.name}</h4>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-72 bg-dark-4 border-gray-1">
+      <DropdownMenuContent className="w-72 bg-dark-4 border-gray-1 max-h-80 overflow-y-auto">
         {communities.map((community) => (
           <Link href={`/communities/${community._id}`} key={`${community._id}`}>
             <div className="flex items-center gap-3 bg-dark-4 px-3 py-2 rounded-md cursor-pointer hover:bg-gray-800">

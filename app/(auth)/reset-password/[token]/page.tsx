@@ -10,35 +10,41 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/database/auth/auth.actions";
-import { SignInValidation } from "@/database/auth/auth.validation";
+import { resetPassword } from "@/database/auth/auth.actions";
+import { ResetPasswordValidation } from "@/database/auth/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const SignInPage = () => {
+type TProps = {
+  params: {
+    token: string;
+  };
+};
+
+const ResetPasswordPage = ({ params }: TProps) => {
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
-
   const form = useForm({
-    resolver: zodResolver(SignInValidation),
+    resolver: zodResolver(ResetPasswordValidation),
     defaultValues: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof SignInValidation>) => {
+  const onSubmit = async (values: z.infer<typeof ResetPasswordValidation>) => {
     setError(null);
 
+    if (values.password !== values.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     try {
-      await signIn(values.email, values.password);
+      await resetPassword(params.token, values.password);
       form.reset();
-      router.push("/");
     } catch (error: any) {
       setError(error?.message || "An error occurred.");
     }
@@ -50,7 +56,7 @@ const SignInPage = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col justify-start gap-10 max-sm:gap-6"
         >
-          <h1 className="head-text">Sign in</h1>
+          <h1 className="head-text">Reset Password</h1>
 
           {error && (
             <div className="bg-red-500 text-white p-2 text-sm">{error}</div>
@@ -58,27 +64,11 @@ const SignInPage = () => {
 
           <FormField
             control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="flex flex-col gap-3 w-full">
-                <FormLabel className="text-base-semibold text-light-2">
-                  Email
-                </FormLabel>
-                <FormControl>
-                  <Input className="account-form_input no-focus" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-3 w-full">
                 <FormLabel className="text-base-semibold text-light-2">
-                  Password
+                  New Password
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -92,29 +82,37 @@ const SignInPage = () => {
             )}
           />
 
-          <p className="text-light-1">
-            <Link href="/forgot-password" className="text-primary-500">
-              Forgot Password?
-            </Link>
-          </p>
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-3 w-full">
+                <FormLabel className="text-base-semibold text-light-2">
+                  Confirm Password
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    className="account-form_input no-focus"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button
             className={`bg-primary-500 disabled:bg-gray-1 disabled:animate-pulse`}
             type="submit"
             disabled={form.formState.isSubmitting}
           >
-            {!form.formState.isSubmitting ? "Sign In" : "Signing In..."}
+            {!form.formState.isSubmitting ? "Reset Password" : "Updating..."}
           </Button>
         </form>
-        <p className="text-light-1 mt-3">
-          Don't have an account?{" "}
-          <Link href="/sign-up" className="text-primary-500">
-            Sign up
-          </Link>
-        </p>
       </Form>
     </div>
   );
 };
 
-export default SignInPage;
+export default ResetPasswordPage;
