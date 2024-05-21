@@ -12,11 +12,11 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { addCommentToThread } from "@/database/thread/thread.actions";
 import { CommentValidation } from "@/database/thread/thread.validation";
+import { Textarea } from "../ui/textarea";
 
 type TProps = {
   thread_Id: string;
@@ -52,7 +52,7 @@ const Comment = ({ thread_Id, currentUser_Id, currentUserImg }: TProps) => {
           control={form.control}
           name="thread"
           render={({ field }) => (
-            <FormItem className="flex items-center gap-3 w-full">
+            <FormItem className="flex items-start gap-3 w-full">
               <FormLabel>
                 <Image
                   src={currentUserImg}
@@ -63,9 +63,9 @@ const Comment = ({ thread_Id, currentUser_Id, currentUserImg }: TProps) => {
                 />
               </FormLabel>
               <FormControl className="border-none bg-transparent">
-                <Input
+                <Textarea
                   placeholder="Comment..."
-                  className="no-focus text-light-1 outline-none"
+                  className="no-focus text-light-1 outline-none max-h-12 resize-none"
                   {...field}
                 />
               </FormControl>
