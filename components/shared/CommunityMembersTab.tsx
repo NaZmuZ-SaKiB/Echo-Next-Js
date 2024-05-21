@@ -1,5 +1,6 @@
-import { TUser } from "@/database/user/user.interface";
 import Image from "next/image";
+
+import { TUser } from "@/database/user/user.interface";
 import { Button } from "../ui/button";
 import KickCommunityMember from "../forms/KickCommunityMember";
 

@@ -1,53 +1,50 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { communityTabs, publicCommunityTabs } from "@/constants";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CommunityRequestsTab from "@/components/shared/CommunityRequestsTab";
+import CommunityMembersTab from "@/components/shared/CommunityMembersTab";
+import CommunityProfileHeader from "@/components/shared/CommunityProfileHeader";
 import EchosTab from "@/components/shared/EchosTab";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
 import {
   fetchCommunityDetails,
   getCommunityThreadsCount,
   isUserInvitedToThisCommunity,
 } from "@/database/community/community.actions";
-import { currentUser } from "@/database/auth/auth.actions";
-import CommunityRequestsTab from "@/components/shared/CommunityRequestsTab";
-import CommunityMembersTab from "@/components/shared/CommunityMembersTab";
-import CommunityProfileHeader from "@/components/shared/CommunityProfileHeader";
 
 const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
-  const user = await currentUser();
-  if (!user) return null;
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
 
   const communityDetails = await fetchCommunityDetails(params.id);
-  if (!communityDetails) return null;
+  if (!communityDetails) redirect("/");
 
-  const isInvited = await isUserInvitedToThisCommunity(
-    params.id,
-    `${user._id}`
-  );
+  const isInvited = await isUserInvitedToThisCommunity(params.id, user.userId);
 
   const communityThreadsCount = await getCommunityThreadsCount(
     `${communityDetails._id}`
   );
 
   const isCommunityMember = !!communityDetails?.members?.find(
-    (member) => `${member._id}` === `${user._id}`
+    (member) => `${member._id}` === user.userId
   );
 
-  const isCommunityOwner =
-    `${communityDetails.createdBy._id}` === `${user._id}`;
+  const isCommunityOwner = `${communityDetails.createdBy._id}` === user.userId;
 
   return (
     <section>
       <CommunityProfileHeader
         communityId={`${communityDetails._id}`}
-        authUserId={`${user._id}`}
+        authUserId={user.userId}
         name={communityDetails.name!}
         username={communityDetails.username}
         imgUrl={communityDetails.image!}
         bio={communityDetails.bio || ""}
         communityOwner={isCommunityOwner}
         isCommunityMember={isCommunityMember}
-        requestSent={communityDetails.requests.includes(`${user._id}`)}
+        requestSent={communityDetails.requests.includes(user.userId)}
         isInvited={isInvited}
       />
 
@@ -76,7 +73,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
 
           <TabsContent value="echos">
             <EchosTab
-              currentUser_Id={`${user._id}`}
+              currentUser_Id={user.userId}
               fetchAccount_Id={`${communityDetails._id}`}
               accountType="Community"
             />

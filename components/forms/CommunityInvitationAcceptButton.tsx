@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
-
 import { usePathname } from "next/navigation";
+
+import { Button } from "../ui/button";
 import { acceptCommunityJoinInvitation } from "@/database/community/community.actions";
 
 type TProps = {

@@ -1,8 +1,8 @@
-import { fetchCommunityJoinRequests } from "@/database/community/community.actions";
 import Image from "next/image";
-import { Button } from "../ui/button";
 import Link from "next/link";
+
 import CommunityRequestAcceptButton from "../forms/CommunityRequestAcceptButton";
+import { fetchCommunityJoinRequests } from "@/database/community/community.actions";
 
 type TProps = {
   communityId: string;

@@ -96,6 +96,24 @@ export const currentUser = async () => {
   }
 };
 
+export const isUserLoggedIn = async () => {
+  try {
+    const jwt = cookies().get("jwt");
+    if (!jwt?.value) {
+      return null;
+    }
+
+    const decoded = await jwtHelpers.verifyToken(
+      jwt.value,
+      process.env.JWT_SECRET as string
+    );
+
+    return { userId: `${decoded.payload?.id}`, email: decoded.payload?.email };
+  } catch (error) {
+    return null;
+  }
+};
+
 export const signOut = async () => {
   cookies().delete("jwt");
   redirect("/sign-in");

@@ -1,9 +1,11 @@
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+
 import SearchResultLoading from "@/components/loaders/SearchResultLoading";
 import CommunityInviteSearchResult from "@/components/shared/CommunityInviteSearchResult";
 import Searchbar from "@/components/shared/Searchbar";
-import { currentUser } from "@/database/auth/auth.actions";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
 import { getInvitedUsersList } from "@/database/community/community.actions";
-import { Suspense } from "react";
 
 type TProps = {
   params: { id: string };
@@ -11,8 +13,8 @@ type TProps = {
 };
 
 const CommunityInvitePage = async ({ params, searchParams }: TProps) => {
-  const user = await currentUser();
-  if (!user) return null;
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
 
   const invitedUsersList = await getInvitedUsersList(params.id);
 
@@ -26,7 +28,7 @@ const CommunityInvitePage = async ({ params, searchParams }: TProps) => {
       <Suspense key={query} fallback={<SearchResultLoading type="User" />}>
         <CommunityInviteSearchResult
           communityId={params.id}
-          userId={`${user._id}`}
+          userId={user.userId}
           query={query}
           page={searchParams?.page}
           invitedUsersList={invitedUsersList}

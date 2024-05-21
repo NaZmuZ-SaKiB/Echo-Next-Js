@@ -1,7 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import CommunityRequestButton from "../forms/CommunityRequestButton";
-import { Button } from "../ui/button";
 
 type TProps = {
   profileUserId: string;

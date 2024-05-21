@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import { sidebarLinks } from "@/constants";
 import { signOut } from "@/database/auth/auth.actions";

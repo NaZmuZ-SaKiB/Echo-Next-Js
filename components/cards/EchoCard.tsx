@@ -1,21 +1,20 @@
-import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import DeleteEcho from "../forms/DeleteEcho";
+
+import { formatDateString } from "@/lib/utils";
 import { TUser } from "@/database/user/user.interface";
 import { TThreadProfilePage } from "@/database/thread/thread.interface";
 import LikeThread from "../forms/LikeThread";
+import DeleteEcho from "../forms/DeleteEcho";
 
 type TProps = {
-  currentUser_Id: string; // _id
-
-  JSONThread: string;
-
+  currentUser_Id: string;
+  JSONEcho: string;
   isComment?: boolean;
 };
 
-const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
-  const thread = JSON.parse(JSONThread) as TThreadProfilePage;
+const EchoCard = ({ currentUser_Id, JSONEcho, isComment }: TProps) => {
+  const echo = JSON.parse(JSONEcho) as TThreadProfilePage;
   return (
     <article
       className={`
@@ -27,11 +26,11 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
         <div className="flex w-full flex-1 flex-row gap-4 max-sm:gap-3">
           <div className="flex flex-col items-center">
             <Link
-              href={`/profile/${thread.author._id}`}
+              href={`/profile/${echo.author._id}`}
               className="relative size-11 max-sm:size-9"
             >
               <Image
-                src={thread.author.image!}
+                src={echo.author.image!}
                 alt="Profile image"
                 fill
                 className="cursor-pointer rounded-full"
@@ -41,14 +40,12 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
           </div>
 
           <div className="flex w-full flex-col">
-            <Link href={`/profile/${thread.author._id}`} className="w-fit">
+            <Link href={`/profile/${echo.author._id}`} className="w-fit">
               <h4 className="cursor-pointer text-base-semibold text-light-1">
-                {thread.author.name}
+                {echo.author.name}
               </h4>
             </Link>
-            <p className="mt-2 text-small-regular text-light-2">
-              {thread.text}
-            </p>
+            <p className="mt-2 text-small-regular text-light-2">{echo.text}</p>
             <div
               className={`${
                 isComment && "mb-10"
@@ -56,12 +53,12 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
             >
               <div className="flex gap-3.5">
                 <LikeThread
-                  thread_Id={`${thread._id}`}
+                  thread_Id={`${echo._id}`}
                   likedBy_Id={currentUser_Id}
-                  isLiked={thread.likes.includes(currentUser_Id)}
-                  likesCount={thread.likes.length}
+                  isLiked={echo.likes.includes(currentUser_Id)}
+                  likesCount={echo.likes.length}
                 />
-                <Link href={`/echo/${thread._id}`}>
+                <Link href={`/echo/${echo._id}`}>
                   <Image
                     src={"/assets/reply.svg"}
                     alt="heart"
@@ -85,10 +82,10 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
                   className="cursor-pointer object-contain"
                 />
               </div>
-              {isComment && thread.replies.length > 0 && (
-                <Link href={`/echo/${thread._id}`}>
+              {isComment && echo.replies.length > 0 && (
+                <Link href={`/echo/${echo._id}`}>
                   <p className="mt-1 text-subtle-medium text-gray-1">
-                    {thread.replies.length} replies
+                    {echo.replies.length} replies
                   </p>
                 </Link>
               )}
@@ -97,15 +94,15 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
         </div>
 
         <DeleteEcho
-          author_Id={`${thread.author?._id}` || null}
+          author_Id={`${echo.author?._id}` || null}
           currentUser_Id={currentUser_Id} // json.stringify version
-          thread_Id={`${thread._id}`} // json.stringify version
+          thread_Id={`${echo._id}`} // json.stringify version
         />
       </div>
 
-      {!isComment && thread.replies.length > 0 && (
+      {!isComment && echo.replies.length > 0 && (
         <div className="ml-1 mt-3 flex items-center gap-2">
-          {thread.replies.slice(0, 2).map((comment, index: number) => (
+          {echo.replies.slice(0, 2).map((comment, index: number) => (
             <Image
               key={index}
               src={(comment.author as unknown as TUser).image!}
@@ -116,27 +113,26 @@ const EchoCard = ({ currentUser_Id, JSONThread, isComment }: TProps) => {
             />
           ))}
 
-          <Link href={`/echo/${thread._id}`}>
+          <Link href={`/echo/${echo._id}`}>
             <p className="mt-1 text-subtle-medium text-gray-1">
-              {thread.replies.length} repl
-              {thread.replies.length > 1 ? "ies" : "y"}
+              {echo.replies.length} repl
+              {echo.replies.length > 1 ? "ies" : "y"}
             </p>
           </Link>
         </div>
       )}
 
-      {!isComment && thread.community && (
+      {!isComment && echo.community && (
         <Link
-          href={`/communities/${thread.community._id}`}
+          href={`/communities/${echo.community._id}`}
           className="mt-5 flex items-center"
         >
           <p className="text-subtle-medium text-gray-1">
-            {formatDateString(thread.createdAt)} - {thread.community.name}{" "}
-            Community
+            {formatDateString(echo.createdAt)} - {echo.community.name} Community
           </p>
           <Image
-            src={thread.community.image!}
-            alt={thread.community.name!}
+            src={echo.community.image!}
+            alt={echo.community.name!}
             height={14}
             width={14}
             className="ml-1 rounded-full size-[14px] object-cover"

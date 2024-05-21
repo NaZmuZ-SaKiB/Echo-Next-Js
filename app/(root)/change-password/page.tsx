@@ -1,8 +1,11 @@
+import { redirect } from "next/navigation";
+
 import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
-import { currentUser } from "@/database/auth/auth.actions";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
 
 const ChangePasswordPage = async () => {
-  const user = await currentUser();
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
   return (
     <main className="mx-auto flex max-w-3xl flex-col justify-start px-10 py-20">
       <h1 className="head-text">Change Password</h1>
@@ -11,7 +14,7 @@ const ChangePasswordPage = async () => {
       </p>
 
       <section className="mt-9  max-sm:mt-5 bg-dark-2 p-10">
-        <ChangePasswordForm userId={`${user?._id}`} />
+        <ChangePasswordForm userId={user?.userId} />
       </section>
     </main>
   );

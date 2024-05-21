@@ -1,11 +1,10 @@
 "use client";
 
-import { changePassword, signOut } from "@/database/auth/auth.actions";
-import { ChangePasswordValidation } from "@/database/auth/auth.validation";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import {
   Form,
   FormControl,
@@ -16,6 +15,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { ChangePasswordValidation } from "@/database/auth/auth.validation";
+import { changePassword, signOut } from "@/database/auth/auth.actions";
 
 const ChangePasswordForm = ({ userId }: { userId: string }) => {
   const [error, setError] = useState<string | null>(null);

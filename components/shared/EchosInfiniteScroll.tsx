@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import EchoCardLoading from "../loaders/EchoCardLoading";
 import { useInView } from "react-intersection-observer";
+
+import EchoCardLoading from "../loaders/EchoCardLoading";
 import EchoCard from "../cards/EchoCard";
 import ReplayCard from "../cards/ReplayCard";
 
@@ -63,7 +64,7 @@ const EchosInfiniteScroll = ({
         return isReplayCard ? (
           <ReplayCard
             key={`thread-with-replies-${thread?._id}`}
-            thread={{
+            echo={{
               _id: thread?._id,
               author: thread?.author,
               text: thread?.text,
@@ -75,7 +76,7 @@ const EchosInfiniteScroll = ({
           <EchoCard
             key={`${thread._id}`}
             currentUser_Id={user_Id}
-            JSONThread={JSON.stringify(thread)}
+            JSONEcho={JSON.stringify(thread)}
           />
         );
       })}

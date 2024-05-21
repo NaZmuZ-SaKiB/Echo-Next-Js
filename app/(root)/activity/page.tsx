@@ -1,20 +1,18 @@
 import { redirect } from "next/navigation";
 
-import { currentUser } from "@/database/auth/auth.actions";
-import { getMyNotifications } from "@/database/notification/notification.actions";
-import { TNotificationPopulated } from "@/database/notification/notification.interface";
 import { notificationTypeEnum } from "@/constants";
+import { TNotificationPopulated } from "@/database/notification/notification.interface";
 import InvitationNotificationCard from "@/components/cards/InvitationNotificationCard";
 import LikeAndReplyNotificationCard from "@/components/cards/LikeAndReplyNotificationCard";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
+import { getMyNotifications } from "@/database/notification/notification.actions";
 
 const ActivityPage = async () => {
-  const user = await currentUser();
-  if (!user) return null;
-
-  if (!user?.onboarded) redirect("/onboarding");
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
 
   const activities = (await getMyNotifications(
-    `${user._id}`
+    user.userId
   )) as any as TNotificationPopulated[];
 
   return (

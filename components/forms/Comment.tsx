@@ -1,9 +1,10 @@
 "use client";
 
-import { z } from "zod";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 import {
   Form,
@@ -13,10 +14,9 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { Textarea } from "../ui/textarea";
 import { addCommentToThread } from "@/database/thread/thread.actions";
 import { CommentValidation } from "@/database/thread/thread.validation";
-import { Textarea } from "../ui/textarea";
 
 type TProps = {
   thread_Id: string;

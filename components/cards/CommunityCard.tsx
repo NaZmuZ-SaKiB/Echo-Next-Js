@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { Button } from "../ui/button";
 
-type TCommunityCardProps = {
+type TProps = {
   id: string;
   name: string;
   username: string;
@@ -21,7 +21,7 @@ const CommunityCard = ({
   imgUrl,
   bio,
   members,
-}: TCommunityCardProps) => {
+}: TProps) => {
   return (
     <article className="community-card">
       <div className="flex flex-wrap items-center gap-3">

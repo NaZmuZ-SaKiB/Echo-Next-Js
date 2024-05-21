@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+
 import { Button } from "../ui/button";
 import { kickCommunityMember } from "@/database/community/community.actions";
-import { usePathname } from "next/navigation";
 
 type TProps = {
   communityId: string;

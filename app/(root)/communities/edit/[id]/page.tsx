@@ -1,13 +1,12 @@
-import Community from "@/components/forms/Community";
-import { currentUser } from "@/database/auth/auth.actions";
-import { fetchCommunityInfo } from "@/database/community/community.actions";
 import { redirect } from "next/navigation";
 
-const CommunityEditPage = async ({ params }: { params: { id: string } }) => {
-  const user = await currentUser();
-  if (!user) return null;
+import Community from "@/components/forms/Community";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
+import { fetchCommunityInfo } from "@/database/community/community.actions";
 
-  if (!user?.onboarded) redirect("/onboarding");
+const CommunityEditPage = async ({ params }: { params: { id: string } }) => {
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
 
   const community = await fetchCommunityInfo(params.id);
 
@@ -18,7 +17,7 @@ const CommunityEditPage = async ({ params }: { params: { id: string } }) => {
 
       <section className="mt-12 max-sm:mt-6">
         <Community
-          userId={`${user?._id}`}
+          userId={user.userId}
           JsonCommunity={JSON.stringify(community)}
           btnTitle="Update Changes"
         />

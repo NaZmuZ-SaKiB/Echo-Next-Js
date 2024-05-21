@@ -1,13 +1,12 @@
 import { redirect } from "next/navigation";
+
 import PostEcho from "@/components/forms/PostEcho";
 import { currentUser } from "@/database/auth/auth.actions";
 import { getUsersCommunities } from "@/database/community/community.actions";
 
 const CreateThreadPage = async () => {
   const user = await currentUser();
-  if (!user) return null;
-
-  if (!user?.onboarded) redirect("/onboarding");
+  if (!user) redirect("/sign-in");
 
   const communities = await getUsersCommunities(`${user._id}`);
 

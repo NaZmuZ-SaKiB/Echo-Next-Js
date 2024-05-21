@@ -1,15 +1,14 @@
-import AccountProfile from "@/components/forms/AccountProfile";
-import { Button } from "@/components/ui/button";
-import { currentUser } from "@/database/auth/auth.actions";
-import { TUser } from "@/database/user/user.interface";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { TUser } from "@/database/user/user.interface";
+import AccountProfile from "@/components/forms/AccountProfile";
+import { Button } from "@/components/ui/button";
+import { currentUser } from "@/database/auth/auth.actions";
+
 const ProfileEditPage = async () => {
   const user = await currentUser();
-  if (!user) return null;
-
-  if (!user?.onboarded) redirect("/onboarding");
+  if (!user) redirect("/sign-in");
 
   const userData = {
     _id: `${user?._id}`,

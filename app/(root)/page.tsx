@@ -1,10 +1,13 @@
+import { redirect } from "next/navigation";
+
 import EchoCard from "@/components/cards/EchoCard";
 import EchosInfiniteScroll from "@/components/shared/EchosInfiniteScroll";
-import { currentUser } from "@/database/auth/auth.actions";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
 import { fetchThreads } from "@/database/thread/thread.actions";
 
 const Home = async () => {
-  const user = await currentUser();
+  const user = await isUserLoggedIn();
+  if (!user) redirect("/sign-in");
 
   const limit = 4;
   const result = await fetchThreads(1, limit);
@@ -20,13 +23,13 @@ const Home = async () => {
             {result?.threads.map((thread) => (
               <EchoCard
                 key={`${thread._id}`}
-                currentUser_Id={`${user?._id}` || ""}
-                JSONThread={JSON.stringify(thread)}
+                currentUser_Id={user.userId}
+                JSONEcho={JSON.stringify(thread)}
               />
             ))}
             <EchosInfiniteScroll
               limit={limit}
-              user_Id={`${user?._id}`}
+              user_Id={user.userId}
               fetchFunc={fetchThreads}
               args={[]}
             />

@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
+
 import UserCard from "../cards/UserCard";
-import { searchUsers } from "@/database/user/user.actions";
-import { searchCommunities } from "@/database/community/community.actions";
 import CommunityCard from "../cards/CommunityCard";
 import { currentUser } from "@/database/auth/auth.actions";
+import { searchUsers } from "@/database/user/user.actions";
+import { searchCommunities } from "@/database/community/community.actions";
 
 type TProps = {
   type: "User" | "Community";

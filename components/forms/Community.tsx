@@ -1,15 +1,15 @@
 "use client";
 
-import { TCommunity } from "@/database/community/community.interface";
-import { CommunityValidation } from "@/database/community/community.validation";
-import { deleteImage } from "@/lib/actions/uploadthing.action";
-import { useUploadThing } from "@/lib/uploadthing";
-import { isBase64Image } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+
+import { deleteImage } from "@/lib/actions/uploadthing.action";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
+import { TCommunity } from "@/database/community/community.interface";
 import {
   Form,
   FormControl,
@@ -22,6 +22,7 @@ import Image from "next/image";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { CommunityValidation } from "@/database/community/community.validation";
 import {
   createCommunity,
   updateCommunityInfo,

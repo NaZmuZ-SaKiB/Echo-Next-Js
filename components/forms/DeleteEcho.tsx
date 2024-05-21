@@ -1,10 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { deleteThread } from "@/database/thread/thread.actions";
-import { useState } from "react";
 
 type TProps = {
   thread_Id: string;

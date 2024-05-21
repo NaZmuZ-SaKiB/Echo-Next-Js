@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { readNotification } from "@/database/notification/notification.actions";
-import { TUser } from "@/database/user/user.interface";
 import Image from "next/image";
+
+import { TUser } from "@/database/user/user.interface";
+import { readNotification } from "@/database/notification/notification.actions";
 
 type TProps = {
   activityId: string;

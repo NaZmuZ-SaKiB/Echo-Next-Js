@@ -21,21 +21,23 @@ export const metadata: Metadata = {
   description: "A place to share your thoughts",
 };
 
-export default async function RootLayout({
-  children,
-}: {
+type TProps = {
   children: React.ReactNode;
-}) {
+};
+
+export default async function RootLayout({ children }: TProps) {
   const user = await currentUser();
 
   let communities: TCommunity[] = [];
 
+  // If user is logged in and onboarded, get their communities to show in top bar
   if (user && user.onboarded) {
     communities = await getUsersCommunities(`${user?._id}`);
   } else {
     redirect("/onboarding");
   }
 
+  // Get the count of unread notifications to show in activity icon
   const activityCount = await getUnreadNotificationsCount(`${user?._id}`);
 
   return (

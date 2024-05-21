@@ -1,23 +1,23 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-import ProfileHeader from "@/components/shared/ProfileHeader";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
-import { fetchUser, getUserThreadsCount } from "@/database/user/user.actions";
+import ProfileHeader from "@/components/shared/ProfileHeader";
 import EchosTab from "@/components/shared/EchosTab";
-import { Suspense } from "react";
 import EchosTabLoading from "@/components/loaders/EchosTabLoading";
 import RepliesTab from "@/components/shared/RepliesTab";
-import { currentUser } from "@/database/auth/auth.actions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { fetchUser, getUserThreadsCount } from "@/database/user/user.actions";
+import { isUserLoggedIn } from "@/database/auth/auth.actions";
 
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
-  const user = await currentUser();
+  const user = await isUserLoggedIn();
   if (!user) redirect("/sign-in");
 
   const profileUserInfo = await fetchUser(params.id);
   if (!profileUserInfo) redirect("/");
-  if (!profileUserInfo?.onboarded) redirect("/onboarding");
+  if (!profileUserInfo?.onboarded) redirect("/");
 
   const userThreadsCount = await getUserThreadsCount(`${profileUserInfo._id}`);
 
@@ -25,7 +25,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
     <section>
       <ProfileHeader
         profileUserId={`${profileUserInfo._id}`}
-        authUserId={`${user._id}`}
+        authUserId={user.userId}
         name={profileUserInfo.name!}
         username={profileUserInfo.username}
         imgUrl={profileUserInfo.image!}
@@ -54,7 +54,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<EchosTabLoading />}>
               <EchosTab
-                currentUser_Id={`${user._id}`}
+                currentUser_Id={user.userId}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />
@@ -67,7 +67,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<EchosTabLoading />}>
               <RepliesTab
-                currentUser_Id={`${user._id}`}
+                currentUser_Id={user.userId}
                 user_id={`${profileUserInfo._id}`}
               />
             </Suspense>
@@ -79,7 +79,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
           >
             <Suspense fallback={<EchosTabLoading />}>
               <EchosTab
-                currentUser_Id={`${user._id}`}
+                currentUser_Id={user.userId}
                 fetchAccount_Id={`${profileUserInfo._id}`}
                 accountType="User"
               />

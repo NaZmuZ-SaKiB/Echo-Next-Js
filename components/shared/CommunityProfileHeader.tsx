@@ -1,8 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+
 import CommunityRequestButton from "../forms/CommunityRequestButton";
-import { Button } from "../ui/button";
 import CommunityInvitationAcceptButton from "../forms/CommunityInvitationAcceptButton";
+import { Button } from "../ui/button";
 
 type TProps = {
   communityId: string;

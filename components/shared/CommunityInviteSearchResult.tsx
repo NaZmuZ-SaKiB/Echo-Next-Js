@@ -1,7 +1,7 @@
-import { searchUsers } from "@/database/user/user.actions";
 import Image from "next/image";
-import { Button } from "../ui/button";
+
 import CommunityInviteButton from "../forms/CommunityInviteButton";
+import { searchUsers } from "@/database/user/user.actions";
 
 type TProps = {
   communityId: string;

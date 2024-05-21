@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
 import { Button } from "../ui/button";
 import { readNotification } from "@/database/notification/notification.actions";
 

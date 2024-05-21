@@ -1,11 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { ChangeEvent, useState } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
+import { TUser } from "@/database/user/user.interface";
 import {
   Form,
   FormControl,
@@ -17,15 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-
 import { UserValidation } from "@/database/user/user.validation";
-import { isBase64Image } from "@/lib/utils";
-import { useUploadThing } from "@/lib/uploadthing";
 import { updateUser } from "@/database/user/user.actions";
 import { usePathname, useRouter } from "next/navigation";
-import { TUser } from "@/database/user/user.interface";
 import { deleteImage } from "@/lib/actions/uploadthing.action";
-import Link from "next/link";
 
 interface IProps {
   user: TUser;

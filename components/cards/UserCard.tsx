@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
-type TUserCardProps = {
+import { Button } from "../ui/button";
+
+type TProps = {
   id: string;
   name: string;
   username: string;
@@ -12,13 +13,7 @@ type TUserCardProps = {
   personType: "User" | "Community";
 };
 
-const UserCard = ({
-  id,
-  name,
-  username,
-  imgUrl,
-  personType,
-}: TUserCardProps) => {
+const UserCard = ({ id, name, username, imgUrl, personType }: TProps) => {
   const router = useRouter();
 
   const isCommunity = personType === "Community";

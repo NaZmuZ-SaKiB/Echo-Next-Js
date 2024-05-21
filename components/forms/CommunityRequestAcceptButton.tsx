@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+
 import { Button } from "../ui/button";
 import {
   acceptCommunityJoinRequest,
   rejectCommunityJoinRequest,
 } from "@/database/community/community.actions";
-import { usePathname } from "next/navigation";
 
 type TProps = {
   requestId: string;

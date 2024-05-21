@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { ThreadValidation } from "@/database/thread/thread.validation";
+import { TCommunity } from "@/database/community/community.interface";
 import {
   Form,
   FormControl,
@@ -22,10 +24,8 @@ import {
 } from "../ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "../ui/button";
+import { ThreadValidation } from "@/database/thread/thread.validation";
 import { createThread } from "@/database/thread/thread.actions";
-import { usePathname, useRouter } from "next/navigation";
-import { TCommunity } from "@/database/community/community.interface";
-import { useState } from "react";
 
 type TProps = { user_Id: string; jsonCommunities: string; user_name: string };
 

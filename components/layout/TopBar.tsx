@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
 import ProfileDropDown from "../shared/ProfileDropDown";
 
 type TProps = { JsonUser: string | null; JsonCommunities: string };

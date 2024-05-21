@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { fetchCommunityThreads } from "@/database/community/community.actions";
-import { fetchUserThreads } from "@/database/user/user.actions";
-import EchoCard from "../cards/EchoCard";
+
 import { TThreadProfilePage } from "@/database/thread/thread.interface";
+import { fetchCommunityThreads } from "@/database/community/community.actions";
+import EchoCard from "../cards/EchoCard";
 import EchosInfiniteScroll from "./EchosInfiniteScroll";
+import { fetchUserThreads } from "@/database/user/user.actions";
 
 type TProps = {
   currentUser_Id: string; // _id
@@ -33,7 +34,7 @@ const EchosTab = async ({
         <EchoCard
           key={`${thread._id}`}
           currentUser_Id={currentUser_Id}
-          JSONThread={JSON.stringify(thread)}
+          JSONEcho={JSON.stringify(thread)}
           isComment={false}
         />
       ))}

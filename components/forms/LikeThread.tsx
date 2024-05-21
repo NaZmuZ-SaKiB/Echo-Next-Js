@@ -1,9 +1,10 @@
 "use client";
 
-import { handleLikeTherad } from "@/database/thread/thread.actions";
+import { useState } from "react";
 import Image from "next/image";
 import { redirect, usePathname } from "next/navigation";
-import { useState } from "react";
+
+import { handleLikeTherad } from "@/database/thread/thread.actions";
 
 type TProps = {
   thread_Id: string; // _id
@@ -23,6 +24,7 @@ const LikeThread = ({ thread_Id, likedBy_Id, isLiked, likesCount }: TProps) => {
 
   const handleLike = async () => {
     if (liking) return;
+    setLiked((prev) => !prev);
     setLiking(true);
 
     setLiked((prev) => !prev);
@@ -47,7 +49,7 @@ const LikeThread = ({ thread_Id, likedBy_Id, isLiked, likesCount }: TProps) => {
         alt="heart"
         width={24}
         height={24}
-        className={`cursor-pointer object-contain ${liking && "animate-ping"}`}
+        className={`cursor-pointer object-contain`}
         onClick={handleLike}
       />
       {totalLikes !== 0 && (

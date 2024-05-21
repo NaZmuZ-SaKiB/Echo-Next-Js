@@ -1,6 +1,6 @@
-import { fetchUsersReplies } from "@/database/user/user.actions";
 import ReplayCard from "../cards/ReplayCard";
 import EchosInfiniteScroll from "./EchosInfiniteScroll";
+import { fetchUsersReplies } from "@/database/user/user.actions";
 
 type TProps = {
   currentUser_Id: string; // _id
@@ -16,7 +16,7 @@ const RepliesTab = async ({ user_id, currentUser_Id }: TProps) => {
       {result.threads.map((thread: any) => (
         <ReplayCard
           key={`thread-with-replies-${thread?._id}`}
-          thread={{
+          echo={{
             _id: thread?._id,
             author: thread?.author,
             text: thread?.text,

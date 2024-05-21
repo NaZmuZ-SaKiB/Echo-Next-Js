@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+
 import { TCommunity } from "@/database/community/community.interface";
 import { TUser } from "@/database/user/user.interface";
 import {
@@ -7,8 +10,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import Image from "next/image";
-import Link from "next/link";
 import { signOut } from "@/database/auth/auth.actions";
 
 type TProps = { JsonUser: string | null; JsonCommunities: string };
