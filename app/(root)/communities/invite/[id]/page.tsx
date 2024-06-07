@@ -1,11 +1,14 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import SearchResultLoading from "@/components/loaders/SearchResultLoading";
 import CommunityInviteSearchResult from "@/components/shared/CommunityInviteSearchResult";
 import Searchbar from "@/components/shared/Searchbar";
 import { isUserLoggedIn } from "@/database/auth/auth.actions";
-import { getInvitedUsersList } from "@/database/community/community.actions";
+import {
+  fetchCommunityInfo,
+  getInvitedUsersList,
+} from "@/database/community/community.actions";
 
 type TProps = {
   params: { id: string };
@@ -15,6 +18,13 @@ type TProps = {
 const CommunityInvitePage = async ({ params, searchParams }: TProps) => {
   const user = await isUserLoggedIn();
   if (!user) redirect("/sign-in");
+
+  const community = await fetchCommunityInfo(params.id);
+  if (!community) notFound();
+
+  if (user.userId !== `${community.createdBy}`) {
+    redirect("/");
+  }
 
   const invitedUsersList = await getInvitedUsersList(params.id);
 

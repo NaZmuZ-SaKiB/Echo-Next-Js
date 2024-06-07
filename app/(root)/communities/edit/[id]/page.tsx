@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import Community from "@/components/forms/Community";
 import { isUserLoggedIn } from "@/database/auth/auth.actions";
@@ -9,6 +9,11 @@ const CommunityEditPage = async ({ params }: { params: { id: string } }) => {
   if (!user) redirect("/sign-in");
 
   const community = await fetchCommunityInfo(params.id);
+  if (!community) notFound();
+
+  if (user.userId !== `${community.createdBy}`) {
+    redirect("/");
+  }
 
   return (
     <>

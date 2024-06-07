@@ -479,6 +479,7 @@ export const searchUsers = async ({
       query.$or = [
         { username: { $regex: regex } },
         { name: { $regex: regex } },
+        { email: { $regex: regex } },
       ];
     }
 

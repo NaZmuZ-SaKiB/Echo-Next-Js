@@ -101,11 +101,15 @@ export const fetchCommunityInfo = async (id: string) => {
 
     const communityInfo = await Community.findById(id);
 
+    if (!communityInfo) {
+      return null;
+    }
+
     return communityInfo;
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community info:", error);
-    throw new Error("Failed to fetch community info");
+    return null;
   }
 };
 
