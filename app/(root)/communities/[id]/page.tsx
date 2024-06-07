@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { communityTabs, publicCommunityTabs } from "@/constants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +19,7 @@ const SingleCommunityPage = async ({ params }: { params: { id: string } }) => {
   if (!user) redirect("/sign-in");
 
   const communityDetails = await fetchCommunityDetails(params.id);
-  if (!communityDetails) redirect("/");
+  if (!communityDetails) notFound();
 
   const isInvited = await isUserInvitedToThisCommunity(params.id, user.userId);
 

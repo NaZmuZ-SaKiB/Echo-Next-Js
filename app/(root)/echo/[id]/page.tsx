@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import Comment from "@/components/forms/Comment";
 import EchoCard from "@/components/cards/EchoCard";
@@ -6,12 +6,18 @@ import { fetchThreadById } from "@/database/thread/thread.actions";
 import { currentUser } from "@/database/auth/auth.actions";
 
 const EchoPage = async ({ params }: { params: { id: string } }) => {
-  if (!params.id) return null;
+  if (!params.id) redirect("/");
 
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
   const echo = await fetchThreadById(params.id);
+
+  console.log("ecno", echo);
+
+  if (!echo) {
+    return notFound();
+  }
 
   return (
     <section className="relative">

@@ -122,6 +122,10 @@ export const fetchCommunityDetails = async (id: string) => {
       },
     ]);
 
+    if (!communityDetails) {
+      return null;
+    }
+
     const joinRequests = await CommunityRequest.find({
       communityId: id,
     });
@@ -137,7 +141,7 @@ export const fetchCommunityDetails = async (id: string) => {
   } catch (error) {
     // Handle any errors
     console.error("Error fetching community details:", error);
-    throw error;
+    return null;
   }
 };
 

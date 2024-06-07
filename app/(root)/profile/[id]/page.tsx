@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { profileTabs } from "@/constants";
 import ProfileHeader from "@/components/shared/ProfileHeader";
@@ -16,7 +16,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
   if (!user) redirect("/sign-in");
 
   const profileUserInfo = await fetchUser(params.id);
-  if (!profileUserInfo) redirect("/");
+  if (!profileUserInfo) notFound();
   if (!profileUserInfo?.onboarded) redirect("/");
 
   const userThreadsCount = await getUserThreadsCount(`${profileUserInfo._id}`);

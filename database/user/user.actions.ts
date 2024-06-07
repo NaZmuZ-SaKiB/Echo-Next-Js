@@ -53,12 +53,19 @@ export const fetchUser = async (userId: string) => {
   try {
     connectToDB();
 
-    return await User.findById(userId).populate({
+    const user = await User.findById(userId).populate({
       path: "communities",
       model: Community,
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
   } catch (error: any) {
-    throw new Error(`Failed to fetch user: ${error?.message}`);
+    console.log(`Failed to fetch user: ${error?.message}`);
+    return null;
   }
 };
 
@@ -492,50 +499,4 @@ export const searchUsers = async ({
   } catch (error: any) {
     throw new Error(`Failed to fetch users: ${error?.message}`);
   }
-};
-
-export const getUserActivity = async (userId: string) => {
-  // connectToDB();
-
-  // try {
-  //   const userThreads = await Thread.find({ author: userId });
-
-  //   const childThreadIds = userThreads.reduce((acc, thread) => {
-  //     return acc.concat(thread.children);
-  //   }, []);
-
-  //   const replies = await Thread.find({
-  //     _id: { $in: childThreadIds },
-  //     author: { $ne: userId },
-  //   })
-  //     .populate({
-  //       path: "author",
-  //       model: User,
-  //       select: "id name image _id",
-  //     })
-  //     .populate({
-  //       path: "parentThread",
-  //       model: Thread,
-  //       populate: [
-  //         {
-  //           path: "author",
-  //           model: User,
-  //         },
-  //         {
-  //           path: "children",
-  //           model: Thread,
-  //           populate: {
-  //             path: "author",
-  //             model: User,
-  //             select: "id name image _id",
-  //           },
-  //         },
-  //       ],
-  //     });
-  //   return replies;
-  // } catch (error: any) {
-  //   throw new Error(`Failed to fetch user activity: ${error?.message}`);
-  // }
-
-  return [];
 };

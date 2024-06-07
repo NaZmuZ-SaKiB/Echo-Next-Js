@@ -231,7 +231,7 @@ export const fetchThreadById = async (id: string) => {
       .exec();
 
     if (!thread) {
-      throw new Error(`Faild to fetch thread. Thread not found`);
+      return null;
     }
 
     const mainThreadLikes = await Like.find({
@@ -289,7 +289,8 @@ export const fetchThreadById = async (id: string) => {
 
     return mainThreadWithReplies;
   } catch (error: any) {
-    throw new Error(`Failed to fetch thread: ${error?.message}`);
+    console.log(`Failed to fetch thread: ${error?.message}`);
+    return null;
   }
 };
 
