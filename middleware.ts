@@ -29,5 +29,7 @@ export const config = {
     "/communities/:path*",
     "/activity",
     "/change-password",
+    "/echo/:path*",
+    "/onboarding",
   ],
 };
