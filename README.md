@@ -29,6 +29,7 @@ This is a social media project. User can register and manage their profile. User
 6. Notification System
 7. Fully Responsive Design
 8. MongoDB Aggregations for complex queries
+9. Image upload using Uploadthing
 
 ## Run the project in your local mechine
 
