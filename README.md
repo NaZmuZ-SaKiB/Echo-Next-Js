@@ -4,6 +4,11 @@ This is a social media project. User can register and manage their profile. User
 
 ### [Visit Site](https://echo-next-js.vercel.app)
 
+### Credentials
+
+`Email:` sakib@gmail.com
+`Password:` 11111111
+
 ## Technology
 
 1.  NextJs
