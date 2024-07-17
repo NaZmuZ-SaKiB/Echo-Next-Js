@@ -69,10 +69,12 @@ const SignUpPage = () => {
       await sendVerificationEmail(form.getValues("email"), result.code);
       setCodeSent(true);
     } catch (error) {
+      console.log(error);
+
       setError("Failed to send verification code. Please try again.");
+      router.push("/sign-in");
     } finally {
       setLoading(false);
-      router.push("/sign-in");
     }
   };
 
